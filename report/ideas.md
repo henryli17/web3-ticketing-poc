@@ -43,8 +43,8 @@ Ideas
 	- User feedback in toasts
 	- User view purchased tickets
 	- Easy to navigate GUI
+	- Recommender system
 	- Admin interface?
-	- Recommender system?
 - Smart contract requirements
 	- Smart contract deployed
 	- Buy NFT

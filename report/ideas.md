@@ -55,3 +55,5 @@ Ideas
 	- Metadata
 	- Generate smart contracts from events
 - Specifications
+
+First time learning?

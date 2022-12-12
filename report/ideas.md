@@ -57,7 +57,9 @@ Ideas
 - Specifications
 
 # Design
-From the Review explains the rationale behind the design for the artefact, comparing alternatives and justifying any choices made. Describes the requirements for the artefact succinctly, but in enough detail for reader to appreciate all significant points. There is something distinctly ambitious about what is being attempted and the student has carried off the attempt with style, rarely defeated by problems encountered and more typically finding some clever solution.
+- From the Review explains the rationale behind the design for the artefact, comparing alternatives and justifying any choices made.
+- Describes the requirements for the artefact succinctly, but in enough detail for reader to appreciate all significant points.
+- There is something distinctly ambitious about what is being attempted and the student has carried off the attempt with style, rarely defeated by problems encountered and more typically finding some clever solution.
 
 System Architecture:
 User												Admin

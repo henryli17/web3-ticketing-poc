@@ -1,7 +1,9 @@
 const HomeView = () => {
 	return (
-		<div>Hi</div>
-	)
+		<button className="btn btn-primary">
+			Buy Ticket
+		</button>
+	);
 }
 
 export default HomeView;

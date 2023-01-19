@@ -4,14 +4,14 @@ import routes from "./routes"
 import HomeView from "./views/HomeView";
 
 const App = () => {
-  return (
-	  <>
-		  <Routes>
+  	return (
+		<>
+			<Routes>
 				<Route path={routes.home} element={<HomeView />} />
 				<Route path="*" element={<Navigate to={routes.home} replace />} />
-		  </Routes>
-	  </>
-  );
+			</Routes>
+		</>
+	);
 }
 
 export default App;

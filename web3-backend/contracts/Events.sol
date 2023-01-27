@@ -3,8 +3,8 @@
 pragma solidity >=0.6.0 <0.8.0;
 pragma abicoder v2;
 
-import "openzeppelin-solidity/contracts/token/ERC1155/ERC1155.sol";
-import "openzeppelin-solidity/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Events is ERC1155, Ownable {
 	struct Event {
@@ -27,13 +27,13 @@ contract Events is ERC1155, Ownable {
 	}
 
 	// Address => Array of indices for tokensForResale array
-	mapping(address => ResaleTokenEntry[]) resaleTokenEntries;
+	mapping(address => ResaleTokenEntry[]) public resaleTokenEntries;
 
 	// Event ID => Array of Resale Tokens
-	mapping(uint => ResaleToken[]) resaleTokens;
+	mapping(uint => ResaleToken[]) public resaleTokens;
 
 	// ID => Event
-	mapping(uint => Event) private events;
+	mapping(uint => Event) public events;
 
 	constructor() ERC1155("metadataURI") {
 		// List resale: 
@@ -113,6 +113,33 @@ contract Events is ERC1155, Ownable {
 		}
 
 		return false;
+	}
+
+	function buyResaleToken(address _owner, uint _eventId, uint _price) public payable {
+		ResaleToken[] storage rts = resaleTokens[_eventId];
+		ResaleTokenEntry[] storage rtes = resaleTokenEntries[_owner];
+		ResaleTokenEntry storage rte;
+		bool valid = false;
+	
+		for (uint i = 0; i < rtes.length; i++) {
+			if (rtes[i].eventId == _eventId && rtes[i].price == _price) {
+				rte = rtes[i];
+				valid = true;
+				break;
+			}
+		}
+
+		require(valid, "Invalid parameters.");
+		require(msg.value >= _price, "Insufficient amount of ETH provided.");
+
+		address payable seller = payable(_owner);
+
+		_safeTransferFrom(_owner, msg.sender, _asSingletonArray(_eventId), 1, "");
+		seller.transfer(msg.value);
+
+		// Mark resale token as sold
+		rte.price = 0;
+		rts[rte.idx].price = 0;
 	}
 
 	function createEvent(uint _id, string memory _name, uint _time, uint _price, uint _quantity) external onlyOwner {

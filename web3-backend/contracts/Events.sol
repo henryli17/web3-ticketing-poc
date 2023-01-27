@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.6.0 <0.8.0;
+pragma solidity ^0.8.1;
 pragma abicoder v2;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
@@ -26,39 +26,19 @@ contract Events is ERC1155, Ownable {
 		uint idx;
 	}
 
-	// Address => Array of indices for tokensForResale array
+	// Resale Token Owner Address => ResaleTokenEntry[]
 	mapping(address => ResaleTokenEntry[]) public resaleTokenEntries;
 
-	// Event ID => Array of Resale Tokens
+	// Event ID => ResaleToken[]
 	mapping(uint => ResaleToken[]) public resaleTokens;
 
-	// ID => Event
+	// Event ID => Event
 	mapping(uint => Event) public events;
 
-	constructor() ERC1155("metadataURI") {
-		// List resale: 
-		/**
-		 * API endpoint
-		 * Add ResaleToken to resaleTokens, get index, add to tokensForResaleIdx
-		 */
+	constructor() ERC1155("metadataURI") {}
 
-		// Unlist resale:
-		/**
-		 * API endpoint
-		 * Remove from resaleTokens, remove from tokensForResaleIdx
-		 */
-
-		// Buy resale:
-		/**
-		 * tokensForResale(eventId)
-		 * Transfer token to buyer -> Send ETH to ResaleToken.owner
-		 * Unlist resale 
-		 * Remove ResaleToken from DB? Inconsistent
-		 */
-	}
-
-	function buyTicket(uint _id, uint _quantity) external payable {
-		Event storage e = events[_id];
+	function buyToken(uint _eventId, uint _quantity) external payable {
+		Event storage e = events[_eventId];
 
 		require(msg.value <= e.price * _quantity, "Insufficient amount of ETH provided.");
 		require(e.supplied + _quantity < e.quantity, "Maximum number of tickets have been issued.");
@@ -66,21 +46,25 @@ contract Events is ERC1155, Ownable {
 
 		e.supplied += _quantity;
 
-		_mint(msg.sender, _id, 1, "");
+		_mint(msg.sender, _eventId, 1, "");
 	}
 
-	function listTokenForResale(uint _eventId, uint _price) public {
-		ResaleTokenEntry[] storage entries = resaleTokenEntries[msg.sender];
+	function listTokenForResale(uint _eventId, uint _price) external {
+		ResaleTokenEntry[] storage senderResaleTokenEntries = resaleTokenEntries[msg.sender];
+		uint numerator = 110;
+		uint denominator = 100;
 		uint listedCount = 0;
 
-		for (uint i = 0; i < entries.length; i++) {
-			if (entries[i].eventId == _eventId && entries[i].price != 0) {
-				listedCount++;
+		for (uint i = 0; i < senderResaleTokenEntries.length; i++) {
+			if (senderResaleTokenEntries[i].eventId == _eventId) {
+				if (senderResaleTokenEntries[i].price != 0) {
+					listedCount++;
+				}
 			}
 		}
 
 		require(listedCount < balanceOf(msg.sender, _eventId), "No more tickets to list.");
-		// TODO: add price validation check
+		require(_price <= events[_eventId].price * (numerator / denominator), "Invalid price.");
 
 		resaleTokens[_eventId].push(
 			ResaleToken({
@@ -89,7 +73,7 @@ contract Events is ERC1155, Ownable {
 			})
 		);
 
-		entries.push(
+		senderResaleTokenEntries.push(
 			ResaleTokenEntry({
 				eventId: _eventId,
 				idx: resaleTokens[_eventId].length - 1,
@@ -98,48 +82,46 @@ contract Events is ERC1155, Ownable {
 		);
 	}
 
-	function unlistTokenForResale(uint _eventId, uint _price) public returns (bool) {
-		ResaleTokenEntry[] storage rtes = resaleTokenEntries[msg.sender];
+	function unlistTokenForResale(uint _eventId, uint _price) external {
+		ResaleTokenEntry[] storage senderResaleTokenEntries = resaleTokenEntries[msg.sender];
 	
-		for (uint i = 0; i < rtes.length; i++) {
-			if (rtes[i].eventId == _eventId && rtes[i].price == _price) {
-				ResaleToken[] storage rts = resaleTokens[_eventId];
-
-				rtes[i].price = 0;
-				rts[rtes[i].idx].price = 0;
-
-				return true;
+		for (uint i = 0; i < senderResaleTokenEntries.length; i++) {
+			if (senderResaleTokenEntries[i].eventId == _eventId) {
+				if (senderResaleTokenEntries[i].price == _price) {
+					senderResaleTokenEntries[i].price = 0;
+					resaleTokens[_eventId][senderResaleTokenEntries[i].idx].price = 0;
+					return;
+				}
 			}
 		}
 
-		return false;
+		revert("Invalid parameters.");
 	}
 
-	function buyResaleToken(address _owner, uint _eventId, uint _price) public payable {
-		ResaleToken[] storage rts = resaleTokens[_eventId];
-		ResaleTokenEntry[] storage rtes = resaleTokenEntries[_owner];
-		ResaleTokenEntry storage rte;
-		bool valid = false;
+	function buyResaleToken(address _owner, uint _eventId, uint _price) external payable {
+		require(msg.value >= _price, "Insufficient amount of ETH provided.");
+
+		ResaleTokenEntry[] storage ownerResaleTokenEntries = resaleTokenEntries[_owner];
+		address payable seller = payable(_owner);
 	
-		for (uint i = 0; i < rtes.length; i++) {
-			if (rtes[i].eventId == _eventId && rtes[i].price == _price) {
-				rte = rtes[i];
-				valid = true;
-				break;
+		for (uint i = 0; i < ownerResaleTokenEntries.length; i++) {
+			if (ownerResaleTokenEntries[i].eventId == _eventId) {
+				if (ownerResaleTokenEntries[i].price == _price) {
+					ResaleTokenEntry storage ownerResaleTokenEntry = ownerResaleTokenEntries[i];
+
+					_safeTransferFrom(_owner, msg.sender, _eventId, 1, "");
+					seller.transfer(msg.value);
+
+					// Mark resale token as sold
+					ownerResaleTokenEntry.price = 0;
+					resaleTokens[_eventId][ownerResaleTokenEntry.idx].price = 0;
+
+					return;
+				}
 			}
 		}
 
-		require(valid, "Invalid parameters.");
-		require(msg.value >= _price, "Insufficient amount of ETH provided.");
-
-		address payable seller = payable(_owner);
-
-		_safeTransferFrom(_owner, msg.sender, _asSingletonArray(_eventId), 1, "");
-		seller.transfer(msg.value);
-
-		// Mark resale token as sold
-		rte.price = 0;
-		rts[rte.idx].price = 0;
+		revert("Invalid parameters.");
 	}
 
 	function createEvent(uint _id, string memory _name, uint _time, uint _price, uint _quantity) external onlyOwner {

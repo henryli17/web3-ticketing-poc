@@ -1,3 +1,5 @@
+const Web3 = require('web3');
+
 const shouldThrow = async (promise) => {
     try {
         await promise;
@@ -22,6 +24,8 @@ const defaultEvent = () => {
 	};
 }
 
+const gweiToWei = (gwei) => Web3.utils.toWei(gwei.toString(), "gwei");
+
 const createEvent = async (contract, caller, event) => {
 	event = { ...defaultEvent(), ...event };
 
@@ -38,5 +42,6 @@ const createEvent = async (contract, caller, event) => {
 module.exports = {
 	createEvent,
 	defaultEvent,
+	gweiToWei,
 	shouldThrow
 }

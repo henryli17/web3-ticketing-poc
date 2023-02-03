@@ -152,7 +152,7 @@ contract Events is ERC1155, Ownable {
 
 		e.name = _name;
 		e.time = _time;
-		e.price = _price;
+		e.price = _price * (1 gwei);
 		e.quantity = _quantity;
 	}
 }

@@ -2,7 +2,6 @@ const Web3 = require('web3');
 const web3 = new Web3(Web3.givenProvider);
 const utils = require("./helpers/utils");
 const Events = artifacts.require("Events");
-const price = Web3.utils.toWei("1", "ether");
 
 contract("Events", (accounts) => {
 	const [alice, bob, charlie] = accounts;
@@ -25,7 +24,7 @@ contract("Events", (accounts) => {
 
 			assert.equal(event.name.toString(), defaultEvent.name);
 			assert.equal(event.time.toNumber(), defaultEvent.time);
-			assert.equal(BigInt(event.price), BigInt(defaultEvent.priceInWei()));
+			assert.equal(BigInt(event.price), BigInt(utils.gweiToWei(defaultEvent.price)));
 			assert.equal(event.quantity.toNumber(), defaultEvent.quantity);
 		});
 	
@@ -83,7 +82,7 @@ contract("Events", (accounts) => {
 
 			assert.equal(event.name.toString(), updatedEvent.name);
 			assert.equal(event.time.toNumber(), updatedEvent.time);
-			assert.equal(event.price.toNumber(), updatedEvent.price);
+			assert.equal(BigInt(event.price), BigInt(utils.gweiToWei(updatedEvent.price)));
 			assert.equal(event.quantity.toNumber(), updatedEvent.quantity);
 		});
 	});
@@ -106,7 +105,7 @@ contract("Events", (accounts) => {
 			await contract.buyToken.sendTransaction(
 				defaultEvent.id,
 				1,
-				{ from: charlie, value: defaultEvent.priceInWei() }
+				{ from: charlie, value: utils.gweiToWei(defaultEvent.price) }
 			);
 
 			assertTokenCount(charlie, defaultEvent.id, 1);
@@ -117,7 +116,7 @@ contract("Events", (accounts) => {
 				contract.buyToken.sendTransaction(
 					defaultEvent.id,
 					defaultEvent.quantity,
-					{ from: charlie, value: defaultEvent.priceInWei() }
+					{ from: charlie, value: utils.gweiToWei(defaultEvent.price) }
 				)
 			);
 
@@ -128,13 +127,13 @@ contract("Events", (accounts) => {
 			await contract.buyToken.sendTransaction(
 				defaultEvent.id,
 				defaultEvent.quantity,
-				{ from: alice, value: defaultEvent.priceInWei() * defaultEvent.quantity }
+				{ from: alice, value: utils.gweiToWei(defaultEvent.price) * defaultEvent.quantity }
 			)
 			await utils.shouldThrow(
 				contract.buyToken.sendTransaction(
 					defaultEvent.id,
 					1,
-					{ from: charlie, value: defaultEvent.priceInWei() }
+					{ from: charlie, value: utils.gweiToWei(defaultEvent.price) }
 				)
 			);
 
@@ -152,7 +151,7 @@ contract("Events", (accounts) => {
 				contract.buyToken.sendTransaction(
 					event.id,
 					1,
-					{ from: charlie, value: defaultEvent.priceInWei() }
+					{ from: charlie, value: utils.gweiToWei(defaultEvent.price) }
 				)
 			);
 

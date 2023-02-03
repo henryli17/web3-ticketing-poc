@@ -5,11 +5,11 @@
     "@truffle/hdwallet-provider": "^2.1.5",
     "@truffle/interface-adapter": "^0.5.27",
     "solc": "^0.8.17",
-    "solidity-coverage": "^0.7.22",
     "truffle-assertions": "^0.9.2",
     "truffle-export-abi": "^1.0.1"
   },
   "devDependencies": {
+    "solidity-coverage": "^0.7.22",
     "ganache-cli": "^6.12.2"
   }
 }

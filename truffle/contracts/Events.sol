@@ -141,4 +141,18 @@ contract Events is ERC1155, Ownable {
 			created: true
 		});
 	}
+
+	function updateEvent(uint _id, string memory _name, uint _time, uint _price, uint _quantity) external onlyOwner {
+		Event storage e = events[_id];
+
+		require(e.created == true, "An event with this ID does not exist.");
+		require(_price > 0, "Price must be greater than 0.");
+		require(_quantity >= e.supplied, "Quantity must be greater or equal than what has been supplied already.");
+		require(_quantity > 0, "Quantity must be greater than 0.");
+
+		e.name = _name;
+		e.time = _time;
+		e.price = _price;
+		e.quantity = _quantity;
+	}
 }

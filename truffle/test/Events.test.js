@@ -19,7 +19,14 @@ contract("Events", (accounts) => {
 
 	describe("createEvent", () => {
 		it("creates an event", async () => {
-			await utils.createEvent(contract, alice);
+			await utils.createEvent(contract, alice, defaultEvent);
+
+			const event = await contract.events.call(defaultEvent.id);
+
+			assert.equal(event.name.toString(), defaultEvent.name);
+			assert.equal(event.time.toNumber(), defaultEvent.time);
+			assert.equal(BigInt(event.price), BigInt(defaultEvent.priceInWei()));
+			assert.equal(event.quantity.toNumber(), defaultEvent.quantity);
 		});
 	
 		it("reverts when not owner", async () => {
@@ -48,10 +55,52 @@ contract("Events", (accounts) => {
 		});	
 	});
 
+	describe("updateEvent", () => {
+		const defaultEvent = utils.defaultEvent();
+
+		beforeEach(async () => {
+			await utils.createEvent(contract, alice);
+		});
+
+		it("updates an event", async () => {
+			const updatedEvent = {
+				id: defaultEvent.id,
+				name: defaultEvent.name + "Updated",
+				time: defaultEvent.time + 1,
+				price: defaultEvent.price + 1,
+				quantity: defaultEvent.quantity + 1
+			};
+
+			await contract.updateEvent.sendTransaction(
+				updatedEvent.id,
+				updatedEvent.name,
+				updatedEvent.time,
+				updatedEvent.price,
+				updatedEvent.quantity
+			);
+
+			const event = await contract.events.call(defaultEvent.id);
+
+			assert.equal(event.name.toString(), updatedEvent.name);
+			assert.equal(event.time.toNumber(), updatedEvent.time);
+			assert.equal(event.price.toNumber(), updatedEvent.price);
+			assert.equal(event.quantity.toNumber(), updatedEvent.quantity);
+		});
+	});
+
 	describe("buyToken", () => {
 		beforeEach(async () => {
 			await utils.createEvent(contract, alice);
 		});
+
+		const assertTokenCount = async (account, id, count) => {
+			const tokenCount = await contract.balanceOf.call(
+				account,
+				id
+			);
+
+			assert.equal(tokenCount.toNumber(), count);
+		}
 
 		it("buys a token", async () => {
 			await contract.buyToken.sendTransaction(
@@ -59,6 +108,8 @@ contract("Events", (accounts) => {
 				1,
 				{ from: charlie, value: defaultEvent.priceInWei() }
 			);
+
+			assertTokenCount(charlie, defaultEvent.id, 1);
 		});
 
 		it("reverts with insufficient payment", async () => {
@@ -69,6 +120,8 @@ contract("Events", (accounts) => {
 					{ from: charlie, value: defaultEvent.priceInWei() }
 				)
 			);
+
+			assertTokenCount(charlie, defaultEvent.id, 0);
 		});
 
 		it("reverts with too much quantity", async () => {
@@ -84,6 +137,8 @@ contract("Events", (accounts) => {
 					{ from: charlie, value: defaultEvent.priceInWei() }
 				)
 			);
+
+			assertTokenCount(charlie, defaultEvent.id, 0);
 		});
 
 		it("reverts when event is in the past", async () => {
@@ -100,6 +155,8 @@ contract("Events", (accounts) => {
 					{ from: charlie, value: defaultEvent.priceInWei() }
 				)
 			);
+
+			assertTokenCount(charlie, event.id, 0);
 		});
 	});
 

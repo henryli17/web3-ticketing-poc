@@ -38,12 +38,22 @@ contract("Events", (accounts) => {
 			await utils.shouldThrow(
 				utils.createEvent(contract, alice, { quantity: 0 })
 			);
+		});
+
+		it("reverts when event with same ID exists", async () => {
+			await utils.createEvent(contract, alice);
+			await utils.shouldThrow(
+				utils.createEvent(contract, alice)
+			);
 		});	
 	});
 
 	describe("buyToken", () => {
-		it("buys a token", async () => {
+		beforeEach(async () => {
 			await utils.createEvent(contract, alice);
+		});
+
+		it("buys a token", async () => {
 			await contract.buyToken.sendTransaction(
 				defaultEvent.id,
 				1,
@@ -52,7 +62,6 @@ contract("Events", (accounts) => {
 		});
 
 		it("reverts with insufficient payment", async () => {
-			await utils.createEvent(contract, alice);
 			await utils.shouldThrow(
 				contract.buyToken.sendTransaction(
 					defaultEvent.id,
@@ -63,7 +72,6 @@ contract("Events", (accounts) => {
 		});
 
 		it("reverts with too much quantity", async () => {
-			await utils.createEvent(contract, alice);
 			await contract.buyToken.sendTransaction(
 				defaultEvent.id,
 				defaultEvent.quantity,
@@ -79,18 +87,25 @@ contract("Events", (accounts) => {
 		});
 
 		it("reverts when event is in the past", async () => {
-			await utils.createEvent(
-				contract,
-				alice,
-				{ time: Math.floor(Date.now() / 1000) - 1 }
-			);
+			const event = {
+				id: defaultEvent.id + 1,
+				time: Math.floor(Date.now() / 1000)
+			};
+
+			await utils.createEvent(contract, alice, event);
 			await utils.shouldThrow(
 				contract.buyToken.sendTransaction(
-					defaultEvent.id,
+					event.id,
 					1,
 					{ from: charlie, value: defaultEvent.priceInWei() }
 				)
 			);
+		});
+	});
+
+	describe("listTokenForResale", () => {
+		it("lists a token for resale", async () => {
+
 		});
 	});
 });

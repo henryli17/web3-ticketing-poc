@@ -125,6 +125,9 @@ contract Events is ERC1155, Ownable {
 	}
 
 	function createEvent(uint _id, string memory _name, uint _time, uint _price, uint _quantity) external onlyOwner {
+		require(_price > 0, "Price must be greater than 0.");
+		require(_quantity > 0, "Quantity must be greater than 0.");
+
 		events[_id] = Event({
 			name: _name,
 			time: _time,

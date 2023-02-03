@@ -17,64 +17,80 @@ contract("Events", (accounts) => {
 		assert.ok(contract.address);
 	});
 
-	it("creates an event", async () => {
-		await utils.createEvent(contract, alice);
+	describe("createEvent", () => {
+		it("creates an event", async () => {
+			await utils.createEvent(contract, alice);
+		});
+	
+		it("reverts when not owner", async () => {
+			await utils.shouldThrow(
+				utils.createEvent(contract, bob)
+			);
+		});	
+
+		it("reverts when price is 0", async () => {
+			await utils.shouldThrow(
+				utils.createEvent(contract, alice, { price: 0 })
+			);
+		});	
+
+		it("reverts when quantity is 0", async () => {
+			await utils.shouldThrow(
+				utils.createEvent(contract, alice, { quantity: 0 })
+			);
+		});	
 	});
 
-	it("only allows contract owner to create events", async () => {
-		await utils.shouldThrow(
-			utils.createEvent(contract, bob)
-		);
-	});
+	describe("buyToken", () => {
+		it("buys a token", async () => {
+			await utils.createEvent(contract, alice);
+			await contract.buyToken.sendTransaction(
+				defaultEvent.id,
+				1,
+				{ from: charlie, value: defaultEvent.priceInWei() }
+			);
+		});
 
-	it("allows a user to buy a token", async () => {
-		await utils.createEvent(contract, alice);
-		await contract.buyToken.sendTransaction(
-			defaultEvent.id,
-			1,
-			{ from: charlie, value: defaultEvent.priceInWei() }
-		);
-	});
+		it("reverts with insufficient payment", async () => {
+			await utils.createEvent(contract, alice);
+			await utils.shouldThrow(
+				contract.buyToken.sendTransaction(
+					defaultEvent.id,
+					defaultEvent.quantity,
+					{ from: charlie, value: defaultEvent.priceInWei() }
+				)
+			);
+		});
 
-	it("reverts when buying a token with insufficient ETH", async () => {
-		await utils.createEvent(contract, alice);
-		await utils.shouldThrow(
-			contract.buyToken.sendTransaction(
+		it("reverts with too much quantity", async () => {
+			await utils.createEvent(contract, alice);
+			await contract.buyToken.sendTransaction(
 				defaultEvent.id,
 				defaultEvent.quantity,
-				{ from: charlie, value: defaultEvent.priceInWei() }
+				{ from: alice, value: defaultEvent.priceInWei() * defaultEvent.quantity }
 			)
-		);
-	});
+			await utils.shouldThrow(
+				contract.buyToken.sendTransaction(
+					defaultEvent.id,
+					1,
+					{ from: charlie, value: defaultEvent.priceInWei() }
+				)
+			);
+		});
 
-	it("reverts when buying a token with too much quantity", async () => {
-		await utils.createEvent(contract, alice);
-		await contract.buyToken.sendTransaction(
-			defaultEvent.id,
-			defaultEvent.quantity,
-			{ from: alice, value: defaultEvent.priceInWei() * defaultEvent.quantity }
-		)
-		await utils.shouldThrow(
-			contract.buyToken.sendTransaction(
-				defaultEvent.id,
-				1,
-				{ from: charlie, value: defaultEvent.priceInWei() }
-			)
-		);
-	});
-
-	it("reverts when buying a token for a past event", async () => {
-		await utils.createEvent(
-			contract,
-			alice,
-			{ time: Math.floor(Date.now() / 1000) - 1 }
-		);
-		await utils.shouldThrow(
-			contract.buyToken.sendTransaction(
-				defaultEvent.id,
-				1,
-				{ from: charlie, value: defaultEvent.priceInWei() }
-			)
-		);
+		it("reverts when event is in the past", async () => {
+			await utils.createEvent(
+				contract,
+				alice,
+				{ time: Math.floor(Date.now() / 1000) - 1 }
+			);
+			await utils.shouldThrow(
+				contract.buyToken.sendTransaction(
+					defaultEvent.id,
+					1,
+					{ from: charlie, value: defaultEvent.priceInWei() }
+				)
+			);
+		});
 	});
 });

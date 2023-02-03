@@ -40,8 +40,8 @@ contract Events is ERC1155, Ownable {
 	function buyToken(uint _eventId, uint _quantity) external payable {
 		Event storage e = events[_eventId];
 
-		require(msg.value <= e.price * _quantity, "Insufficient amount of ETH provided.");
-		require(e.supplied + _quantity < e.quantity, "Maximum number of tickets have been issued.");
+		require(msg.value >= e.price * _quantity, "Insufficient amount of ETH provided.");
+		require(e.supplied + _quantity <= e.quantity, "Maximum number of tickets have been issued.");
 		require(block.timestamp < e.time, "This event has already passed.");
 
 		e.supplied += _quantity;
@@ -128,7 +128,7 @@ contract Events is ERC1155, Ownable {
 		events[_id] = Event({
 			name: _name,
 			time: _time,
-			price: _price,
+			price: _price * (1 gwei),
 			quantity: _quantity,
 			supplied: 0
 		});

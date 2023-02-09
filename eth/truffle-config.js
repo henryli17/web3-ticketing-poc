@@ -23,6 +23,12 @@
 // const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
 
+const config = {
+  projectId: "d054222c82ce4f2995f8e3ee2c514f90",
+  mnemonic: "blind labor taste cage calm neck ridge habit sea fine alone divert",
+  address: "0xADa95D02B0DAb0d52CCDDa4b9fDFa1a6d068EcF1"
+}
+
 module.exports = {
   /**
    * Networks define how you connect to your ethereum client and let you set the
@@ -74,6 +80,17 @@ module.exports = {
     //   network_id: 2111,   // This network is yours, in the cloud.
     //   production: true    // Treats this network as if it was a public net. (default: false)
     // }
+    goerli: {
+      provider: function() { 
+       return new HDWalletProvider(
+        config.mnemonic,
+        "https://goerli.infura.io/v3/" + config.projectId
+       );
+      },
+      network_id: 5,
+      from: config.address,
+      gas: 7500000
+    }
   },
 
   // Set default mocha options here, use special reporters, etc.

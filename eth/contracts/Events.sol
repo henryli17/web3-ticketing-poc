@@ -36,6 +36,9 @@ contract Events is ERC1155, Ownable {
 	// Event ID => Event
 	mapping(uint => Event) public events;
 
+	// Token Owner Address => Event IDs
+	mapping(address => uint[]) public usedTokens;
+
 	constructor() ERC1155("metadataURI") {}
 
 	function buyToken(uint _eventId, uint _quantity) external payable {
@@ -50,22 +53,53 @@ contract Events is ERC1155, Ownable {
 		_mint(msg.sender, _eventId, 1, "");
 	}
 
-	function listTokenForResale(uint _eventId, uint _price) external {
-		ResaleTokenEntry[] storage senderResaleTokenEntries = resaleTokenEntries[msg.sender];
-		uint numerator = 110;
-		uint denominator = 100;
+	function markTokenAsUsed(address _owner, uint _eventId) external onlyOwner {
+		uint listedCount = getListedCount(msg.sender, _eventId);
+		uint usedCount = getUsedCount(msg.sender, _eventId);
+
+		require(listedCount + usedCount < balanceOf(msg.sender, _eventId), "No tickets left to mark as used.");
+
+		usedTokens[_owner].push(_eventId);
+	}
+
+	function getListedCount(address _addr, uint _eventId) private view returns(uint) {
+		ResaleTokenEntry[] storage addrResaleTokenEntries = resaleTokenEntries[_addr];
 		uint listedCount = 0;
 
-		for (uint i = 0; i < senderResaleTokenEntries.length; i++) {
-			if (senderResaleTokenEntries[i].eventId == _eventId) {
-				if (senderResaleTokenEntries[i].price != 0) {
+		for (uint i = 0; i < addrResaleTokenEntries.length; i++) {
+			if (addrResaleTokenEntries[i].eventId == _eventId) {
+				if (addrResaleTokenEntries[i].price != 0) {
 					listedCount++;
 				}
 			}
 		}
 
-		require(listedCount < balanceOf(msg.sender, _eventId), "No more tickets to list.");
+		return listedCount;
+	}
+
+	function getUsedCount(address _addr, uint _eventId) private view returns(uint) {
+		uint[] storage addrUsedTokens = usedTokens[_addr];
+		uint usedCount = 0;
+
+		for (uint i = 0; i < addrUsedTokens.length; i++) {
+			if (addrUsedTokens[i] == _eventId) {
+				usedCount++;
+			}
+		}
+
+		return usedCount;
+	}
+
+	function listTokenForResale(uint _eventId, uint _price) external {
+		uint numerator = 110;
+		uint denominator = 100;
+		uint listedCount = getListedCount(msg.sender, _eventId);
+		uint usedCount = getUsedCount(msg.sender, _eventId);
+
+		require(listedCount + usedCount < balanceOf(msg.sender, _eventId), "No more tickets to list.");
 		require(_price <= events[_eventId].price * (numerator / denominator), "Invalid price.");
+
+		ResaleTokenEntry[] storage senderResaleTokenEntries = resaleTokenEntries[msg.sender];
 
 		resaleTokens[_eventId].push(
 			ResaleToken({

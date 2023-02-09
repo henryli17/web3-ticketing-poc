@@ -155,4 +155,12 @@ contract Events is ERC1155, Ownable {
 		e.price = _price * (1 gwei);
 		e.quantity = _quantity;
 	}
+
+	function getBalance() public view onlyOwner returns(uint) {
+		return address(this).balance;
+	}
+
+	function transferBalance(address payable addr) external onlyOwner {
+		addr.transfer(getBalance());
+	}
 }

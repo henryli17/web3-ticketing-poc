@@ -1,1 +1,1 @@
-@openzeppelin/=truffle/node_modules/@openzeppelin/
+@openzeppelin/=eth/node_modules/@openzeppelin/

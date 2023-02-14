@@ -67,7 +67,7 @@ const Navbar = () => {
 							</div>
 						</div>
 					</div>
-					<div className="pr-2 sm:pr-0 hidden md:flex items-center">
+					<div className="pr-2 sm:pr-0 hidden sm:flex items-center">
 						<Search />
 						<div className="ml-3">
 							Connect Wallet

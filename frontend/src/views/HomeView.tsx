@@ -1,8 +1,8 @@
+import Navbar from "../components/Navbar";
+
 const HomeView = () => {
 	return (
-		<button className="btn btn-primary">
-			Buy Ticket
-		</button>
+		<Navbar />
 	);
 }
 

@@ -1,4 +1,4 @@
-import './App.css';
+import './index.scss';
 import { Navigate, Route, Routes } from "react-router-dom";
 import routes from "./routes"
 import HomeView from "./views/HomeView";

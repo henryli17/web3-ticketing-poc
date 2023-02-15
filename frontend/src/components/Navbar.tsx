@@ -36,7 +36,7 @@ const Search = (props: { className?: string }) => {
 			</div>
 			<input
 				type="text"
-				className="block w-full rounded-md border-gray-300 pl-9 pr-12 sm:text-sm"
+				className="block w-full rounded-md border-gray-300 pl-9 pr-5 sm:text-sm focus:border-indigo-500 focus:ring-indigo-500 focus:border-1 focus:ring-0"
 				placeholder="Search"
 			/>
 		</div>
@@ -81,7 +81,10 @@ const Navbar = () => {
 			</div>
 			<div className={"sm:hidden " + mobileMenuClasses}>
 				<div className="pt-2 pb-3">
-					<Search className="mx-2 mb-3" />
+					<Search className="mx-2 mb-2" />
+					<div className="flex mx-2 mb-3">
+						<ConnectWallet className="w-full"/>
+					</div>
 					<MobileLink href="/" text="Events" active={true} />
 					<MobileLink href="/" text="Purchases" active={false} />
 				</div>

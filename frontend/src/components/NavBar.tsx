@@ -1,27 +1,31 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import routes from "../routes";
 import ConnectWallet from "./ConnectWallet";
 
-const Link = (props: { href: string, text: string, active: boolean }) => {
-	const borderColour = (props.active) ? "border-indigo-500" : "border-transparent";
+const Tab = (props: { to: string, text: string }) => {
+	const active = (window.location.pathname === props.to);
+	const borderColour = (active) ? "border-indigo-500" : "border-transparent";
 
 	return (
 		<button className={"border-b-2 h-full " + borderColour}>
-			<a href={props.href} className="text-gray-800 px-3 py-2 text-sm font-medium h-full">
+			<Link to={props.to} className="text-gray-800 px-3 py-2 text-sm font-medium h-full">
 				{props.text}
-			</a>
+			</Link>
 		</button>
 	);
 };
 
-const MobileLink = (props: { href: string, text: string, active: boolean }) => {
-	const buttonClasses = (props.active) ? "border-l-4 border-indigo-500 bg-indigo-100" : "";
-	const aClasses = (props.active) ? "ml-3 text-indigo-800" : "ml-4 text-gray-500";
+const MobileTab = (props: { to: string, text: string  }) => {
+	const active = (window.location.pathname === props.to);
+	const buttonClasses = (active) ? "border-l-4 border-indigo-500 bg-indigo-100" : "";
+	const aClasses = (active) ? "ml-3 text-indigo-800" : "ml-4 text-gray-500";
 
 	return (
 		<button className={"py-2 w-full text-left " + buttonClasses}>
-			<a href={props.href} className={"font-medium ml-3 " + aClasses}>
+			<Link to={props.to} className={"font-medium ml-3 " + aClasses}>
 				{props.text}
-			</a>
+			</Link>
 		</button>
 	);
 };
@@ -68,8 +72,8 @@ const NavBar = () => {
 						</div>
 						<div className="hidden sm:ml-6 sm:block justify-center">
 							<div className="flex space-x-4 h-full">
-								<Link href="/" text="Events" active={true} />
-								<Link href="/" text="Purchases" active={false} />
+								<Tab to={routes.event(1)} text="Events" />
+								<Tab to="/" text="Purchases" />
 							</div>
 						</div>
 					</div>
@@ -85,8 +89,8 @@ const NavBar = () => {
 					<div className="flex mx-2 mb-3">
 						<ConnectWallet className="w-full"/>
 					</div>
-					<MobileLink href="/" text="Events" active={true} />
-					<MobileLink href="/" text="Purchases" active={false} />
+					<MobileTab to="/" text="Events" />
+					<MobileTab to="/" text="Purchases" />
 				</div>
 			</div>
 		</nav>

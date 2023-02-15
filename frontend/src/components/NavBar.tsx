@@ -1,55 +1,30 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAddressState } from "../middleware/Wallet";
 import routes from "../routes";
 import ConnectWallet from "./ConnectWallet";
-
-const Tab = (props: { to: string, text: string }) => {
-	const active = (window.location.pathname === props.to);
-	const borderColour = (active) ? "border-indigo-500" : "border-transparent";
-
-	return (
-		<button className={"border-b-2 h-full " + borderColour}>
-			<Link to={props.to} className="text-gray-800 px-3 py-2 text-sm font-medium h-full">
-				{props.text}
-			</Link>
-		</button>
-	);
-};
-
-const MobileTab = (props: { to: string, text: string  }) => {
-	const active = (window.location.pathname === props.to);
-	const buttonClasses = (active) ? "border-l-4 border-indigo-500 bg-indigo-100" : "";
-	const aClasses = (active) ? "ml-3 text-indigo-800" : "ml-4 text-gray-500";
-
-	return (
-		<button className={"py-2 w-full text-left " + buttonClasses}>
-			<Link to={props.to} className={"font-medium ml-3 " + aClasses}>
-				{props.text}
-			</Link>
-		</button>
-	);
-};
-
-const Search = (props: { className?: string }) => {
-	return (
-		<div className={"relative shadow-sm " + props.className}>
-			<div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor" className="w-4 h-4">
-					<path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-				</svg>
-			</div>
-			<input
-				type="text"
-				className="block w-full rounded-md border-gray-300 pl-9 pr-5 sm:text-sm focus:border-indigo-500 focus:ring-indigo-500 focus:border-1 focus:ring-0"
-				placeholder="Search"
-			/>
-		</div>
-	);
-};
+import SearchBar from "./SearchBar";
 
 const NavBar = () => {
+	const navigate = useNavigate();
+	const [address] = useAddressState();
 	const [mobileMenuHidden, setMobileMenuHidden] = useState(true);
+	const [navEntries, setNavEntries] = useState<NavEntry[]>(allNavEntries);
 	const mobileMenuClasses = (mobileMenuHidden) ? "hidden" : "";
+
+	useEffect(() => {
+		const navEntries = allNavEntries
+			.filter(navEntry => address || !navEntry.requiresWallet)
+			.map(navEntry => { 
+				return {
+					...navEntry,
+					active: window.location.pathname === navEntry.location
+				};
+			})
+		;
+
+		setNavEntries(navEntries);
+	}, [navigate, address]);
 
 	return (
 		<nav className="bg-white drop-shadow">
@@ -72,28 +47,64 @@ const NavBar = () => {
 						</div>
 						<div className="hidden sm:ml-6 sm:block justify-center">
 							<div className="flex space-x-4 h-full">
-								<Tab to={routes.event(1)} text="Events" />
-								<Tab to="/" text="Purchases" />
+								{navEntries.map((navEntry, i) => <Tab key={i} navEntry={navEntry} />)}
 							</div>
 						</div>
 					</div>
 					<div className="pr-2 sm:pr-0 hidden sm:flex items-center">
-						<Search />
+						<SearchBar />
 						<ConnectWallet className="ml-3" />
 					</div>
 				</div>
 			</div>
 			<div className={"sm:hidden " + mobileMenuClasses}>
 				<div className="pt-2 pb-3">
-					<Search className="mx-2 mb-2" />
+					<SearchBar className="mx-2 mb-2" />
 					<div className="flex mx-2 mb-3">
 						<ConnectWallet className="w-full"/>
 					</div>
-					<MobileTab to="/" text="Events" />
-					<MobileTab to="/" text="Purchases" />
+					{navEntries.map((navEntry, i) => <MobileTab key={i} navEntry={navEntry} />)}
 				</div>
 			</div>
 		</nav>
+	);
+};
+
+interface NavEntry {
+	location: string,
+	text: string,
+	active: boolean,
+	requiresWallet: boolean
+};
+
+const allNavEntries = [
+	{ location: routes.home(), text: "Home", active: false, requiresWallet: false },
+	{ location: routes.event(1), text: "Events", active: false, requiresWallet: false },
+	{ location: routes.purchases(), text: "Purchases", active: false, requiresWallet: true }
+];
+
+const Tab = (props: { navEntry: NavEntry }) => {
+	const borderColour = (props.navEntry.active) ? "border-indigo-500" : "border-transparent";
+
+	return (
+		<button className={"border-b-2 h-full " + borderColour}>
+			<Link to={props.navEntry.location} className="text-gray-800 px-3 py-2 text-sm font-medium h-full">
+				{props.navEntry.text}
+			</Link>
+		</button>
+	);
+};
+
+const MobileTab = (props: { navEntry: NavEntry }) => {
+	const buttonClasses = (props.navEntry.active) ? "border-l-4 border-indigo-500 bg-indigo-100" : "";
+	const aClasses = (props.navEntry.active) ? "ml-3 text-indigo-800" : "ml-4 text-gray-500";
+
+	return (
+		<button className={"py-2 w-full text-left " + buttonClasses}>
+			<Link to={props.navEntry.location} className={"font-medium ml-3 " + aClasses}>
+				{props.navEntry.text}
+			</Link>
+		</button>
 	);
 };
 

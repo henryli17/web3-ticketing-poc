@@ -5,6 +5,7 @@ const param = (name: string, value: any) => {
 const routes = {
 	home: () => "/",
 	event: (id?: number) => "/events/" + param("id", id),
+	purchases: () => "/purchases"
 };
 
 export default routes;

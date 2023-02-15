@@ -1,5 +1,5 @@
 import Web3 from 'web3';
-import { useAddressState } from '../middleware/WalletMiddleware';
+import { useAddressState } from '../middleware/Wallet';
 import { useState } from 'react';
 import { useLocalStorage } from 'usehooks-ts';
 

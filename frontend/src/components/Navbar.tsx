@@ -43,7 +43,7 @@ const Search = (props: { className?: string }) => {
 	);
 };
 
-const Navbar = () => {
+const NavBar = () => {
 	const [mobileMenuHidden, setMobileMenuHidden] = useState(true);
 	const mobileMenuClasses = (mobileMenuHidden) ? "hidden" : "";
 
@@ -93,4 +93,4 @@ const Navbar = () => {
 	);
 };
 
-export default Navbar;
+export default NavBar;

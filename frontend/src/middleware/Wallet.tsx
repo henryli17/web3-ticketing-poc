@@ -3,7 +3,7 @@ import { Outlet, useOutletContext } from "react-router-dom";
 import { useLocalStorage } from "usehooks-ts";
 import Web3 from "web3";
 
-const WalletMiddleware = () => {
+const Wallet = () => {
 	const [loggedOut, setLoggedOut] = useLocalStorage("loggedOut", false);
 	const [address, setAddress] = useState<string | null>(null);
 	const web3 = new Web3(Web3.givenProvider);
@@ -55,4 +55,4 @@ export const useAddressState = () => {
 	return useOutletContext<[string, React.Dispatch<React.SetStateAction<string>>]>();
 }
 
-export default WalletMiddleware;
+export default Wallet;

@@ -18,11 +18,7 @@
  *
  */
 
-// const HDWalletProvider = require('@truffle/hdwallet-provider');
-//
-// const fs = require('fs');
-// const mnemonic = fs.readFileSync(".secret").toString().trim();
-
+const HDWalletProvider = require('@truffle/hdwallet-provider');
 const config = {
   projectId: "d054222c82ce4f2995f8e3ee2c514f90",
   mnemonic: "blind labor taste cage calm neck ridge habit sea fine alone divert",

@@ -41,6 +41,14 @@ contract Events is ERC1155, Ownable {
 
 	constructor() ERC1155("metadataURI") {}
 
+	function getResaleTokenEntries(address _owner) public view returns(ResaleTokenEntry[] memory) {
+		return resaleTokenEntries[_owner];
+	}
+
+	function getResaleTokens(uint _eventId) public view returns(ResaleToken[] memory) {
+		return resaleTokens[_eventId];
+	}
+
 	function buyToken(uint _eventId, uint _quantity) external payable {
 		Event storage e = events[_eventId];
 
@@ -91,13 +99,14 @@ contract Events is ERC1155, Ownable {
 	}
 
 	function listTokenForResale(uint _eventId, uint _price) external {
-		uint numerator = 110;
-		uint denominator = 100;
+		_price = _price * (1 gwei);
+
 		uint listedCount = getListedCount(msg.sender, _eventId);
 		uint usedCount = getUsedCount(msg.sender, _eventId);
 
 		require(listedCount + usedCount < balanceOf(msg.sender, _eventId), "No more tickets to list.");
-		require(_price <= events[_eventId].price * (numerator / denominator), "Invalid price.");
+		require(_price > 0, "Invalid price.");
+		require(_price <= events[_eventId].price, "Invalid price.");
 
 		ResaleTokenEntry[] storage senderResaleTokenEntries = resaleTokenEntries[msg.sender];
 
@@ -134,6 +143,8 @@ contract Events is ERC1155, Ownable {
 	}
 
 	function buyResaleToken(address _owner, uint _eventId, uint _price) external payable {
+		_price = _price * (1 gwei);
+
 		require(msg.value >= _price, "Insufficient amount of ETH provided.");
 
 		ResaleTokenEntry[] storage ownerResaleTokenEntries = resaleTokenEntries[_owner];

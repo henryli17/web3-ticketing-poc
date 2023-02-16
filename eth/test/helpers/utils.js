@@ -16,7 +16,7 @@ const defaultEvent = () => {
 		id: 1,
 		name: "TestEvent1",
 		time: Math.floor(Date.now() / 1000) + 86400, // Tomorrow
-		price: 10000000, // 0.01 ETH
+		price: 10000000, // 10000000 gwei / 0.01 ETH
 		quantity: 2,
 		priceInWei: function() {
 			return this.price * Math.pow(10, 9);

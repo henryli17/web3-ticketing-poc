@@ -12,6 +12,30 @@ contract("Events", (accounts) => {
 		contract = await Events.new();
 	});
 
+	it.only("resale scenario", async () => {
+		await utils.createEvent(contract, alice, defaultEvent);
+		await contract.buyToken.sendTransaction(
+			defaultEvent.id,
+			1,
+			{ from: bob, value: utils.gweiToWei(defaultEvent.price) }
+		);
+		await contract.listTokenForResale.sendTransaction(
+			defaultEvent.id,
+			defaultEvent.price,
+			{ from: bob }
+		);
+		await contract.buyResaleToken.sendTransaction(
+			bob,
+			defaultEvent.id,
+			defaultEvent.price,
+			{ from: charlie, value: utils.gweiToWei(defaultEvent.price) }
+		);
+
+		const balance = await contract.balanceOf.call(charlie, defaultEvent.id);
+
+		assert.equal(balance.toNumber(), 1);
+	});
+
 	it("deploys a contract", () => {
 		assert.ok(contract.address);
 	});

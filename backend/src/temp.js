@@ -7,7 +7,7 @@ const config = {
 	address: "0xADa95D02B0DAb0d52CCDDa4b9fDFa1a6d068EcF1"
 }
 
-const provider: any = new HDWalletProvider(
+const provider = new HDWalletProvider(
 	config.mnemonic,
 	"https://goerli.infura.io/v3/" + config.projectId
 );
@@ -42,7 +42,7 @@ const contract = new web3.eth.Contract(
 			// .send({ from: config.address })
 		;
 		console.log(res);
-	} catch (e: any) {
+	} catch (e) {
 		console.error(e);
 	}
 

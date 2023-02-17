@@ -33,3 +33,10 @@ server.get("/events/:id?", async (req, res) => {
 		return events;
 	});
 });
+
+server.get("/genres", async (req, res) => {
+	await response(req, res, async (req) => {
+		const genres = await db.genres();
+		return genres;
+	});
+});

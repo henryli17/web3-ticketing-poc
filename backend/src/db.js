@@ -41,6 +41,16 @@ const events = async (params) => {
 	}
 };
 
+const genres = async () => {
+	const genres = await knex
+		.select("*")
+		.table("genres")
+	;
+
+	return genres;
+}
+
 module.exports = {
 	events,
+	genres
 };

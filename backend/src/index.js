@@ -1,24 +1,35 @@
 require('dotenv').config()
 
 const restify = require("restify");
+const errs = require('restify-errors');
 const db = require("./db.js");
 const server = restify.createServer();
 
 server.listen(8080);
 
-const response = (res, data, status = 200) => {
-	res.send(
-		status,
-		JSON.parse(JSON.stringify(data)) || undefined
-	);
+const response = async (req, res, fn) => {
+	try {
+		const data = await fn(req);
+		res.send(
+			200,
+			JSON.parse(JSON.stringify(data))
+		);
+	} catch (e) {
+		console.error(e);
+		res.send(
+			(e instanceof errs.HttpError) ? e : new errs.InternalServerError()
+		);
+	}
 };
 
 server.get("/events/:id?", async (req, res) => {
-	try {
+	await response(req, res, async (req) => {
 		const events = await db.events(req.params);
-		response(res, events);
-	} catch (e) {
-		console.error(e);
-		response(res, null, 500);
-	}
+
+		if (!events && req.params.id) {
+			throw new errs.ResourceNotFoundError();
+		}
+
+		return events;
+	});
 });

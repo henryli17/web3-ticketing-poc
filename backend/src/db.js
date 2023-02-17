@@ -10,7 +10,7 @@ const knex = require('knex')({
 });
 
 const events = async (params) => {
-	const temp = {};
+	const events = {};
 	const rows = await knex
 		.select("events.*")
 		.select("genres.name AS genre")
@@ -26,16 +26,19 @@ const events = async (params) => {
 
 	// Group genres into array for each event
 	for (const row of rows) {
-		if (!temp[row.id]) {
-			temp[row.id] = { ...row, genre: [row.genre] };
+		if (!events[row.id]) {
+			events[row.id] = { ...row, genres: [row.genre] };
+			delete events[row.id].genre;
 		} else {
-			temp[row.id].genre.push(row.genre);
+			events[row.id].genres.push(row.genre);
 		}
 	}
 
-	const events = Object.values(rows);
-
-	return (params.id) ? events.shift() : events;
+	if (params.id) {
+		return (events) ? events[params.id] : {};
+	} else {
+		return Object.values(events);
+	}
 };
 
 module.exports = {

@@ -79,7 +79,7 @@ interface NavEntry {
 
 const allNavEntries = [
 	{ location: routes.home(), text: "Home", active: false, requiresWallet: false },
-	{ location: routes.event(1), text: "Events", active: false, requiresWallet: false },
+	{ location: routes.events(), text: "Events", active: false, requiresWallet: false },
 	{ location: routes.purchases(), text: "Purchases", active: false, requiresWallet: true }
 ];
 

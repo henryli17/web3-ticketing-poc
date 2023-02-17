@@ -5,6 +5,7 @@ import HomeView from "./views/HomeView";
 import Wallet from './middleware/Wallet';
 import ShowNavBar from './middleware/ShowNavBar';
 import SingleEventView from './views/SingleEventView';
+import EventsView from './views/EventsView';
 
 const App = () => {
   	return (
@@ -13,6 +14,7 @@ const App = () => {
 				<Route element={<Wallet />}>
 					<Route element={<ShowNavBar />}>
 						<Route path={routes.home()} element={<HomeView />} />
+						<Route path={routes.events()} element={<EventsView />} />
 						<Route path={routes.event()} element={<SingleEventView />} />
 						<Route path="*" element={<Navigate to={routes.home()} replace />} />
 					</Route>

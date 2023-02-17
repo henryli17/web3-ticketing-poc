@@ -4,6 +4,7 @@ const param = (name: string, value: any) => {
 
 const routes = {
 	home: () => "/",
+	events: () => "/events",
 	event: (id?: number) => "/events/" + param("id", id),
 	purchases: () => "/purchases"
 };

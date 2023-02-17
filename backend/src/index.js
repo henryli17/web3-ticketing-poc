@@ -1,25 +1,24 @@
-const restify = require('restify');
+require('dotenv').config()
 
-function respond(req, res, next) {
-	res.send('hello ' + req.params.name);
-	next();
-  }
-  
-var server = restify.createServer();
-server.get('/hello/:name', respond);
-server.head('/hello/:name', respond);
+const restify = require("restify");
+const db = require("./db.js");
+const server = restify.createServer();
 
-server.listen(8080, function() {
-console.log('%s listening at %s', server.name, server.url);
-});
+server.listen(8080);
 
-const knex = require('knex')({
-	client: 'mysql',
-	connection: {
-	  host : '127.0.0.1',
-	  port : 3306,
-	  user : 'your_database_user',
-	  password : 'your_database_password',
-	  database : 'myapp_test'
+const response = (res, data, status = 200) => {
+	res.send(
+		status,
+		JSON.parse(JSON.stringify(data)) || undefined
+	);
+};
+
+server.get("/events/:id?", async (req, res) => {
+	try {
+		const events = await db.events(req.params);
+		response(res, events);
+	} catch (e) {
+		console.error(e);
+		response(res, null, 500);
 	}
-  });
+});

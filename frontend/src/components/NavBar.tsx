@@ -13,13 +13,18 @@ const NavBar = () => {
 	const mobileMenuClasses = (mobileMenuHidden) ? "hidden" : "";
 
 	useEffect(() => {
+		const isActive = (navEntry: NavEntry) => {
+			if (navEntry.location === "/") {
+				return window.location.pathname === "/";
+			} else {
+				return window.location.pathname.startsWith(navEntry.location);
+			}
+		};
+
 		const navEntries = allNavEntries
 			.filter(navEntry => address || !navEntry.requiresWallet)
 			.map(navEntry => { 
-				return {
-					...navEntry,
-					active: window.location.pathname === navEntry.location
-				};
+				return { ...navEntry, active: isActive(navEntry)};
 			})
 		;
 

@@ -31,9 +31,12 @@ const SingleEventView = () => {
 			<div className="grid-span-1 flex">
 				<div className="my-auto">
 					<h1 className="italic uppercase font-bold mb-1">
-						{event.name}
+						{event.artist}
 					</h1>
-					<div className="text-2xl mb-8">
+					<div className="text-2xl mb-8 italic">
+						{event.name}
+					</div>
+					<div className="text-2xl">
 						{prettyDate(event.time)}
 					</div>
 					<div className="text-2xl mb-8">

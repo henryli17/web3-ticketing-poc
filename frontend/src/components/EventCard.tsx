@@ -11,8 +11,8 @@ const EventCard = (props: { event: Event, className?: string }) => {
 				<img className="rounded shadow-lg m-5 hidden sm:block" src={props.event.imagePath} alt="" width={100} />
 				<div className="my-5 mx-5 sm:mr-5 sm:ml-0 text-left w-full flex">
 					<div className="my-auto w-full">
-						<div className="italic uppercase mb-2">
-							<h2 className="font-bold mr-2">
+						<div className="italic mb-2">
+							<h2 className="font-bold uppercase mr-2">
 								{props.event.artist}
 							</h2>
 							<div className="text-xl">

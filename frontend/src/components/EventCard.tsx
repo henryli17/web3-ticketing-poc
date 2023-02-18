@@ -1,6 +1,6 @@
 const EventCard = () => {
 	return (
-		<button type="button" className="outline outline-1 outline-gray-300 rounded transition ease-in-out duration-300 hover:outline-indigo-500 flex w-full">
+		<button type="button" className="card flex w-full">
 			<div className="my-auto flex w-full">
 				<img className="rounded shadow-lg m-5 hidden sm:block" src="https://i.imgur.com/Awaw7ni.png" alt="" width={100} />
 				<div className="my-5 mx-5 sm:mr-5 sm:ml-0 text-left w-full flex">

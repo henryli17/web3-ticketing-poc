@@ -5,7 +5,7 @@ enum HttpMethod {
 	POST = "post"
 };
 
-type Event = {
+export type Event = {
 	id: number
 	name: string
 	artist: string
@@ -42,6 +42,13 @@ export const getEvents = () => {
 	return request<Event[]>(
 		HttpMethod.GET,
 		"events"
+	);
+};
+
+export const getEvent = (id: number) => {
+	return request<Event>(
+		HttpMethod.GET,
+		"events/" + id,
 	);
 };
 

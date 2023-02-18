@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
 import CheckboxGroup, { CheckboxItem } from "../components/CheckboxGroup";
 import EventCard from "../components/EventCard";
-import { getGenres } from "../helpers/api";
-
-
+import { getEvents, getGenres } from "../helpers/api";
+import { Event } from "../helpers/api";
 
 const EventsView = () => {
+	const [events, setEvents] = useState<Event[]>([]);
 	const [genres, setGenres] = useState<CheckboxItem[]>([]);
 
 	useEffect(() => {
+		getEvents()
+			.then(setEvents)
+		;
+
 		getGenres()
 			.then(genres => {
 				setGenres(
@@ -34,10 +38,7 @@ const EventsView = () => {
 				</div>
 			</form>
 			<div className="space-y-3 col-span-12 md:col-span-9 xl:col-span-10">
-				<EventCard />
-				<EventCard />
-				<EventCard />
-				<EventCard />
+				{events.map(event => <EventCard key={event.id} event={event} />)}
 			</div>
 		</div>
 	);

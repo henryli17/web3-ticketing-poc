@@ -41,6 +41,13 @@ const request = <T>(method: HttpMethod, endpoint: string, options?: { data?: any
 export const getEvents = () => {
 	return request<Event[]>(
 		HttpMethod.GET,
-		"/events"
+		"events"
+	);
+};
+
+export const getGenres = () => {
+	return request<string[]>(
+		HttpMethod.GET,
+		"genres"
 	);
 };

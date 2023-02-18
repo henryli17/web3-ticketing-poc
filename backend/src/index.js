@@ -6,6 +6,11 @@ const db = require("./db.js");
 const server = restify.createServer();
 
 server.listen(8080);
+server.use((_, res, next) => {
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Headers", "X-Requested-With");
+	return next();
+});
 
 const response = async (req, res, fn) => {
 	try {

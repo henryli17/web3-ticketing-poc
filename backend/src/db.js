@@ -43,8 +43,9 @@ const events = async (params) => {
 
 const genres = async () => {
 	const genres = await knex
-		.select("*")
+		.select("name")
 		.table("genres")
+		.pluck("name")
 	;
 
 	return genres;

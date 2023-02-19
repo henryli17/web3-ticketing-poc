@@ -52,6 +52,7 @@ contract Events is ERC1155, Ownable {
 	function buyToken(uint _eventId, uint _quantity) external payable {
 		Event storage e = events[_eventId];
 
+		require(e.created, "An event with this ID does not exist.");
 		require(msg.value >= e.price * _quantity, "Insufficient amount of ETH provided.");
 		require(e.supplied + _quantity <= e.quantity, "Maximum number of tickets have been issued.");
 		require(block.timestamp < e.time, "This event has already passed.");

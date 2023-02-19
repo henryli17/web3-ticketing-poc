@@ -5,6 +5,7 @@ import ConnectWallet from "../components/ConnectWallet";
 import GenrePill from "../components/GenrePill";
 import NotFound from "../components/NotFound";
 import { Event, getEvent } from "../helpers/api";
+import { contract } from "../helpers/contract";
 import { prettyDate } from "../helpers/utils";
 import { useAddressState } from "../middleware/Wallet";
 
@@ -69,11 +70,6 @@ const SingleEventView = () => {
 const PurchaseButton = (props: { className?: string, event: Event }) => {
 	const [address] = useAddressState();
 	const [disabled, setDisabled] = useState(false);
-	const web3 = new Web3(Web3.givenProvider);
-	const contract = new web3.eth.Contract(
-		require("../ABI.json"),
-		"0x3830Dc9f529987f2cB373F48304baF9EE6789a19"
-	);
 
 	if (!address) {
 		return <ConnectWallet className={props.className} />;

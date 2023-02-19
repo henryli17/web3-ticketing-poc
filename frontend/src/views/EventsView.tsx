@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
 import CheckboxGroup, { CheckboxItem } from "../components/CheckboxGroup";
 import EventCard from "../components/EventCard";
+import NotFound from "../components/NotFound";
 import { getEvents, getGenres } from "../helpers/api";
 import { Event } from "../helpers/api";
 
 const EventsView = () => {
+	const [error, setError] = useState(false);
 	const [events, setEvents] = useState<Event[]>([]);
 	const [genres, setGenres] = useState<CheckboxItem[]>([]);
 
 	useEffect(() => {
 		getEvents()
 			.then(setEvents)
+			.catch(() => setError(true))
 		;
 
 		getGenres()
@@ -21,8 +24,13 @@ const EventsView = () => {
 					})
 				);
 			})
+			.catch(() => setError(true))
 		;
 	}, []);
+
+	if (error) {
+		return <NotFound />;
+	}
 
 	return (
 		<div className="container py-20 px-10 mx-auto grid grid-cols-12 gap-x-3">

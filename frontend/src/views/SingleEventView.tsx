@@ -3,22 +3,27 @@ import { useParams } from "react-router-dom";
 import Web3 from "web3";
 import ConnectWallet from "../components/ConnectWallet";
 import GenrePill from "../components/GenrePill";
+import NotFound from "../components/NotFound";
 import { Event, getEvent } from "../helpers/api";
 import { prettyDate } from "../helpers/utils";
 import { useAddressState } from "../middleware/Wallet";
 
 const SingleEventView = () => {
 	const { id } = useParams();
+	const [error, setError] = useState(false);
 	const [event, setEvent] = useState<Event>();
 
 	useEffect(() => {
 		getEvent(Number(id))
 			.then(setEvent)
+			.catch(() => setError(true))
 		;
 	}, [id]);
 
 	if (!event) {
 		return <></>;
+	} else if (error) {
+		return <NotFound />;
 	}
 
 	return (

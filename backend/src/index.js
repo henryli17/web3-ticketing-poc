@@ -2,8 +2,10 @@ require('dotenv').config()
 
 const restify = require("restify");
 const errs = require('restify-errors');
-const db = require("./db.js");
+const db = require("./helpers/db.js");
+const contract = require("./helpers/contract.js");
 const server = restify.createServer();
+const API_BASE = "/api"
 
 server.listen(8080);
 server.use(restify.plugins.queryParser());
@@ -28,9 +30,9 @@ const response = async (req, res, fn) => {
 	}
 };
 
-server.get("/events/:id?", async (req, res) => {
+server.get(API_BASE + "/events/:id?", async (req, res) => {
 	await response(req, res, async (req) => {	
-		const events = await db.events({
+		const events = await db.getEvents({
 			id: req.params.id || req.query.id?.split(",")
 		});
 
@@ -42,9 +44,32 @@ server.get("/events/:id?", async (req, res) => {
 	});
 });
 
-server.get("/genres", async (req, res) => {
+server.get(API_BASE + "/genres", async (req, res) => {
 	await response(req, res, async (req) => {
-		const genres = await db.genres();
-		return genres;
+		return await db.getGenres();
+	});
+});
+
+server.get(API_BASE + "/purchases/:address", async (req, res) => {
+	await response(req, res, async (req) => {
+		const tokens = await contract.getTokens(req.params.address);
+		const events = await db.getEvents({ id: Array.from(tokens.keys()) })
+		const eventsById = new Map();
+		const purchases = [];
+
+		for (const event of events) {
+			eventsById.set(event.id, event);
+		}
+	
+		for (const [eventId, quantity] of tokens.entries()) {
+			purchases.push({
+				event: eventsById.get(eventId),
+				quantity: quantity,
+				expired: false,
+				forSale: false
+			});
+		}
+
+		return purchases;
 	});
 });

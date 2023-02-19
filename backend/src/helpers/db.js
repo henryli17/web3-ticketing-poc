@@ -9,7 +9,7 @@ const knex = require('knex')({
 	}
 });
 
-const events = async (options) => {
+const getEvents = async (options) => {
 	const events = {};
 	const rows = await knex
 		.select("events.*")
@@ -45,7 +45,7 @@ const events = async (options) => {
 	}
 };
 
-const genres = async () => {
+const getGenres = async () => {
 	const genres = await knex
 		.select("name")
 		.table("genres")
@@ -56,6 +56,6 @@ const genres = async () => {
 }
 
 module.exports = {
-	events,
-	genres
+	getEvents,
+	getGenres
 };

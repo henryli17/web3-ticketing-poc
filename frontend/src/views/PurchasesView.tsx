@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import NotFound from "../components/NotFound";
 import PurchaseCard from "../components/PurchaseCard";
-import { getEvents, Event } from "../helpers/api";
-import { getTokens } from "../helpers/contract";
+import { getPurchases, Purchase } from "../helpers/api";
 import { useAddressState } from "../middleware/Wallet";
 
 const PurchasesView = () => {
@@ -11,31 +10,10 @@ const PurchasesView = () => {
 	const [purchases, setPurchases] = useState<Purchase[]>([]);
 
 	useEffect(() => {
-		const updatePurchases = async () => {
-			try {
-				const tokens = await getTokens(address);
-				const events = await getEvents({ id: Array.from(tokens.keys()) });
-				const eventsById = new Map();
-				const purchases = [];
-
-				for (const event of events) {
-					eventsById.set(event.id, event);
-				}
-
-				for (const [eventId, quantity] of tokens.entries()) {
-					purchases.push({
-						event: eventsById.get(eventId),
-						quantity: quantity
-					});
-				}
-
-				setPurchases(purchases);
-			} catch (e) {
-				setError(true);
-			}
-		};
-
-		updatePurchases();
+		getPurchases(address)
+			.then(setPurchases)
+			.catch(() => setError(true))
+		;
 	}, [address]);
 
 	if (error) {
@@ -48,10 +26,5 @@ const PurchasesView = () => {
 		</div>
 	);
 };
-
-type Purchase = {
-	event: Event,
-	quantity: number
-}
 
 export default PurchasesView;

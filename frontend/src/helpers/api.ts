@@ -19,8 +19,15 @@ export type Event = {
 	genres: string[]
 };
 
+export type Purchase = {
+	event: Event,
+	quantity: number,
+	forSale: boolean,
+	expired: boolean
+};
+
 const request = <T>(method: HttpMethod, endpoint: string, options?: { data?: object, params?: object }) => {
-	const API_BASE = "http://localhost:8080";
+	const API_BASE = "http://localhost:8080/api";
 
 	return new Promise<T>(async (resolve, reject) => {
 		try {
@@ -61,5 +68,12 @@ export const getGenres = () => {
 	return request<string[]>(
 		HttpMethod.GET,
 		"genres"
+	);
+};
+
+export const getPurchases = (address: string) => {
+	return request<Purchase[]>(
+		HttpMethod.GET,
+		"purchases/" + address
 	);
 };

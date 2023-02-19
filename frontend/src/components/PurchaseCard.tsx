@@ -20,7 +20,7 @@ const PurchaseCard = (props: { event: Event, quantity: number, className?: strin
 							</div>
 						</div>
 						<div className="text-xl font-bold text-indigo-500">
-							{Web3.utils.fromWei(props.event.price.toString(), "gwei")} ETH
+							{Web3.utils.fromWei((props.event.price * props.quantity).toString(), "gwei")} ETH
 						</div>
 						<div className="text-md block">
 							{props.event.venue} · {props.event.city} · {prettyDate(props.event.time)}

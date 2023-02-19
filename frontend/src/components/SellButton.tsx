@@ -1,7 +1,14 @@
 import { CurrencyDollar } from "react-bootstrap-icons";
+import { Event } from "../helpers/api";
 import { range } from "../helpers/utils";
 
-const SellButton = (props: { eventId: number, quantity: number, className?: string, onClick?: React.MouseEventHandler<HTMLButtonElement> }) => {
+const SellButton = (props: {
+	event: Event,
+	quantity: number,
+	className?: string,
+	onClick?: React.MouseEventHandler<HTMLButtonElement>,
+	onChange?: React.ChangeEventHandler<HTMLSelectElement>
+}) => {
 	const quantityOnClick = (e: React.MouseEvent<HTMLSelectElement, MouseEvent>) => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -20,6 +27,8 @@ const SellButton = (props: { eventId: number, quantity: number, className?: stri
 			<select
 				className="border-transparent h-full bg-transparent py-0 pl-3 pr-8 text-sm focus:ring-0 focus:border-transparent"
 				onClick={e => quantityOnClick(e)}
+				defaultValue={props.quantity}
+				onChange={props.onChange}
 			>
 				{range(1, props.quantity).map(i => <option key={i}>{i}</option>)}
 			</select>

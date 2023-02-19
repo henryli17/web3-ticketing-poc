@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import LoadingCard from "../components/LoadingCard";
 import NotFound from "../components/NotFound";
 import PurchaseCard from "../components/PurchaseCard";
 import { getPurchases, Purchase } from "../helpers/api";
@@ -22,6 +23,7 @@ const PurchasesView = () => {
 
 	return (
 		<div className="container mx-auto py-16 px-10">
+			{!purchases.length && <LoadingCard className="h-40" />}
 			{purchases.map(purchase => <PurchaseCard key={purchase.event.id} event={purchase.event} quantity={purchase.quantity} />)}
 		</div>
 	);

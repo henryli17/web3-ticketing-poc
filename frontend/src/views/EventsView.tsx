@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import CheckboxGroup, { CheckboxItem } from "../components/CheckboxGroup";
 import EventCard from "../components/EventCard";
+import LoadingCard from "../components/LoadingCard";
 import NotFound from "../components/NotFound";
 import { getEvents, getGenres } from "../helpers/api";
 import { Event } from "../helpers/api";
@@ -46,6 +47,7 @@ const EventsView = () => {
 				</div>
 			</form>
 			<div className="space-y-3 col-span-12 md:col-span-9 xl:col-span-10">
+				{!events.length && <LoadingCard className="h-40" />}
 				{events.map(event => <EventCard key={event.id} event={event} />)}
 			</div>
 		</div>

@@ -6,6 +6,7 @@ const db = require("./db.js");
 const server = restify.createServer();
 
 server.listen(8080);
+server.use(restify.plugins.queryParser());
 server.use((_, res, next) => {
 	res.header("Access-Control-Allow-Origin", "*");
 	res.header("Access-Control-Allow-Headers", "X-Requested-With");
@@ -28,8 +29,10 @@ const response = async (req, res, fn) => {
 };
 
 server.get("/events/:id?", async (req, res) => {
-	await response(req, res, async (req) => {
-		const events = await db.events(req.params);
+	await response(req, res, async (req) => {	
+		const events = await db.events({
+			id: req.params.id || req.query.id?.split(",")
+		});
 
 		if (!events && req.params.id) {
 			throw new errs.ResourceNotFoundError();

@@ -9,7 +9,7 @@ const knex = require('knex')({
 	}
 });
 
-const events = async (params) => {
+const events = async (options) => {
 	const events = {};
 	const rows = await knex
 		.select("events.*")
@@ -18,8 +18,12 @@ const events = async (params) => {
 		.leftJoin("event-genre", "events.id", "event-genre.eventId")
 		.innerJoin("genres", "event-genre.genreId", "genres.id")
 		.modify(query => {
-			if (params.id) {
-				query.where("events.id", params.id);
+			if (options.id) {
+				if (Array.isArray(options.id)) {
+					query.whereIn("events.id", options.id);
+				} else {
+					query.where("events.id", options.id);
+				}
 			}
 		})
 	;
@@ -34,8 +38,8 @@ const events = async (params) => {
 		}
 	}
 
-	if (params.id) {
-		return (events) ? events[params.id] : {};
+	if (options.id && !Array.isArray(options.id)) {
+		return (events) ? events[options.id] : {};
 	} else {
 		return Object.values(events);
 	}

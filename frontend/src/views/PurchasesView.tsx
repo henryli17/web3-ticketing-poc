@@ -24,7 +24,7 @@ const PurchasesView = () => {
 	return (
 		<div className="container mx-auto py-16 px-10">
 			{!purchases.length && <LoadingCard className="h-40" />}
-			{purchases.map(purchase => <PurchaseCard key={purchase.event.id} event={purchase.event} quantity={purchase.quantity} />)}
+			{purchases.map(purchase => <PurchaseCard key={purchase.event.id} purchase={purchase} />)}
 		</div>
 	);
 };

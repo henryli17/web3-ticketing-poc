@@ -8,3 +8,8 @@ export const prettyDate = (time: string | number) => {
 		date.getFullYear()
 	].map(n => String(n).padStart(2, '0')).join(" ");
 };
+
+
+export const range = (start: number, end: number) => {
+	return Array(end - start + 1).fill(start).map((x, y) => x + y);
+};

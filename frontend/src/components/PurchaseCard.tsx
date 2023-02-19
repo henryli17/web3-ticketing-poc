@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import Web3 from "web3";
 import {  Purchase } from "../helpers/api";
+import { contract } from "../helpers/contract";
 import { prettyDate } from "../helpers/utils";
 import routes from "../routes";
 import SellButton from "./SellButton";
@@ -14,6 +15,23 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string }) => {
 		e.preventDefault();
 		e.stopPropagation();
 		setShowConfirmationModal(true);
+	};
+
+	const sellTicket = async () => {
+		try {
+			await contract
+				.methods
+				.buyToken(props.event.id, 1)
+				.send({
+					from: address,
+					value: Web3.utils.toWei(String(props.event.price), "gwei")
+				})
+			;
+		} catch (e: any) {
+			if (e.code !== 4001) {
+				// TODO: error message
+			}
+		}
 	};
 
 	return (
@@ -76,7 +94,7 @@ const ConfirmationModal = (props: { cancel: () => any, continue: () => any }) =>
 									<h3 className="text-lg font-medium leading-6 text-gray-900" id="modal-title">Sell Ticket</h3>
 									<div className="mt-2">
 										<p className="text-sm text-gray-500">
-											Are you sure you want to sell 2 tickets?
+											Are you sure you want to list 2 tickets for sale?
 										</p>
 									</div>
 								</div>

@@ -18,12 +18,12 @@ contract Events is ERC1155, Ownable {
 
 	struct ResaleToken {
 		address owner;
-		uint price;
+		bool sold;
 	}
 
 	struct ResaleTokenEntry {
 		uint eventId;
-		uint price;
+		bool sold;
 		uint idx;
 	}
 
@@ -63,6 +63,8 @@ contract Events is ERC1155, Ownable {
 	}
 
 	function markTokenAsUsed(address _owner, uint _eventId) external onlyOwner {
+		require(events[_eventId].created, "An event with this ID does not exist.");
+
 		uint listedCount = getListedCount(msg.sender, _eventId);
 		uint usedCount = getUsedCount(msg.sender, _eventId);
 
@@ -77,7 +79,7 @@ contract Events is ERC1155, Ownable {
 
 		for (uint i = 0; i < addrResaleTokenEntries.length; i++) {
 			if (addrResaleTokenEntries[i].eventId == _eventId) {
-				if (addrResaleTokenEntries[i].price != 0) {
+				if (!addrResaleTokenEntries[i].sold) {
 					listedCount++;
 				}
 			}
@@ -99,22 +101,20 @@ contract Events is ERC1155, Ownable {
 		return usedCount;
 	}
 
-	function listTokenForResale(uint _eventId, uint _price) external {
-		_price = _price * (1 gwei);
+	function listTokenForResale(uint _eventId) external {
+		require(events[_eventId].created, "An event with this ID does not exist.");
 
 		uint listedCount = getListedCount(msg.sender, _eventId);
 		uint usedCount = getUsedCount(msg.sender, _eventId);
 
 		require(listedCount + usedCount < balanceOf(msg.sender, _eventId), "No more tickets to list.");
-		require(_price > 0, "Invalid price.");
-		require(_price <= events[_eventId].price, "Invalid price.");
 
 		ResaleTokenEntry[] storage senderResaleTokenEntries = resaleTokenEntries[msg.sender];
 
 		resaleTokens[_eventId].push(
 			ResaleToken({
 				owner: msg.sender,
-				price: _price
+				sold: false
 			})
 		);
 
@@ -122,46 +122,44 @@ contract Events is ERC1155, Ownable {
 			ResaleTokenEntry({
 				eventId: _eventId,
 				idx: resaleTokens[_eventId].length - 1,
-				price: _price
+				sold: false
 			})
 		);
 	}
 
-	function unlistTokenForResale(uint _eventId, uint _price) external {
+	function unlistTokenForResale(uint _eventId) external {
 		ResaleTokenEntry[] storage senderResaleTokenEntries = resaleTokenEntries[msg.sender];
 	
 		for (uint i = 0; i < senderResaleTokenEntries.length; i++) {
 			if (senderResaleTokenEntries[i].eventId == _eventId) {
-				if (senderResaleTokenEntries[i].price == _price) {
-					senderResaleTokenEntries[i].price = 0;
-					resaleTokens[_eventId][senderResaleTokenEntries[i].idx].price = 0;
+				if (!senderResaleTokenEntries[i].sold) {
+					senderResaleTokenEntries[i].sold = true;
+					resaleTokens[_eventId][senderResaleTokenEntries[i].idx].sold = true;
 					return;
 				}
 			}
 		}
 
-		revert("Invalid parameters.");
+		revert("No tickets for this ID are listed for sale.");
 	}
 
-	function buyResaleToken(address _owner, uint _eventId, uint _price) external payable {
-		_price = _price * (1 gwei);
-
-		require(msg.value >= _price, "Insufficient amount of ETH provided.");
+	function buyResaleToken(address _owner, uint _eventId) external payable {
+		require(events[_eventId].created, "An event with this ID does not exist.");
+		require(msg.value >= events[_eventId].price, "Insufficient amount of ETH provided.");
 
 		ResaleTokenEntry[] storage ownerResaleTokenEntries = resaleTokenEntries[_owner];
 		address payable seller = payable(_owner);
 	
 		for (uint i = 0; i < ownerResaleTokenEntries.length; i++) {
 			if (ownerResaleTokenEntries[i].eventId == _eventId) {
-				if (ownerResaleTokenEntries[i].price == _price) {
+				if (!ownerResaleTokenEntries[i].sold) {
 					ResaleTokenEntry storage ownerResaleTokenEntry = ownerResaleTokenEntries[i];
 
 					_safeTransferFrom(_owner, msg.sender, _eventId, 1, "");
 					seller.transfer(msg.value);
 
-					// Mark resale token as sold
-					ownerResaleTokenEntry.price = 0;
-					resaleTokens[_eventId][ownerResaleTokenEntry.idx].price = 0;
+					ownerResaleTokenEntry.sold = true;
+					resaleTokens[_eventId][ownerResaleTokenEntry.idx].sold = true;
 
 					return;
 				}

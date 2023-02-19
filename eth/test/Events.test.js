@@ -21,13 +21,11 @@ contract("Events", (accounts) => {
 		);
 		await contract.listTokenForResale.sendTransaction(
 			defaultEvent.id,
-			defaultEvent.price,
 			{ from: bob }
 		);
 		await contract.buyResaleToken.sendTransaction(
 			bob,
 			defaultEvent.id,
-			defaultEvent.price,
 			{ from: charlie, value: utils.gweiToWei(defaultEvent.price) }
 		);
 

@@ -24,6 +24,8 @@ const defaultEvent = () => {
 	};
 }
 
+const gweiToWei = (gwei) => Web3.utils.toWei(gwei.toString(), "gwei");
+
 const createEvent = async (contract, caller, event) => {
 	event = { ...defaultEvent(), ...event };
 

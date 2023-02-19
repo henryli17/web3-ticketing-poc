@@ -23,19 +23,21 @@ const getTokens = (address) => {
 			);
 
 			for (const event of events) {
+				const eventId = Number(event.returnValues.id);
+				const quantity = Number(event.returnValues.value);
 				let diff;
 
 				if (event.returnValues.to === address) {
-					diff = Number(event.returnValues.value);
+					diff = quantity;
 				} else if (event.returnValues.from === address) {
-					diff = -Number(event.returnValues.value);
+					diff = -quantity;
 				} else {
 					continue;
 				}
 
 				tokens.set(
-					Number(event.returnValues.id),
-					(Number(tokens.get(event.returnValues.id)) || 0) + diff
+					eventId,
+					(tokens.has(eventId)) ? tokens.get(eventId) + diff : 1
 				)
 			}
 	

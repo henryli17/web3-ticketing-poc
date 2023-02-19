@@ -9,10 +9,10 @@ export const contract = new web3.eth.Contract(
 );
 
 export const getTokens = (address: string) => {
-	return new Promise<Map<Number, Number>>(async (resolve, reject) => {
+	return new Promise<Map<number, number>>(async (resolve, reject) => {
 		try {
 			const events = await contract.getPastEvents('TransferSingle', { fromBlock: 0, toBlock: 'latest' });
-			const tokens: Map<Number, Number> = new Map();
+			const tokens: Map<number, number> = new Map();
 
 			for (const event of events) {
 				let diff;

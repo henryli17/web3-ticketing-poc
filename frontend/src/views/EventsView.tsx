@@ -33,7 +33,7 @@ const EventsView = () => {
 	}
 
 	return (
-		<div className="container py-20 px-10 mx-auto grid grid-cols-12 gap-x-3">
+		<div className="container py-16 px-10 mx-auto grid grid-cols-12 gap-x-3">
 			<form className="card-static col-span-12 mb-5 md:mb-0 md:col-span-3 xl:col-span-2">
 				<div className="filter-child">
 					Genre

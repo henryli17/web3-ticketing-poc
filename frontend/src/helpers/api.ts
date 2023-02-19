@@ -19,7 +19,7 @@ export type Event = {
 	genres: string[]
 };
 
-const request = <T>(method: HttpMethod, endpoint: string, options?: { data?: any, params?: any }) => {
+const request = <T>(method: HttpMethod, endpoint: string, options?: { data?: object, params?: object }) => {
 	const API_BASE = "http://localhost:8080";
 
 	return new Promise<T>(async (resolve, reject) => {
@@ -38,10 +38,15 @@ const request = <T>(method: HttpMethod, endpoint: string, options?: { data?: any
 	});
 }
 
-export const getEvents = () => {
+export const getEvents = (params?: { id?: Number[] }) => {
 	return request<Event[]>(
 		HttpMethod.GET,
-		"events"
+		"events",
+		{
+			params: {
+				id: params?.id?.join(",")
+			}
+		}
 	);
 };
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Outlet, useOutletContext } from "react-router-dom";
 import { useLocalStorage } from "usehooks-ts";
 import Web3 from "web3";
@@ -24,6 +24,10 @@ const Wallet = () => {
 	}
 
 	const connectWallet = async () => {
+		if (!w.ethereum) {
+			return;
+		}
+
 		w.ethereum.on('accountsChanged', (accounts: Array<string>) => {
 			setAddress(accounts.length ? accounts[0] : "");
 		});
@@ -38,14 +42,16 @@ const Wallet = () => {
 				setLoggedOut(true);
 			}
 		}
-	}
+	};
 
-	checkMetaMaskPermission().then((hasPermission) => {
-		if (hasPermission && !loggedOut) {
-			connectWallet();
-		} else {
-			setAddress("");
-		}
+	useEffect(() => {		
+		checkMetaMaskPermission().then((hasPermission) => {
+			if (hasPermission && !loggedOut) {
+				connectWallet();
+			} else {
+				setAddress("");
+			}
+		});
 	});
 
 	return <Outlet context={[address, setAddress]} />;

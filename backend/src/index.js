@@ -64,6 +64,12 @@ server.get(API_BASE + "/genres", async (req, res) => {
 	});
 });
 
+server.get(API_BASE + "/locations", async (req, res) => {
+	await response(req, res, async (req) => {
+		return await db.getLocations();
+	});
+});
+
 server.get(API_BASE + "/purchases/:address", async (req, res) => {
 	await response(req, res, async (req) => {
 		const tokens = await contract.getTokens(req.params.address);

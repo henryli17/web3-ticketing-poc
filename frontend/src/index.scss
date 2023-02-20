@@ -41,7 +41,11 @@ h2 {
 }
 
 .filter-child {
-	@apply border-b py-2 px-3;
+	@apply py-2 px-3;
+}
+
+.filter-child:not(:last-child) {
+	@apply border-b;
 }
 
 .card {
@@ -53,5 +57,13 @@ h2 {
 }
 
 .menu-tab {
-	@apply border-b-4 pb-1 font-medium
+	@apply border-b-4 pb-1 font-medium;
+}
+
+.input {
+	@apply w-full rounded-md border-gray-300 text-sm focus:ring-0;
+}
+
+.input:focus {
+	@apply border-indigo-500 ring-indigo-500 border;
 }

@@ -69,7 +69,18 @@ const getGenres = async () => {
 	return genres;
 }
 
+const getLocations = async () => {
+	const locations = await knex
+		.distinct("city")
+		.table("events")
+		.pluck("city")
+	;
+
+	return locations;
+}
+
 module.exports = {
 	getEvents,
-	getGenres
+	getGenres,
+	getLocations
 };

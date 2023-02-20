@@ -69,7 +69,9 @@ export const getEvents = (params?: {
 		{
 			params: {
 				offset: params?.offset,
-				genres: params?.genres?.join(",")
+				genres: params?.genres?.join(","),
+				locations: params?.locations?.join(","),
+				maxPrice: params?.maxPrice,
 			}
 		}
 	);
@@ -86,6 +88,13 @@ export const getGenres = () => {
 	return request<string[]>(
 		HttpMethod.GET,
 		"genres"
+	);
+};
+
+export const getLocations = () => {
+	return request<string[]>(
+		HttpMethod.GET,
+		"locations"
 	);
 };
 

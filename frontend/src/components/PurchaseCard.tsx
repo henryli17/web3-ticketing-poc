@@ -4,12 +4,15 @@ import Web3 from "web3";
 import {  Purchase } from "../helpers/api";
 import { contract } from "../helpers/contract";
 import { prettyDate } from "../helpers/utils";
+import { useAddressState } from "../middleware/Wallet";
 import routes from "../routes";
 import SellButton from "./SellButton";
+import Spinner from "./Spinner";
 
 const PurchaseCard = (props: { purchase: Purchase, className?: string }) => {
 	const [quantityToSell, setQuantityToSell] = useState(0);
 	const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+	const [address] = useAddressState();
 
 	const sellButtonOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
 		e.preventDefault();
@@ -19,13 +22,11 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string }) => {
 
 	const sellTicket = async () => {
 		try {
+			// TODO: contract resale quantity
 			await contract
 				.methods
-				.buyToken(props.event.id, 1)
-				.send({
-					from: address,
-					value: Web3.utils.toWei(String(props.event.price), "gwei")
-				})
+				.listTokenForResale(props.purchase.event.id)
+				.send({ from: address })
 			;
 		} catch (e: any) {
 			if (e.code !== 4001) {
@@ -71,12 +72,26 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string }) => {
 					</div>
 				</div>
 			</Link>
-			{showConfirmationModal && <ConfirmationModal cancel={() => setShowConfirmationModal(false)} continue={() => console.log(quantityToSell)} />}
+			{
+				showConfirmationModal &&
+				<ConfirmationModal 
+					close={() => setShowConfirmationModal(false)}
+					action={() => sellTicket()}
+				/>
+			}
 		</>
 	);
 };
 
-const ConfirmationModal = (props: { cancel: () => any, continue: () => any }) => {
+const ConfirmationModal = (props: { close: () => any, action: () => any }) => {
+	const [disabled, setDisabled] = useState(false);
+
+	const action = async () => {
+		setDisabled(true);
+		await props.action();
+		props.close();
+	};
+
 	return (
 		<div className="relative z-10" role="dialog">
 			<div className="fixed inset-0 bg-gray-500 bg-opacity-75"></div>
@@ -103,15 +118,18 @@ const ConfirmationModal = (props: { cancel: () => any, continue: () => any }) =>
 						<div className="px-4 py-5 sm:flex sm:flex-row-reverse sm:px-6">
 							<button
 								type="button"
-								className="inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm"
-								onClick={() => props.continue()}
+								disabled={disabled}
+								className="inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-25"
+								onClick={() => action()}
 							>
+								{disabled && <Spinner />}
 								Continue
 							</button>
 							<button
 								type="button"
-								className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-								onClick={() => props.cancel()}
+								disabled={disabled}
+								className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-25"
+								onClick={() => props.close()}
 							>
 								Cancel
 							</button>

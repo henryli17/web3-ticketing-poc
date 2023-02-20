@@ -8,7 +8,7 @@ const web3 = new Web3(
 	)
 );
 
-const contract = new web3.eth.Contract(
+const instance = new web3.eth.Contract(
 	require("../ABI.json"),
 	process.env.ETH_CONTRACT_ADDRESS
 );
@@ -17,7 +17,7 @@ const getTokens = (address) => {
 	return new Promise(async (resolve, reject) => {
 		try {
 			const tokens = new Map();
-			const events = await contract.getPastEvents(
+			const events = await instance.getPastEvents(
 				'TransferSingle',
 				{ fromBlock: 0, toBlock: 'latest' }
 			);
@@ -49,6 +49,6 @@ const getTokens = (address) => {
 };
 
 module.exports = {
-	contract,
+	instance,
 	getTokens
 }

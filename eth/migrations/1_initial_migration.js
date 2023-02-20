@@ -1,5 +1,5 @@
 /**
- * To deploy the `EventFactory` to Goerli use:
+ * To deploy the `Events` contract to Goerli use:
  * `truffle migrate --network goerli`
  */
 

@@ -8,7 +8,7 @@ import { useAddressState } from "../middleware/Wallet";
 const PurchasesView = () => {
 	const [error, setError] = useState(false);
 	const [address] = useAddressState();
-	const [purchases, setPurchases] = useState<Purchase[]>([]);
+	const [purchases, setPurchases] = useState<Purchase[] | null>(null);
 
 	useEffect(() => {
 		getPurchases(address)
@@ -23,8 +23,8 @@ const PurchasesView = () => {
 
 	return (
 		<div className="container mx-auto py-16 px-10">
-			{!purchases.length && <LoadingCard className="h-40" />}
-			{purchases.map(purchase => <PurchaseCard key={purchase.event.id} purchase={purchase} />)}
+			{!purchases && <LoadingCard className="h-40" />}
+			{purchases && purchases.map(purchase => <PurchaseCard key={purchase.event.id} purchase={purchase} />)}
 		</div>
 	);
 };

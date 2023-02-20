@@ -31,13 +31,13 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange:
 			if (props.purchase.forSale) {
 				await contract
 					.methods
-					.unlistTokenForResale(props.purchase.event.id)
+					.unlistTokenForResale(props.purchase.event.id, selectedQuantity)
 					.send({ from: address })
 				;
 			} else {
 				await contract
 					.methods
-					.listTokenForResale(props.purchase.event.id)
+					.listTokenForResale(props.purchase.event.id, selectedQuantity)
 					.send({ from: address })
 				;
 			}

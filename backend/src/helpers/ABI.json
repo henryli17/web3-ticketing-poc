@@ -963,6 +963,11 @@
         "internalType": "uint256",
         "name": "_eventId",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_quantity",
+        "type": "uint256"
       }
     ],
     "name": "listTokenForResale",
@@ -975,6 +980,11 @@
       {
         "internalType": "uint256",
         "name": "_eventId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_quantity",
         "type": "uint256"
       }
     ],

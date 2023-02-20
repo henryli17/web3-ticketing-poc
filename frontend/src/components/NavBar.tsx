@@ -71,8 +71,8 @@ const NavBar = () => {
 				</div>
 			</div>
 			<div className={"sm:hidden " + mobileMenuClasses}>
-				<div className="pt-2 pb-3">
-					<SearchBar className="mx-2 mb-2 w-10" />
+				<div className="pt-2 pb-3 w-full">
+					<SearchBar className="mx-2 mb-2" />
 					<div className="flex mx-2 mb-3">
 						<ConnectWallet className="w-full"/>
 					</div>
@@ -100,24 +100,21 @@ const Tab = (props: { navEntry: NavEntry, className?: string }) => {
 	const borderColour = (props.navEntry.active) ? "border-indigo-500" : "border-transparent";
 
 	return (
-		<button className={`border-b-2 h-full ${borderColour} ${props.className}`}>
-			<Link to={props.navEntry.location} className="text-gray-800 px-3 py-2 text-sm font-medium h-full">
-				{props.navEntry.text}
-			</Link>
-		</button>
+		<Link to={props.navEntry.location} className={`border-b-2 h-full text-gray-800 px-3 py-2 text-sm font-medium h-full items-center flex ${borderColour} ${props.className}`}>
+			{props.navEntry.text}
+		</Link>
 	);
 };
 
 const MobileTab = (props: { navEntry: NavEntry }) => {
-	const buttonClasses = (props.navEntry.active) ? "border-l-4 border-indigo-500 bg-indigo-100" : "";
-	const aClasses = (props.navEntry.active) ? "ml-3 text-indigo-800" : "ml-4 text-gray-500";
+	const className = (props.navEntry.active) ? "border-l-4 border-indigo-500 bg-indigo-100 text-indigo-800" : "text-gray-500";
 
 	return (
-		<button className={"py-2 w-full text-left " + buttonClasses}>
-			<Link to={props.navEntry.location} className={"font-medium ml-3 " + aClasses}>
+		<Link to={props.navEntry.location} className={"py-2 w-full text-left flex " + className}>
+			<div className={(props.navEntry.active) ? "ml-3 text-indigo-800" : "ml-4 text-gray-600"}>
 				{props.navEntry.text}
-			</Link>
-		</button>
+			</div>
+		</Link>
 	);
 };
 

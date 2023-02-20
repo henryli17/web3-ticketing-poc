@@ -51,3 +51,7 @@ h2 {
 .card-static {
 	@apply outline outline-1 outline-gray-300 rounded;
 }
+
+.menu-tab {
+	@apply border-b-4 pb-1 font-medium
+}

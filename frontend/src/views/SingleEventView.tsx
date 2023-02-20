@@ -6,7 +6,7 @@ import GenrePill from "../components/GenrePill";
 import NotFound from "../components/NotFound";
 import Spinner from "../components/Spinner";
 import { Event, getEvent } from "../helpers/api";
-import { contract } from "../helpers/contract";
+import { instance } from "../helpers/contract";
 import { prettyDate } from "../helpers/utils";
 import { useAddressState } from "../middleware/Wallet";
 
@@ -80,6 +80,8 @@ const PurchaseButton = (props: { className?: string, event: Event }) => {
 		setDisabled(true);
 
 		try {
+			const contract = await instance();
+
 			await contract
 				.methods
 				.buyToken(props.event.id, 1)

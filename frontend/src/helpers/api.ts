@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { AbiItem } from 'web3-utils';
 
 enum HttpMethod {
 	GET = "get",
@@ -24,6 +25,11 @@ export type Purchase = {
 	quantity: number,
 	forSale: boolean,
 	expired: boolean
+};
+
+export type Contract = {
+	ABI: AbiItem,
+	address: string
 };
 
 const request = <T>(method: HttpMethod, endpoint: string, options?: { data?: object, params?: object }) => {
@@ -75,5 +81,12 @@ export const getPurchases = (address: string) => {
 	return request<Purchase[]>(
 		HttpMethod.GET,
 		"purchases/" + address
+	);
+};
+
+export const getContract = () => {
+	return request<Contract>(
+		HttpMethod.GET,
+		"contract"
 	);
 };

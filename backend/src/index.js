@@ -110,3 +110,12 @@ server.get(API_BASE + "/purchases/:address", async (req, res) => {
 		});
 	});
 });
+
+server.get(API_BASE + "/contract", async (req, res) => {
+	await response(req, res, async (req) => {
+		return {
+			ABI: contract.ABI,
+			address: contract.address
+		};
+	});
+});

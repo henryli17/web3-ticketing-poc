@@ -8,10 +8,9 @@ const web3 = new Web3(
 	)
 );
 
-const instance = new web3.eth.Contract(
-	require("../ABI.json"),
-	process.env.ETH_CONTRACT_ADDRESS
-);
+const ABI = require("./ABI.json");
+const address = process.env.ETH_CONTRACT_ADDRESS;
+const instance = new web3.eth.Contract(ABI, address);
 
 const getTokens = (address) => {
 	return new Promise(async (resolve, reject) => {
@@ -49,6 +48,8 @@ const getTokens = (address) => {
 };
 
 module.exports = {
+	ABI,
+	address,
 	instance,
 	getTokens
 }

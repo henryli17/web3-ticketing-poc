@@ -55,7 +55,7 @@ const NavBar = () => {
 								{
 									navEntries.map((navEntry, i) => {
 										if (navEntry.location === routes.home()) {
-											return <Tab key={i} navEntry={navEntry} className="hidden md:block" />
+											return <Tab key={i} navEntry={navEntry} className="hidden md:flex" />
 										} else {
 											return <Tab key={i} navEntry={navEntry} />;
 										}

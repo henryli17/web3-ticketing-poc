@@ -54,22 +54,77 @@ server.get(API_BASE + "/purchases/:address", async (req, res) => {
 	await response(req, res, async (req) => {
 		const tokens = await contract.getTokens(req.params.address);
 		const events = await db.getEvents({ id: Array.from(tokens.keys()) })
+		const resaleTokenEntries = await contract.instance.methods.getResaleTokenEntries(req.params.address).call();
 		const eventsById = new Map();
+		const resaleTokenEntriesById = new Map();
 		const purchases = [];
 
 		for (const event of events) {
 			eventsById.set(event.id, event);
 		}
+
+		for (const resaleTokenEntry of resaleTokenEntries) {
+			const key = Number(resaleTokenEntry.eventId);
+			const value = resaleTokenEntriesById.get(key);
+
+			if (!value) {
+				resaleTokenEntriesById.set(
+					key,
+					{ sold: 0, unsold: 0 }
+				);
+			}
+			
+			if (resaleTokenEntries.sold) {
+				resaleTokenEntriesById.get(key).sold++;
+			} else {
+				resaleTokenEntriesById.get(key).unsold++;
+			}
+		}
 	
-		for (const [eventId, quantity] of tokens.entries()) {
+		for (let [eventId, quantity] of tokens.entries()) {
+			const resaleTokenEntries = resaleTokenEntriesById.get(eventId);
+
+			if (resaleTokenEntries) {
+				quantity -= resaleTokenEntries.sold + resaleTokenEntries.unsold;
+			}
+
+			if (quantity <= 0) {
+				continue;
+			}
+
 			purchases.push({
 				event: eventsById.get(eventId),
 				quantity: quantity,
-				expired: false,
-				forSale: false
+				forSale: false,
+				sold: false
 			});
 		}
 
-		return purchases;
+		for (const [eventId, resaleTokenEntry] of resaleTokenEntriesById.entries()) {
+			if (resaleTokenEntry.sold) {
+				purchases.push({
+					event: eventsById.get(eventId),
+					quantity: resaleTokenEntry.sold,
+					forSale: true,
+					sold: true
+				});
+			}
+
+			if (resaleTokenEntry.unsold) {
+				purchases.push({
+					event: eventsById.get(eventId),
+					quantity: resaleTokenEntry.unsold,
+					forSale: true,
+					sold: false
+				});
+			}
+		}
+
+		return purchases.map(purchase => {
+			return {
+				...purchase,
+				expired: new Date(purchase.event.time) < new Date()
+			};
+		});
 	});
 });

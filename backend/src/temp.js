@@ -15,7 +15,10 @@ let contract = require("./helpers/contract");
 				1000000,
 				50
 			)
-			.send({ from: process.env.ETH_PROVIDER_ADDRESS })
+			.send({
+				from: process.env.ETH_PROVIDER_ADDRESS,
+				gas: 999999
+			})
 		;
 
 		// const res = await contract

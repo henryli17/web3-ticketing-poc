@@ -1,11 +1,7 @@
 const Web3 = require("web3");
-const HDWalletProvider = require("@truffle/hdwallet-provider");
 
 const web3 = new Web3(
-	new HDWalletProvider(
-		process.env.ETH_PROVIDER_MNEMONIC,
-		"https://goerli.infura.io/v3/" + process.env.ETH_PROVIDER_PROJECT_ID
-	)
+	new Web3.providers.HttpProvider(process.env.ETH_PROVIDER_HTTP_URL)
 );
 
 const ABI = require("./ABI.json");

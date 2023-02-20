@@ -1,8 +1,3 @@
-/**
- * To deploy the `Events` contract to Goerli use:
- * `truffle migrate --network goerli`
- */
-
 const Events = artifacts.require("Events");
 
 module.exports = function(deployer, network, accounts) {

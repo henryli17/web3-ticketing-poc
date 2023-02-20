@@ -9,22 +9,34 @@ const PurchasesView = () => {
 	const [error, setError] = useState(false);
 	const [address] = useAddressState();
 	const [purchases, setPurchases] = useState<Purchase[] | null>(null);
+	const [updatePurchases, setUpdatePurchases] = useState(false);
 
 	useEffect(() => {
 		getPurchases(address)
 			.then(setPurchases)
 			.catch(() => setError(true))
 		;
-	}, [address]);
+	}, [address, updatePurchases]);
 
 	if (error) {
 		return <NotFound />;
 	}
 
 	return (
-		<div className="container mx-auto py-16 px-10">
+		<div className="container mx-auto py-16 px-10 space-y-3">
 			{!purchases && <LoadingCard className="h-40" />}
-			{purchases && purchases.map(purchase => <PurchaseCard key={purchase.event.id} purchase={purchase} />)}
+			{
+				purchases &&
+				purchases.map((purchase, i) => {
+					return (
+						<PurchaseCard
+							key={i}
+							purchase={purchase}
+							onChange={() => setUpdatePurchases(!updatePurchases)}
+						/>
+					);
+				})
+			}
 		</div>
 	);
 };

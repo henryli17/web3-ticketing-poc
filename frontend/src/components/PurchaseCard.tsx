@@ -1,6 +1,5 @@
-import { privateEncrypt } from "crypto";
 import { useState } from "react";
-import { X } from "react-bootstrap-icons";
+import { CurrencyDollar, X, XLg } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 import Web3 from "web3";
 import {  Purchase } from "../helpers/api";
@@ -9,33 +8,43 @@ import { prettyDate } from "../helpers/utils";
 import { useAddressState } from "../middleware/Wallet";
 import routes from "../routes";
 import ConfirmationModal from "./ConfirmationModal";
-import SellButton from "./SellButton";
+import QuantityButton from "./QuantityButton";
 
-const PurchaseCard = (props: { purchase: Purchase, className?: string }) => {
-	const [quantityToSell, setQuantityToSell] = useState(props.purchase.quantity);
+const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange: () => any }) => {
+	const [selectedQuantity, setSelectedQuantity] = useState(props.purchase.quantity);
 	const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 	const [address] = useAddressState();
 	const price = Number(Web3.utils.fromWei(props.purchase.event.price.toString(), "gwei"));
 
-	const sellButtonOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+	const quantityButtonClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
 		e.preventDefault();
 		e.stopPropagation();
 		setShowConfirmationModal(true);
 	};
 
-	const sellTicket = async () => {
+	const action = async () => {
 		try {
 			// TODO: contract resale quantity
-			await contract
-				.methods
-				.listTokenForResale(props.purchase.event.id)
-				.send({ from: address })
-			;
+			if (props.purchase.forSale) {
+				await contract
+					.methods
+					.unlistTokenForResale(props.purchase.event.id)
+					.send({ from: address })
+				;
+			} else {
+				await contract
+					.methods
+					.listTokenForResale(props.purchase.event.id)
+					.send({ from: address })
+				;
+			}
 		} catch (e: any) {
 			if (e.code !== 4001) {
 				// TODO: error message
 			}
 		}
+
+		props.onChange();
 	};
 
 	return (
@@ -63,31 +72,48 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string }) => {
 							</div>
 						</div>
 					</div>
-					<div className="col-span-12 lg:col-span-3 xl:col-span-2 mb-5 lg:mt-5 mx-5 mr-5 flex">
-						<div className="lg:ml-auto">
-							<SellButton
-								event={props.purchase.event}
-								quantity={props.purchase.quantity}
-								defaultQuantity={quantityToSell}
-								onClick={e => sellButtonOnClick(e)}
-								onChange={e => setQuantityToSell(parseInt(e.target.value))}
-							/>
+					{
+						!props.purchase.expired &&
+						<div className="col-span-12 lg:col-span-3 xl:col-span-2 mb-5 lg:mt-5 mx-5 mr-5 flex">
+							<div className="lg:ml-auto">
+								<QuantityButton
+									quantity={props.purchase.quantity}
+									className={props.purchase.forSale ? "outline-red-700 text-red-700 hover:outline-red-900 hover:text-red-900" : "outline-green-700 text-green-700 hover:outline-green-900 hover:text-green-900"}
+									defaultQuantity={props.purchase.quantity}
+									onClick={e => quantityButtonClick(e)}
+									onChange={e => setSelectedQuantity(parseInt(e.target.value))}
+								>
+									{
+										!props.purchase.forSale &&
+										<>
+											<CurrencyDollar size={16} className="mr-1" />
+											Sell
+										</>
+									}
+									{
+										props.purchase.forSale &&
+										<>
+											<XLg size={16} className="mr-1" />
+											Unlist
+										</>
+									}
+								</QuantityButton>
+							</div>
 						</div>
-					</div>
+					}
 				</div>
 			</Link>
 			{
 				showConfirmationModal &&
 				<ConfirmationModal
-					title="Sell Ticket"
-					message={`Are you sure you want to list ${quantityToSell} tickets for ${price} ETH each?`}
+					title={props.purchase.forSale ? "Unlist Ticket" : "Sell Ticket"}
+					message={`Are you sure you want to ${props.purchase.forSale ? "unlist" : "list"} ${selectedQuantity} tickets${props.purchase.forSale ? "?" : " for " + price + " ETH each?"}`}
 					close={() => setShowConfirmationModal(false)}
-					action={() => sellTicket()}
+					action={() => action()}
 				/>
 			}
 		</>
 	);
 };
-
 
 export default PurchaseCard;

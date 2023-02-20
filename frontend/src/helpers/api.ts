@@ -23,8 +23,7 @@ export type Purchase = {
 	event: Event,
 	quantity: number,
 	forSale: boolean,
-	expired: boolean,
-	sold: boolean
+	expired: boolean
 };
 
 const request = <T>(method: HttpMethod, endpoint: string, options?: { data?: object, params?: object }) => {

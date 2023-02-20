@@ -65,27 +65,20 @@ server.get(API_BASE + "/purchases/:address", async (req, res) => {
 
 		for (const resaleTokenEntry of resaleTokenEntries) {
 			const key = Number(resaleTokenEntry.eventId);
-			const value = resaleTokenEntriesById.get(key);
 
-			if (!value) {
+			if (!resaleTokenEntry.sold) {
 				resaleTokenEntriesById.set(
 					key,
-					{ sold: 0, unsold: 0 }
+					(resaleTokenEntriesById.get(key) || 0) + 1
 				);
-			}
-			
-			if (resaleTokenEntries.sold) {
-				resaleTokenEntriesById.get(key).sold++;
-			} else {
-				resaleTokenEntriesById.get(key).unsold++;
 			}
 		}
 	
 		for (let [eventId, quantity] of tokens.entries()) {
-			const resaleTokenEntries = resaleTokenEntriesById.get(eventId);
+			const resaleTokenEntry = resaleTokenEntriesById.get(eventId);
 
-			if (resaleTokenEntries) {
-				quantity -= resaleTokenEntries.sold + resaleTokenEntries.unsold;
+			if (resaleTokenEntry) {
+				quantity -= resaleTokenEntry;
 			}
 
 			if (quantity <= 0) {
@@ -95,27 +88,18 @@ server.get(API_BASE + "/purchases/:address", async (req, res) => {
 			purchases.push({
 				event: eventsById.get(eventId),
 				quantity: quantity,
-				forSale: false,
-				sold: false
+				forSale: false
 			});
 		}
 
-		for (const [eventId, resaleTokenEntry] of resaleTokenEntriesById.entries()) {
-			if (resaleTokenEntry.sold) {
-				purchases.push({
-					event: eventsById.get(eventId),
-					quantity: resaleTokenEntry.sold,
-					forSale: true,
-					sold: true
-				});
-			}
+		console.log(resaleTokenEntriesById);
 
-			if (resaleTokenEntry.unsold) {
+		for (const [eventId, quantity] of resaleTokenEntriesById.entries()) {
+			if (quantity) {
 				purchases.push({
 					event: eventsById.get(eventId),
-					quantity: resaleTokenEntry.unsold,
-					forSale: true,
-					sold: false
+					quantity: quantity,
+					forSale: true
 				});
 			}
 		}

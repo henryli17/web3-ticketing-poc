@@ -75,10 +75,15 @@ server.get(API_BASE + "/purchases/:address", async (req, res) => {
 		}
 	
 		for (let [eventId, quantity] of tokens.entries()) {
-			const resaleTokenEntry = resaleTokenEntriesById.get(eventId);
+			const event = eventsById.get(eventId);
+			const expired = new Date(event.time) < new Date();
 
-			if (resaleTokenEntry) {
-				quantity -= resaleTokenEntry;
+			if (!expired) {
+				const resaleTokenEntry = resaleTokenEntriesById.get(eventId);
+	
+				if (resaleTokenEntry) {
+					quantity -= resaleTokenEntry;
+				}
 			}
 
 			if (quantity <= 0) {
@@ -86,28 +91,32 @@ server.get(API_BASE + "/purchases/:address", async (req, res) => {
 			}
 
 			purchases.push({
-				event: eventsById.get(eventId),
+				event: event,
 				quantity: quantity,
-				forSale: false
+				forSale: false,
+				expired: expired
 			});
 		}
 
 		for (const [eventId, quantity] of resaleTokenEntriesById.entries()) {
+			const event = eventsById.get(eventId);
+			const expired = new Date(event.time) < new Date();
+
+			if (expired) {
+				continue;
+			}
+
 			if (quantity) {
 				purchases.push({
 					event: eventsById.get(eventId),
 					quantity: quantity,
-					forSale: true
+					forSale: true,
+					expired: expired
 				});
 			}
 		}
 
-		return purchases.map(purchase => {
-			return {
-				...purchase,
-				expired: new Date(purchase.event.time) < new Date()
-			};
-		});
+		return purchases;
 	});
 });
 

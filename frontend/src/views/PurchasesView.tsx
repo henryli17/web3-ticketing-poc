@@ -45,7 +45,7 @@ const PurchasesView = () => {
 
 	return (
 		<div className="container mx-auto py-16 px-10 space-y-3">
-			<div className="flex space-x-4 mb-5">
+			<div className="flex space-x-5 mb-5">
 				{
 					Object.values(PurchaseType)
 						.filter(purchaseType => purchaseData[purchaseType].length) // Do not show tabs with no items

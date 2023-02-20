@@ -32,7 +32,7 @@ const getTokens = (address) => {
 
 				tokens.set(
 					eventId,
-					(tokens.has(eventId)) ? tokens.get(eventId) + diff : 1
+					(tokens.has(eventId)) ? (tokens.get(eventId) + diff) : quantity
 				)
 			}
 	

@@ -27,7 +27,6 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange:
 		try {
 			const contract = await instance();
 
-			// TODO: contract resale quantity
 			if (props.purchase.forSale) {
 				await contract
 					.methods

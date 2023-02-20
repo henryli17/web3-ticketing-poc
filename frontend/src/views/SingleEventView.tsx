@@ -4,6 +4,7 @@ import Web3 from "web3";
 import ConnectWallet from "../components/ConnectWallet";
 import GenrePill from "../components/GenrePill";
 import NotFound from "../components/NotFound";
+import QuantityButton from "../components/QuantityButton";
 import Spinner from "../components/Spinner";
 import { Event, getEvent } from "../helpers/api";
 import { instance } from "../helpers/contract";
@@ -55,7 +56,7 @@ const SingleEventView = () => {
 					<h2 className="font-bold text-indigo-500 mb-8">
 						{Web3.utils.fromWei(event.price.toString(), "gwei")} ETH
 					</h2>
-					<PurchaseButton event={event} className="mb-8" />
+					<PurchaseButton event={event} className="mb-8 btn-basic" />
 					<div className="mb-8 text-lg">
 						{event.description}
 					</div>
@@ -70,24 +71,22 @@ const SingleEventView = () => {
 
 const PurchaseButton = (props: { className?: string, event: Event }) => {
 	const [address] = useAddressState();
-	const [disabled, setDisabled] = useState(false);
+	const [quantity, setQuantity] = useState(1);
 
 	if (!address) {
 		return <ConnectWallet className={props.className} />;
 	}
 
 	const purchase = async () => {
-		setDisabled(true);
-
 		try {
 			const contract = await instance();
 
 			await contract
 				.methods
-				.buyToken(props.event.id, 1)
+				.buyToken(props.event.id, quantity)
 				.send({
 					from: address,
-					value: Web3.utils.toWei(String(props.event.price), "gwei")
+					value: Web3.utils.toWei(String(props.event.price * quantity), "gwei")
 				})
 			;
 		} catch (e: any) {
@@ -95,20 +94,18 @@ const PurchaseButton = (props: { className?: string, event: Event }) => {
 				// TODO: error message
 			}
 		}
-
-		setDisabled(false);
 	};
 
 	return (
-		<button 
-			type="button"
-			className={"btn btn-basic w-32 " + props.className}
+		<QuantityButton
+			className={props.className}
+			quantity={6}
+			defaultQuantity={1}
 			onClick={() => purchase()}
-			disabled={disabled}
+			onChange={e => setQuantity(Number(e.target.value))}
 		>
-			{disabled && <Spinner />}
 			Purchase
-		</button>
+		</QuantityButton>
 	);
 };
 

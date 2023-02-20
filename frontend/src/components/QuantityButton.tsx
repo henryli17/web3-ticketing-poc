@@ -25,7 +25,7 @@ const QuantityButton = (props: {
 			<select
 				className="border-transparent h-full bg-transparent py-0 pl-3 pr-8 text-sm focus:ring-0 focus:border-transparent"
 				onClick={e => quantityOnClick(e)}
-				defaultValue={props.quantity}
+				defaultValue={props.defaultQuantity}
 				onChange={props.onChange}
 			>
 				{range(1, props.quantity).map(i => <option key={i}>{i}</option>)}

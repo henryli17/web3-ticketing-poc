@@ -1,4 +1,6 @@
+import { privateEncrypt } from "crypto";
 import { useState } from "react";
+import { X } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 import Web3 from "web3";
 import {  Purchase } from "../helpers/api";
@@ -6,13 +8,14 @@ import { contract } from "../helpers/contract";
 import { prettyDate } from "../helpers/utils";
 import { useAddressState } from "../middleware/Wallet";
 import routes from "../routes";
+import ConfirmationModal from "./ConfirmationModal";
 import SellButton from "./SellButton";
-import Spinner from "./Spinner";
 
 const PurchaseCard = (props: { purchase: Purchase, className?: string }) => {
-	const [quantityToSell, setQuantityToSell] = useState(0);
+	const [quantityToSell, setQuantityToSell] = useState(props.purchase.quantity);
 	const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 	const [address] = useAddressState();
+	const price = Number(Web3.utils.fromWei(props.purchase.event.price.toString(), "gwei"));
 
 	const sellButtonOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
 		e.preventDefault();
@@ -51,8 +54,8 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string }) => {
 										{props.purchase.event.name}
 									</div>
 								</div>
-								<div className="text-xl font-bold text-indigo-500">
-									{Web3.utils.fromWei((props.purchase.event.price * props.purchase.quantity).toString(), "gwei")} ETH
+								<div className="text-xl font-bold text-indigo-500 flex items-center">
+									{props.purchase.quantity} <X /> {price} ETH
 								</div>
 								<div className="text-md block">
 									{props.purchase.event.venue} · {props.purchase.event.city} · {prettyDate(props.purchase.event.time)}
@@ -65,6 +68,7 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string }) => {
 							<SellButton
 								event={props.purchase.event}
 								quantity={props.purchase.quantity}
+								defaultQuantity={quantityToSell}
 								onClick={e => sellButtonOnClick(e)}
 								onChange={e => setQuantityToSell(parseInt(e.target.value))}
 							/>
@@ -74,7 +78,9 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string }) => {
 			</Link>
 			{
 				showConfirmationModal &&
-				<ConfirmationModal 
+				<ConfirmationModal
+					title="Sell Ticket"
+					message={`Are you sure you want to list ${quantityToSell} tickets for ${price} ETH each?`}
 					close={() => setShowConfirmationModal(false)}
 					action={() => sellTicket()}
 				/>
@@ -83,62 +89,5 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string }) => {
 	);
 };
 
-const ConfirmationModal = (props: { close: () => any, action: () => any }) => {
-	const [disabled, setDisabled] = useState(false);
-
-	const action = async () => {
-		setDisabled(true);
-		await props.action();
-		props.close();
-	};
-
-	return (
-		<div className="relative z-10" role="dialog">
-			<div className="fixed inset-0 bg-gray-500 bg-opacity-75"></div>
-			<div className="fixed inset-0 z-10 overflow-y-auto">
-				<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-					<div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-						<div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-							<div className="sm:flex sm:items-start">
-								<div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-									<svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
-										<path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-									</svg>
-								</div>
-								<div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-									<h3 className="text-lg font-medium leading-6 text-gray-900" id="modal-title">Sell Ticket</h3>
-									<div className="mt-2">
-										<p className="text-sm text-gray-500">
-											Are you sure you want to list 2 tickets for sale?
-										</p>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div className="px-4 py-5 sm:flex sm:flex-row-reverse sm:px-6">
-							<button
-								type="button"
-								disabled={disabled}
-								className="inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-25"
-								onClick={() => action()}
-							>
-								{disabled && <Spinner />}
-								Continue
-							</button>
-							<button
-								type="button"
-								disabled={disabled}
-								className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-25"
-								onClick={() => props.close()}
-							>
-								Cancel
-							</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
-};
 
 export default PurchaseCard;

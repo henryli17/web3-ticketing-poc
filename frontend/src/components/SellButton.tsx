@@ -5,6 +5,7 @@ import { range } from "../helpers/utils";
 const SellButton = (props: {
 	event: Event,
 	quantity: number,
+	defaultQuantity: number,
 	className?: string,
 	onClick?: React.MouseEventHandler<HTMLButtonElement>,
 	onChange?: React.ChangeEventHandler<HTMLSelectElement>

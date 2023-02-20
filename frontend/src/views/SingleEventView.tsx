@@ -70,9 +70,8 @@ const SingleEventView = () => {
 };
 
 const PurchaseButton = (props: { className?: string, event: Event }) => {
-	const defaultQuantity = 1;
 	const [address] = useAddressState();
-	const [quantity, setQuantity] = useState(defaultQuantity);
+	const [quantity, setQuantity] = useState(1);
 	const [disabled, setDisabled] = useState(false);
 
 	if (!address) {
@@ -106,7 +105,7 @@ const PurchaseButton = (props: { className?: string, event: Event }) => {
 		<QuantityButton
 			className={props.className}
 			quantity={6}
-			defaultQuantity={defaultQuantity}
+			value={quantity}
 			onClick={() => purchase()}
 			onChange={e => setQuantity(Number(e.target.value))}
 			disabled={disabled}

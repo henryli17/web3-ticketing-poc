@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CurrencyDollar, X, XLg } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 import Web3 from "web3";
@@ -22,8 +22,11 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange:
 		setShowConfirmationModal(true);
 	};
 
-	const action = async () => {
+	useEffect(() => {
+		setSelectedQuantity(props.purchase.quantity);
+	}, [props.purchase]);
 
+	const action = async () => {
 		try {
 			const contract = await instance();
 
@@ -81,7 +84,7 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange:
 								<QuantityButton
 									quantity={props.purchase.quantity}
 									className={props.purchase.forSale ? "outline-red-700 text-red-700 hover:outline-red-900 hover:text-red-900" : "outline-green-700 text-green-700 hover:outline-green-900 hover:text-green-900"}
-									defaultQuantity={props.purchase.quantity}
+									value={selectedQuantity}
 									onClick={e => quantityButtonClick(e)}
 									onChange={e => setSelectedQuantity(parseInt(e.target.value))}
 								>

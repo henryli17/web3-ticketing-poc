@@ -21,11 +21,11 @@ h2 {
 }
 
 .btn {
-	@apply flex justify-center text-sm font-medium py-2 px-4 rounded-md outline outline-1;
+	@apply flex justify-center text-sm font-medium py-2 px-4 rounded-md outline outline-1 items-center;
 }
 
 .btn-base {
-	@apply flex justify-center text-sm font-medium rounded-md outline outline-1;
+	@apply flex justify-center text-sm font-medium rounded-md items-center;
 }
 
 .btn-basic[disabled], .btn-basic[disabled]:hover {

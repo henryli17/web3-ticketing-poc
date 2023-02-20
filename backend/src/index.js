@@ -7,7 +7,7 @@ const contract = require("./helpers/contract.js");
 const server = restify.createServer();
 const API_BASE = "/api"
 
-server.listen(8080);
+server.listen(3001);
 server.use(restify.plugins.queryParser());
 server.use((_, res, next) => {
 	res.header("Access-Control-Allow-Origin", "*");
@@ -31,16 +31,30 @@ const response = async (req, res, fn) => {
 };
 
 server.get(API_BASE + "/events/:id?", async (req, res) => {
-	await response(req, res, async (req) => {	
+	await response(req, res, async (req) => {
 		const events = await db.getEvents({
-			id: req.params.id || req.query.id?.split(",")
+			id: req.params.id,
+			genres: req.query?.genres?.split(","),
+			locations: req.query?.locations?.split(","),
+			maxPrice: req.query?.maxPrice
 		});
 
-		if (!events && req.params.id) {
-			throw new errs.ResourceNotFoundError();
+		if (req.params.id) {
+			if (!events) {
+				throw new errs.ResourceNotFoundError();
+			} else {
+				return events.shift();
+			}
 		}
 
-		return events;
+		const limit = 10;
+		const offset = Math.max(parseInt(req.query?.offset) || 0, 0);
+		const slice = events.slice(offset, offset + limit);
+
+		return {
+			events: slice,
+			nextOffset: (offset + limit >= events.length) ? false : offset + limit
+		};
 	});
 });
 

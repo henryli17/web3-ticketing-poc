@@ -6,6 +6,11 @@ enum HttpMethod {
 	POST = "post"
 };
 
+export type GetEventsResponse = {
+	events: Event[],
+	nextOffset: number | boolean
+};
+
 export type Event = {
 	id: number
 	name: string
@@ -33,7 +38,7 @@ export type Contract = {
 };
 
 const request = <T>(method: HttpMethod, endpoint: string, options?: { data?: object, params?: object }) => {
-	const API_BASE = "http://localhost:8080/api";
+	const API_BASE = "http://localhost:3001/api";
 
 	return new Promise<T>(async (resolve, reject) => {
 		try {
@@ -51,15 +56,17 @@ const request = <T>(method: HttpMethod, endpoint: string, options?: { data?: obj
 	});
 }
 
-export const getEvents = (params?: { id?: Number[] }) => {
-	return request<Event[]>(
+export const getEvents = (params?: {
+	offset?: number,
+	genres?: string[],
+	locations?: string[],
+	maxPrice?: number,
+	search?: string
+}) => {
+	return request<GetEventsResponse>(
 		HttpMethod.GET,
 		"events",
-		{
-			params: {
-				id: params?.id?.join(",")
-			}
-		}
+		{ params: params }
 	);
 };
 

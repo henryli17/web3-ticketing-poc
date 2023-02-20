@@ -17,7 +17,7 @@ const QuantityButton = (props: {
 	return (
 		<button
 			type="button"
-			className={"btn-base py-2 pl-4 pr-0 items-center " + props.className}
+			className={"btn-base py-2 pl-4 pr-0 outline outline-1 " + props.className}
 			onClick={e => props.onClick && props.onClick(e)}
 			disabled={props.disabled}
 		>

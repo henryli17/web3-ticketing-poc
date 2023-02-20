@@ -1,19 +1,24 @@
 import { useEffect, useState } from "react";
+import { ArrowLeft, ArrowRight } from "react-bootstrap-icons";
 import CheckboxGroup, { CheckboxItem } from "../components/CheckboxGroup";
 import EventCard from "../components/EventCard";
-import LoadingCard from "../components/LoadingCard";
 import NotFound from "../components/NotFound";
-import { getEvents, getGenres } from "../helpers/api";
-import { Event } from "../helpers/api";
+import PaginationButtons from "../components/PaginationButtons";
+import { getEvents, GetEventsResponse, getGenres } from "../helpers/api";
 
 const EventsView = () => {
 	const [error, setError] = useState(false);
-	const [events, setEvents] = useState<Event[]>([]);
+	const [eventsRes, setEventsRes] = useState<GetEventsResponse>({ events: [], nextOffset: false });
 	const [genres, setGenres] = useState<CheckboxItem[]>([]);
+	const [offset, setOffset] = useState(0);
 
 	useEffect(() => {
-		getEvents()
-			.then(setEvents)
+		const params = {
+			offset: offset
+		};
+
+		getEvents(params)
+			.then(setEventsRes)
 			.catch(() => setError(true))
 		;
 
@@ -27,7 +32,7 @@ const EventsView = () => {
 			})
 			.catch(() => setError(true))
 		;
-	}, []);
+	}, [offset]);
 
 	if (error) {
 		return <NotFound />;
@@ -47,8 +52,16 @@ const EventsView = () => {
 				</div>
 			</form>
 			<div className="space-y-3 col-span-12 md:col-span-9 xl:col-span-10">
-				{!events.length && <LoadingCard className="h-40" />}
-				{events.map(event => <EventCard key={event.id} event={event} />)}
+				{eventsRes.events.map(event => <EventCard key={event.id} event={event} />)}
+				<div className="flex justify-end space-x-2">
+					<PaginationButtons
+						prev={() => setOffset(offset - eventsRes.events.length)}
+						next={() => (typeof eventsRes.nextOffset === "number") && setOffset(eventsRes.nextOffset)}
+						prevDisabled={offset === 0}
+						nextDisabled={!Boolean(eventsRes.nextOffset)}
+						className="btn btn-basic"
+					/>
+				</div>
 			</div>
 		</div>
 	);

@@ -16,7 +16,7 @@ const getEvents = async (options) => {
 		.select("genres.name AS genre")
 		.table("events")
 		.leftJoin("event-genre", "events.id", "event-genre.eventId")
-		.innerJoin("genres", "event-genre.genreId", "genres.id")
+		.leftJoin("genres", "event-genre.genreId", "genres.id")
 		.modify(query => {
 			if (options?.id) {
 				if (Array.isArray(options.id)) {
@@ -24,6 +24,20 @@ const getEvents = async (options) => {
 				} else {
 					query.where("events.id", options.id);
 				}
+				
+				return;
+			}
+			
+			if (options?.genres) {
+				query.whereIn("genres.name", options.genres);
+			}
+
+			if (options?.locations) {
+				query.whereIn("events.city", options.locations);
+			}
+
+			if (options?.maxPrice) {
+				query.where("events.price", "<=", options.maxPrice);
 			}
 		})
 	;
@@ -31,18 +45,18 @@ const getEvents = async (options) => {
 	// Group genres into array for each event
 	for (const row of rows) {
 		if (!events[row.id]) {
-			events[row.id] = { ...row, genres: [row.genre] };
+			events[row.id] = {
+				...row,
+				genres: row.genre ? [row.genre] : []
+			};
+
 			delete events[row.id].genre;
 		} else {
 			events[row.id].genres.push(row.genre);
 		}
 	}
 
-	if (options?.id && !Array.isArray(options.id)) {
-		return (events) ? events[options.id] : {};
-	} else {
-		return Object.values(events);
-	}
+	return Object.values(events);
 };
 
 const getGenres = async () => {

@@ -34,8 +34,8 @@ server.get(API_BASE + "/events/:id?", async (req, res) => {
 	await response(req, res, async (req) => {
 		const events = await db.getEvents({
 			id: req.params.id,
-			genres: req.query?.genres?.split(","),
-			locations: req.query?.locations?.split(","),
+			genres: (req.query?.genres !== "") ? req.query?.genres?.split(",") : null,
+			locations: (req.query?.locations !== "") ? req.query?.locations?.split(",") : null,
 			maxPrice: req.query?.maxPrice
 		});
 

@@ -66,7 +66,12 @@ export const getEvents = (params?: {
 	return request<GetEventsResponse>(
 		HttpMethod.GET,
 		"events",
-		{ params: params }
+		{
+			params: {
+				offset: params?.offset,
+				genres: params?.genres?.join(",")
+			}
+		}
 	);
 };
 

@@ -28,11 +28,11 @@ const getEvents = async (options) => {
 				return;
 			}
 			
-			if (options?.genres) {
+			if (options?.genres && options.genres.length) {
 				query.whereIn("genres.name", options.genres);
 			}
 
-			if (options?.locations) {
+			if (options?.locations && options.locations.length) {
 				query.whereIn("events.city", options.locations);
 			}
 

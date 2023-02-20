@@ -13,15 +13,6 @@ const EventsView = () => {
 	const [offset, setOffset] = useState(0);
 
 	useEffect(() => {
-		const params = {
-			offset: offset
-		};
-
-		getEvents(params)
-			.then(setEventsRes)
-			.catch(() => setError(true))
-		;
-
 		getGenres()
 			.then(genres => {
 				setGenres(
@@ -32,7 +23,19 @@ const EventsView = () => {
 			})
 			.catch(() => setError(true))
 		;
-	}, [offset]);
+	}, [])
+
+	useEffect(() => {
+		const params = {
+			offset: offset,
+			genres: genres.filter(g => g.checked).map(g => g.name)
+		};
+
+		getEvents(params)
+			.then(setEventsRes)
+			.catch(() => setError(true))
+		;
+	}, [offset, genres]);
 
 	if (error) {
 		return <NotFound />;

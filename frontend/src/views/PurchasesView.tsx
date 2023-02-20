@@ -1,19 +1,39 @@
 import { useEffect, useState } from "react";
-import LoadingCard from "../components/LoadingCard";
 import NotFound from "../components/NotFound";
 import PurchaseCard from "../components/PurchaseCard";
 import { getPurchases, Purchase } from "../helpers/api";
 import { useAddressState } from "../middleware/Wallet";
 
+enum PurchaseType {
+	UPCOMING = "upcoming",
+	SELLING = "selling",
+	EXPIRED = "expired"
+};
+
 const PurchasesView = () => {
 	const [error, setError] = useState(false);
 	const [address] = useAddressState();
-	const [purchases, setPurchases] = useState<Purchase[] | null>(null);
+	const [purchaseData, setPurchaseData] = useState<PurchaseData>(emptyPurchaseData());
 	const [updatePurchases, setUpdatePurchases] = useState(false);
+	const [purchaseType, setPurchaseType] = useState<PurchaseType>(PurchaseType.UPCOMING)
 
 	useEffect(() => {
 		getPurchases(address)
-			.then(setPurchases)
+			.then(purchases => {
+				const purchaseData = emptyPurchaseData();
+
+				for (const purchase of purchases) {
+					if (purchase.expired) {
+						purchaseData.expired.push(purchase);
+					} else if (purchase.forSale) {
+						purchaseData.selling.push(purchase);
+					} else {
+						purchaseData.upcoming.push(purchase);
+					}
+				}
+
+				setPurchaseData(purchaseData);
+			})
 			.catch(() => setError(true))
 		;
 	}, [address, updatePurchases]);
@@ -22,12 +42,24 @@ const PurchasesView = () => {
 		return <NotFound />;
 	}
 
+
 	return (
 		<div className="container mx-auto py-16 px-10 space-y-3">
-			{!purchases && <LoadingCard className="h-40" />}
 			{
-				purchases &&
-				purchases.map((purchase, i) => {
+				Object.values(PurchaseType).map((purchaseType, i) => {
+					if (!purchaseData[purchaseType].length) {
+						return <></>;
+					}
+
+					return (
+						<div key={i} onClick={() => setPurchaseType(purchaseType)} className="capitalize">
+							{purchaseType}
+						</div>
+					);
+				})
+			}
+			{
+				purchaseData[purchaseType].map((purchase, i) => {
 					return (
 						<PurchaseCard
 							key={i}
@@ -39,6 +71,16 @@ const PurchasesView = () => {
 			}
 		</div>
 	);
+};
+
+type PurchaseData = {
+	expired: Purchase[],
+	upcoming: Purchase[],
+	selling: Purchase[]
+};
+
+const emptyPurchaseData = (): PurchaseData => {
+	return { expired: [], upcoming: [], selling: [] };
 };
 
 export default PurchasesView;

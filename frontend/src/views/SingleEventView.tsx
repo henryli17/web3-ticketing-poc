@@ -70,14 +70,18 @@ const SingleEventView = () => {
 };
 
 const PurchaseButton = (props: { className?: string, event: Event }) => {
+	const defaultQuantity = 1;
 	const [address] = useAddressState();
-	const [quantity, setQuantity] = useState(1);
+	const [quantity, setQuantity] = useState(defaultQuantity);
+	const [disabled, setDisabled] = useState(false);
 
 	if (!address) {
 		return <ConnectWallet className={props.className} />;
 	}
 
 	const purchase = async () => {
+		setDisabled(true);
+
 		try {
 			const contract = await instance();
 
@@ -94,16 +98,20 @@ const PurchaseButton = (props: { className?: string, event: Event }) => {
 				// TODO: error message
 			}
 		}
+
+		setDisabled(false);
 	};
 
 	return (
 		<QuantityButton
 			className={props.className}
 			quantity={6}
-			defaultQuantity={1}
+			defaultQuantity={defaultQuantity}
 			onClick={() => purchase()}
 			onChange={e => setQuantity(Number(e.target.value))}
+			disabled={disabled}
 		>
+			{disabled && <Spinner />}
 			Purchase
 		</QuantityButton>
 	);

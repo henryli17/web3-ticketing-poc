@@ -6,7 +6,8 @@ const QuantityButton = (props: {
 	defaultQuantity: number,
 	className?: string,
 	onClick?: React.MouseEventHandler<HTMLButtonElement>,
-	onChange?: React.ChangeEventHandler<HTMLSelectElement>
+	onChange?: React.ChangeEventHandler<HTMLSelectElement>,
+	disabled?: boolean
 }) => {
 	const quantityOnClick = (e: React.MouseEvent<HTMLSelectElement, MouseEvent>) => {
 		e.preventDefault();
@@ -18,6 +19,7 @@ const QuantityButton = (props: {
 			type="button"
 			className={"btn-base py-2 pl-4 pr-0 items-center " + props.className}
 			onClick={props.onClick}
+			disabled={props.disabled}
 		>
 			<div className="flex pr-3 items-center border-r border-current h-full">
 				{props.children}
@@ -27,6 +29,7 @@ const QuantityButton = (props: {
 				onClick={e => quantityOnClick(e)}
 				defaultValue={props.defaultQuantity}
 				onChange={props.onChange}
+				disabled={props.disabled}
 			>
 				{range(1, props.quantity).map(i => <option key={i}>{i}</option>)}
 			</select>

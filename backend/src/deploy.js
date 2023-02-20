@@ -17,13 +17,15 @@ const main = async () => {
 				new Date(event.time).getTime() / 1000,
 				parseInt(event.price),
 				parseInt(event.ticketQuantity)
-			)
+		)
 			.send({
 				from: process.env.ETH_CONTRACT_OWNER,
 				gas: GAS
 			})
 		;
 	}
+
+	console.log(`Successfully deployed events to contract ${contract.address}!`);
 };
 
 main()

@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { useEffectOnce } from "usehooks-ts";
 import CheckboxGroup, { CheckboxItem } from "../components/CheckboxGroup";
 import EventCard from "../components/EventCard";
 import NotFound from "../components/NotFound";
 import PaginationButtons from "../components/PaginationButtons";
-import SearchBar from "../components/SearchBar";
 import { getEvents, GetEventsResponse, getGenres, getLocations } from "../helpers/api";
 
 const EventsView = () => {
@@ -13,13 +14,22 @@ const EventsView = () => {
 	const [locations, setLocations] = useState<CheckboxItem[]>([]);
 	const [offset, setOffset] = useState(0);
 	const [maxPrice, setMaxPrice] = useState<number>();
+	const [searchParams, setSearchParams] = useSearchParams();
 
-	useEffect(() => {
+	useEffectOnce(() => {
+		const maxPrice = searchParams.get("maxPrice");
+
+		if (maxPrice) {
+			setMaxPrice(Number(maxPrice));
+		}
+
 		getGenres()
 			.then(genres => {
+				const checkedGenres = searchParams.get("genres")?.split(",") || [];
+
 				setGenres(
 					genres.map(genre => {
-						return { name: genre, checked: false };
+						return { name: genre, checked: checkedGenres.includes(genre) };
 					})
 				);
 			})
@@ -28,29 +38,48 @@ const EventsView = () => {
 
 		getLocations()
 			.then(locations => {
+				const checkedLocations = searchParams.get("locations")?.split(",") || [];
+
 				setLocations(
 					locations.map(location => {
-						return { name: location, checked: false };
+						return { name: location, checked: checkedLocations.includes(location) };
 					})
 				);
 			})
 			.catch(() => setError(true))
 		;
-	}, [])
+	});
 
 	useEffect(() => {
+		const searchParams = new URLSearchParams();
+		const genresToFilter = genres.filter(g => g.checked).map(g => g.name);
+		const locationsToFilter = locations.filter(l => l.checked).map(l => l.name);
 		const params = {
 			offset: offset,
-			genres: genres.filter(g => g.checked).map(g => g.name),
-			locations: locations.filter(l => l.checked).map(l => l.name),
-			maxPrice: (maxPrice === undefined || Number.isNaN(maxPrice)) ? undefined : maxPrice * Math.pow(10, 9)
+			genres: genresToFilter,
+			locations: locationsToFilter,
+			maxPrice: (!maxPrice || Number.isNaN(maxPrice)) ? undefined : maxPrice * Math.pow(10, 9)
 		};
 
 		getEvents(params)
 			.then(setEventsRes)
 			.catch(() => setError(true))
 		;
-	}, [offset, genres, locations, maxPrice]);
+
+		if (genresToFilter.length) {
+			searchParams.append("genres", genresToFilter.join(","))
+		}
+
+		if (locationsToFilter.length) {
+			searchParams.append("locations", locationsToFilter.join(","))
+		}
+
+		if (maxPrice && !Number.isNaN(maxPrice)) {
+			searchParams.append("maxPrice", maxPrice.toString())
+		}
+
+		setSearchParams(searchParams);
+	}, [offset, genres, locations, maxPrice, setSearchParams]);
 
 	if (error) {
 		return <NotFound />;
@@ -86,7 +115,7 @@ const EventsView = () => {
 							min={0}
 							step="0.01"
 							value={maxPrice}
-							onChange={e => setMaxPrice(Number(e.target.value))}
+							onChange={e => setMaxPrice(Number(e.target.value) || undefined)}
 						/>
 					</div>
 				</div>

@@ -87,9 +87,7 @@ const PurchaseButton = (props: { className?: string, event: Event }) => {
 				.buyToken(props.event.id, 1)
 				.send({
 					from: address,
-					// value: Web3.utils.toWei(String(props.event.price), "gwei")
-					// TODO: revert fixed price
-					value: Web3.utils.toWei("1000000", "gwei")
+					value: Web3.utils.toWei(String(props.event.price), "gwei")
 				})
 			;
 		} catch (e: any) {

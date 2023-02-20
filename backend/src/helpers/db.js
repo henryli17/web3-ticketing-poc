@@ -18,7 +18,7 @@ const getEvents = async (options) => {
 		.leftJoin("event-genre", "events.id", "event-genre.eventId")
 		.innerJoin("genres", "event-genre.genreId", "genres.id")
 		.modify(query => {
-			if (options.id) {
+			if (options?.id) {
 				if (Array.isArray(options.id)) {
 					query.whereIn("events.id", options.id);
 				} else {
@@ -38,7 +38,7 @@ const getEvents = async (options) => {
 		}
 	}
 
-	if (options.id && !Array.isArray(options.id)) {
+	if (options?.id && !Array.isArray(options.id)) {
 		return (events) ? events[options.id] : {};
 	} else {
 		return Object.values(events);

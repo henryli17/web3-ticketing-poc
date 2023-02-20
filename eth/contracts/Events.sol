@@ -59,7 +59,7 @@ contract Events is ERC1155, Ownable {
 
 		e.supplied += _quantity;
 
-		_mint(msg.sender, _eventId, 1, "");
+		_mint(msg.sender, _eventId, _quantity, "");
 	}
 
 	function markTokenAsUsed(address _owner, uint _eventId) external onlyOwner {
@@ -101,46 +101,55 @@ contract Events is ERC1155, Ownable {
 		return usedCount;
 	}
 
-	function listTokenForResale(uint _eventId) external {
+	function listTokenForResale(uint _eventId, uint _quantity) external {
 		require(events[_eventId].created, "An event with this ID does not exist.");
 
 		uint listedCount = getListedCount(msg.sender, _eventId);
 		uint usedCount = getUsedCount(msg.sender, _eventId);
 
-		require(listedCount + usedCount < balanceOf(msg.sender, _eventId), "No more tickets to list.");
+		require(listedCount + usedCount + _quantity <= balanceOf(msg.sender, _eventId), "Insufficient number of tickets remaining.");
 
 		ResaleTokenEntry[] storage senderResaleTokenEntries = resaleTokenEntries[msg.sender];
 
-		resaleTokens[_eventId].push(
-			ResaleToken({
-				owner: msg.sender,
-				sold: false
-			})
-		);
+		for (uint i = 0; i < _quantity; i++) {
+			resaleTokens[_eventId].push(
+				ResaleToken({
+					owner: msg.sender,
+					sold: false
+				})
+			);
 
-		senderResaleTokenEntries.push(
-			ResaleTokenEntry({
-				eventId: _eventId,
-				idx: resaleTokens[_eventId].length - 1,
-				sold: false
-			})
-		);
+			senderResaleTokenEntries.push(
+				ResaleTokenEntry({
+					eventId: _eventId,
+					idx: resaleTokens[_eventId].length - 1,
+					sold: false
+				})
+			);
+		}
 	}
 
-	function unlistTokenForResale(uint _eventId) external {
+	function unlistTokenForResale(uint _eventId, uint _quantity) external {
 		ResaleTokenEntry[] storage senderResaleTokenEntries = resaleTokenEntries[msg.sender];
+		uint[] memory idxs = new uint[](_quantity);
+		uint count = 0;
 	
 		for (uint i = 0; i < senderResaleTokenEntries.length; i++) {
 			if (senderResaleTokenEntries[i].eventId == _eventId) {
-				if (!senderResaleTokenEntries[i].sold) {
-					senderResaleTokenEntries[i].sold = true;
-					resaleTokens[_eventId][senderResaleTokenEntries[i].idx].sold = true;
-					return;
+				if (count == _quantity){
+					break;
+				} else if (!senderResaleTokenEntries[i].sold) {
+					idxs[count++] = i;
 				}
 			}
 		}
 
-		revert("No tickets for this ID are listed for sale.");
+		require(count == _quantity, "Quantity is too large.");
+
+		for (uint i = 0; i < idxs.length; i++) {
+			senderResaleTokenEntries[idxs[i]].sold = true;
+			resaleTokens[_eventId][senderResaleTokenEntries[idxs[i]].idx].sold = true;
+		}
 	}
 
 	function buyResaleToken(address _owner, uint _eventId) external payable {

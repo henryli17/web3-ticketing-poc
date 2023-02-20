@@ -92,8 +92,6 @@ server.get(API_BASE + "/purchases/:address", async (req, res) => {
 			});
 		}
 
-		console.log(resaleTokenEntriesById);
-
 		for (const [eventId, quantity] of resaleTokenEntriesById.entries()) {
 			if (quantity) {
 				purchases.push({

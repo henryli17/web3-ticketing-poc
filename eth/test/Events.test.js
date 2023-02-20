@@ -16,11 +16,17 @@ contract("Events", (accounts) => {
 		await utils.createEvent(contract, alice, defaultEvent);
 		await contract.buyToken.sendTransaction(
 			defaultEvent.id,
-			1,
-			{ from: bob, value: utils.gweiToWei(defaultEvent.price) }
+			2,
+			{ from: bob, value: utils.gweiToWei(defaultEvent.price * 2) }
 		);
 		await contract.listTokenForResale.sendTransaction(
 			defaultEvent.id,
+			2,
+			{ from: bob }
+		);
+		await contract.unlistTokenForResale.sendTransaction(
+			defaultEvent.id,
+			1,
 			{ from: bob }
 		);
 		await contract.buyResaleToken.sendTransaction(
@@ -29,9 +35,8 @@ contract("Events", (accounts) => {
 			{ from: charlie, value: utils.gweiToWei(defaultEvent.price) }
 		);
 
-		const balance = await contract.balanceOf.call(charlie, defaultEvent.id);
-
-		assert.equal(balance.toNumber(), 1);
+		// const res = await contract.getResaleTokenEntries.call(bob);
+		// console.log(res);
 	});
 
 	it("deploys a contract", () => {

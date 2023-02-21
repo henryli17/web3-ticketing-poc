@@ -22,8 +22,6 @@ const SingleEventView = () => {
 	const [address] = useAddressState();
 
 	useEffect(() => {
-		console.log('event updated');
-
 		getEvent(Number(id))
 			.then(setEvent)
 			.catch(() => setError(true))

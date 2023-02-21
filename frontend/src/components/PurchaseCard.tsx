@@ -3,7 +3,7 @@ import { CurrencyDollar, X, XLg } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 import Web3 from "web3";
 import {  Purchase } from "../helpers/api";
-import { instance } from "../helpers/contract";
+import { getInstance } from "../helpers/contract";
 import { gweiToEth, prettyDate } from "../helpers/utils";
 import { useAddressState } from "../middleware/Wallet";
 import routes from "../routes";
@@ -28,7 +28,7 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange:
 
 	const action = async () => {
 		try {
-			const contract = await instance();
+			const contract = await getInstance();
 
 			if (props.purchase.forSale) {
 				await contract

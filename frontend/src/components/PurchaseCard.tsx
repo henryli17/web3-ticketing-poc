@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { CurrencyDollar, X, XLg } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
-import Web3 from "web3";
 import {  Purchase } from "../helpers/api";
 import { getInstance } from "../helpers/contract";
 import { gweiToEth, prettyDate } from "../helpers/utils";

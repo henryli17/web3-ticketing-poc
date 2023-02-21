@@ -73,6 +73,26 @@ server.get(API_BASE + "/events/:id?", async (req, res) => {
 	});
 });
 
+server.get(API_BASE + "/events/:id/metadata", async (req, res) => {
+	await response(req, res, async (req) => {
+		const events = await db.getEvents({ id: Number(req.params.id) });
+		const event = events.shift();
+
+		return {
+			title: event.name,
+			description: event.description,
+			image: event.imagePath,
+			properties: {
+				artist: event.artist,
+				venue: event.venue,
+				city: event.city,
+				time: event.time,
+				ticketQuantity: event.ticketQuantity
+			}
+		}
+	});
+});
+
 server.get(API_BASE + "/genres", async (req, res) => {
 	await response(req, res, async (req) => {
 		return await db.getGenres();

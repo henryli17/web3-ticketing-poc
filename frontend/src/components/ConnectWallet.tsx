@@ -3,7 +3,7 @@ import { useAddressState } from '../middleware/Wallet';
 import { useState } from 'react';
 import { useLocalStorage } from 'usehooks-ts';
 
-const ConnectWallet = (props: { className?: string }) => {
+const ConnectWallet = (props: { className?: string, onLocked?: () => any }) => {
 	const [loggedOut, setLoggedOut] = useLocalStorage("loggedOut", false);
 	const [address, setAddress] = useAddressState();
 	const [hovering, setHovering] = useState(false);
@@ -26,8 +26,8 @@ const ConnectWallet = (props: { className?: string }) => {
 				setAddress(accounts[0]);
 				setLoggedOut(false);
 			} catch (e: any) {
-				if (e.code && e.code === -32002) {
-					// TODO: MetaMask wallet is locked - tell the user
+				if (e.code && e.code === -32002 && props.onLocked) {
+					props.onLocked();
 				}
 			}
 		}
@@ -37,20 +37,18 @@ const ConnectWallet = (props: { className?: string }) => {
 	const buttonText = address ? (hovering ? "Disconnect" : "Connected") : "Connect Wallet";
 
 	return (
-		<>		
-			<a
-				href="https://metamask.io/"
-				target="_blank"
-				rel="noreferrer"
-				className={`btn btn-basic ${buttonClasses} ${props.className} `}
-				onClick={(e) => connectWallet(e)}
-				onMouseEnter={() => setHovering(true)}
-				onMouseLeave={() => setHovering(false)}
-			>
-				<img src="../../assets/metamask.svg" className="mr-2" alt="MetaMask icon" height={20} width={20}/>
-				{buttonText}
-			</a>
-		</>
+		<a
+			href="https://metamask.io/"
+			target="_blank"
+			rel="noreferrer"
+			className={`btn btn-basic ${buttonClasses} ${props.className} `}
+			onClick={(e) => connectWallet(e)}
+			onMouseEnter={() => setHovering(true)}
+			onMouseLeave={() => setHovering(false)}
+		>
+			<img src="../../assets/metamask.svg" className="mr-2" alt="MetaMask icon" height={20} width={20}/>
+			{buttonText}
+		</a>
 	);
 };
 

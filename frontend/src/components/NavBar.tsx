@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAddressState } from "../middleware/Wallet";
 import routes from "../routes";
+import AlertModal from "./AlertModal";
 import ConnectWallet from "./ConnectWallet";
 import SearchBar from "./SearchBar";
 
@@ -10,6 +11,7 @@ const NavBar = () => {
 	const [address] = useAddressState();
 	const [mobileMenuHidden, setMobileMenuHidden] = useState(true);
 	const [navEntries, setNavEntries] = useState<NavEntry[]>(allNavEntries);
+	const [showAlert, setShowAlert] = useState(false);
 
 	const search = (search: string) => {
 		navigate(
@@ -37,54 +39,64 @@ const NavBar = () => {
 	}, [navigate, address]);
 
 	return (
-		<nav className="bg-white drop-shadow">
-			<div className="mx-auto px-2 sm:px-6 lg:px-8">
-				<div className="relative flex h-16 items-center justify-between">
-					<div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-						<button
-							type="button"
-							onClick={() => setMobileMenuHidden(!mobileMenuHidden)}
-							className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-						>
-							<svg className="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-								<path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-							</svg>
-						</button>
-					</div>
-					<div className="flex flex-1 justify-center sm:justify-start h-full">
-						<Link to={routes.home()} className="flex flex-shrink-0 items-center">
-							<img className="block h-8 w-auto" src="https://ethereum.org/static/a183661dd70e0e5c70689a0ec95ef0ba/13c43/eth-diamond-purple.png" alt="Ethereum Logo" />
-						</Link>
-						<div className="hidden sm:ml-6 sm:block justify-center">
-							<div className="flex space-x-4 h-full">
-								{
-									navEntries.map((navEntry, i) => {
-										if (navEntry.location === routes.home()) {
-											return <Tab key={i} navEntry={navEntry} className="hidden md:flex" />
-										} else {
-											return <Tab key={i} navEntry={navEntry} />;
-										}
-									})
-								}
+		<>
+			<nav className="bg-white drop-shadow">
+				<div className="mx-auto px-2 sm:px-6 lg:px-8">
+					<div className="relative flex h-16 items-center justify-between">
+						<div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+							<button
+								type="button"
+								onClick={() => setMobileMenuHidden(!mobileMenuHidden)}
+								className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+							>
+								<svg className="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+									<path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+								</svg>
+							</button>
+						</div>
+						<div className="flex flex-1 justify-center sm:justify-start h-full">
+							<Link to={routes.home()} className="flex flex-shrink-0 items-center">
+								<img className="block h-8 w-auto" src="https://ethereum.org/static/a183661dd70e0e5c70689a0ec95ef0ba/13c43/eth-diamond-purple.png" alt="Ethereum Logo" />
+							</Link>
+							<div className="hidden sm:ml-6 sm:block justify-center">
+								<div className="flex space-x-4 h-full">
+									{
+										navEntries.map((navEntry, i) => {
+											if (navEntry.location === routes.home()) {
+												return <Tab key={i} navEntry={navEntry} className="hidden md:flex" />
+											} else {
+												return <Tab key={i} navEntry={navEntry} />;
+											}
+										})
+									}
+								</div>
 							</div>
 						</div>
-					</div>
-					<div className="pr-2 sm:pr-0 hidden sm:flex items-center">
-						<SearchBar className="w-40 md:w-56" onSubmit={search} />
-						<ConnectWallet className="ml-3" />
+						<div className="pr-2 sm:pr-0 hidden sm:flex items-center">
+							<SearchBar className="w-40 md:w-56" onSubmit={search} />
+							<ConnectWallet className="ml-3" onLocked={() => setShowAlert(true)} />
+						</div>
 					</div>
 				</div>
-			</div>
-			<div className={"sm:hidden " + (mobileMenuHidden) ? "hidden" : ""}>
-				<div className="pt-2 pb-3 w-full">
-					<SearchBar className="mx-2 mb-2" onSubmit={search} />
-					<div className="flex mx-2 mb-3">
-						<ConnectWallet className="w-full"/>
+				<div className={"sm:hidden " + (mobileMenuHidden) ? "hidden" : ""}>
+					<div className="pt-2 pb-3 w-full">
+						<SearchBar className="mx-2 mb-2" onSubmit={search} />
+						<div className="flex mx-2 mb-3">
+							<ConnectWallet className="w-full" onLocked={() => setShowAlert(true)} />
+						</div>
+						{navEntries.map((navEntry, i) => <MobileTab key={i} navEntry={navEntry} />)}
 					</div>
-					{navEntries.map((navEntry, i) => <MobileTab key={i} navEntry={navEntry} />)}
 				</div>
-			</div>
-		</nav>
+			</nav>
+			{
+				showAlert &&
+				<AlertModal 
+					close={() => setShowAlert(false)}
+					title="Unlock Wallet"
+					message="Please manually unlock your MetaMask wallet to allow us to connect to it."
+				/>
+			}
+		</>
 	);
 };
 

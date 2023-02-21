@@ -51,7 +51,6 @@ const SingleEventView = () => {
 			{	
 				showLocked &&
 				<Alert
-					title=""
 					message="Please manually unlock your MetaMask wallet to allow us to connect to it."
 					className="bg-indigo-50 text-indigo-800"
 				/>

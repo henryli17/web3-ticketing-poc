@@ -6,6 +6,7 @@ import GenrePill from "../components/GenrePill";
 import NotFound from "../components/NotFound";
 import QuantityButton from "../components/QuantityButton";
 import Spinner from "../components/Spinner";
+import SuccessAlert from "../components/SuccessAlert";
 import { Event, getEvent } from "../helpers/api";
 import { instance } from "../helpers/contract";
 import { gweiToEth, gweiToWei, prettyDate } from "../helpers/utils";
@@ -15,6 +16,7 @@ const SingleEventView = () => {
 	const { id } = useParams();
 	const [error, setError] = useState(false);
 	const [event, setEvent] = useState<Event>();
+	const [showSuccess, setShowSuccess] = useState(false);
 
 	useEffect(() => {
 		getEvent(Number(id))
@@ -30,38 +32,44 @@ const SingleEventView = () => {
 	}
 
 	return (
-		<div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 py-20 px-10">
-			<div className="grid-span-1 flex mb-16 lg:mb-0">
-				<div className="my-auto">
-					<img className="mx-auto shadow-lg w-10/12 md:w-8/12 lg:w-10/12 xl:w-8/12 rounded" src={event.imagePath} alt={event.artist} />
+		<div className="container mx-auto p-10">
+			{	
+				showSuccess &&
+				<SuccessAlert title="Nice!" message="Your tickets were successfully purchased!" />
+			}
+			<div className="grid grid-cols-1 py-10 lg:grid-cols-2 ">
+				<div className="grid-span-1 flex mb-16 lg:mb-0">
+					<div className="my-auto">
+						<img className="mx-auto shadow-lg w-10/12 md:w-8/12 lg:w-10/12 xl:w-8/12 rounded" src={event.imagePath} alt={event.artist} />
+					</div>
 				</div>
-			</div>
-			<div className="grid-span-1 flex">
-				<div className="my-auto">
-					<h1 className="italic uppercase font-bold mb-1">
-						{event.artist}
-					</h1>
-					<div className="text-2xl mb-8 italic">
-						{event.name}
-					</div>
-					<div className="text-2xl">
-						{prettyDate(event.time)}
-					</div>
-					<div className="text-2xl mb-8">
-						{event.venue}, {event.city}
-					</div>
-					<div className="text-2xl uppercase font-bold">
-						Price
-					</div>
-					<h2 className="font-bold text-indigo-500 mb-8">
-						{gweiToEth(event.price)} ETH
-					</h2>
-					<PurchaseButton event={event} className="mb-8 btn-basic" />
-					<div className="mb-8 text-lg">
-						{event.description}
-					</div>
-					<div className="space-x-2 flex">
-						{event.genres.map(genre => <GenrePill name={genre} key={genre} />)}
+				<div className="grid-span-1 flex">
+					<div className="my-auto">
+						<h1 className="italic uppercase font-bold mb-1">
+							{event.artist}
+						</h1>
+						<div className="text-2xl mb-8 italic">
+							{event.name}
+						</div>
+						<div className="text-2xl">
+							{prettyDate(event.time)}
+						</div>
+						<div className="text-2xl mb-8">
+							{event.venue}, {event.city}
+						</div>
+						<div className="text-2xl uppercase font-bold">
+							Price
+						</div>
+						<h2 className="font-bold text-indigo-500 mb-8">
+							{gweiToEth(event.price)} ETH
+						</h2>
+						<PurchaseButton event={event} className="mb-8 btn-basic" onSuccess={() => setShowSuccess(true)} />
+						<div className="mb-8 text-lg">
+							{event.description}
+						</div>
+						<div className="space-x-2 flex">
+							{event.genres.map(genre => <GenrePill name={genre} key={genre} />)}
+						</div>
 					</div>
 				</div>
 			</div>
@@ -69,7 +77,11 @@ const SingleEventView = () => {
 	);
 };
 
-const PurchaseButton = (props: { className?: string, event: Event }) => {
+const PurchaseButton = (props: {
+	className?: string,
+	event: Event,
+	onSuccess: () => any
+}) => {
 	const [address] = useAddressState();
 	const [quantity, setQuantity] = useState(1);
 	const [disabled, setDisabled] = useState(false);
@@ -92,10 +104,10 @@ const PurchaseButton = (props: { className?: string, event: Event }) => {
 					value: gweiToWei(props.event.price * quantity)
 				})
 			;
+
+			props.onSuccess();
 		} catch (e: any) {
-			if (e.code !== 4001) {
-				// TODO: error message
-			}
+			console.error(e)
 		}
 
 		setDisabled(false);

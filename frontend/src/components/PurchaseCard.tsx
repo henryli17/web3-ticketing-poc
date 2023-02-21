@@ -44,9 +44,7 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange:
 				;
 			}
 		} catch (e: any) {
-			if (e.code !== 4001) {
-				// TODO: error message
-			}
+			console.error(e);
 		}
 
 		props.onChange();

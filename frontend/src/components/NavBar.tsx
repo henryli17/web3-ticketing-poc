@@ -10,7 +10,12 @@ const NavBar = () => {
 	const [address] = useAddressState();
 	const [mobileMenuHidden, setMobileMenuHidden] = useState(true);
 	const [navEntries, setNavEntries] = useState<NavEntry[]>(allNavEntries);
-	const mobileMenuClasses = (mobileMenuHidden) ? "hidden" : "";
+
+	const search = (search: string) => {
+		navigate(
+			`${routes.events()}?search=${encodeURIComponent(search)}`
+		)
+	};
 
 	useEffect(() => {
 		const isActive = (navEntry: NavEntry) => {
@@ -65,14 +70,14 @@ const NavBar = () => {
 						</div>
 					</div>
 					<div className="pr-2 sm:pr-0 hidden sm:flex items-center">
-						<SearchBar className="w-40 md:w-56" />
+						<SearchBar className="w-40 md:w-56" onSubmit={search} />
 						<ConnectWallet className="ml-3" />
 					</div>
 				</div>
 			</div>
-			<div className={"sm:hidden " + mobileMenuClasses}>
+			<div className={"sm:hidden " + (mobileMenuHidden) ? "hidden" : ""}>
 				<div className="pt-2 pb-3 w-full">
-					<SearchBar className="mx-2 mb-2" />
+					<SearchBar className="mx-2 mb-2" onSubmit={search} />
 					<div className="flex mx-2 mb-3">
 						<ConnectWallet className="w-full"/>
 					</div>

@@ -27,6 +27,16 @@ const getEvents = async (options) => {
 				
 				return;
 			}
+
+			if (options?.search) {
+				const search = "%" + options.search + "%";
+
+				query
+					.whereILike("genres.name", search)
+					.orWhereILike("events.city", search)
+					.orWhereILike("events.artist", search)
+				;
+			}
 			
 			if (options?.genres && options.genres.length) {
 				query.whereIn("genres.name", options.genres);

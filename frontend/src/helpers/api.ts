@@ -72,6 +72,7 @@ export const getEvents = (params?: {
 				genres: params?.genres?.join(","),
 				locations: params?.locations?.join(","),
 				maxPrice: params?.maxPrice,
+				search: params?.search
 			}
 		}
 	);

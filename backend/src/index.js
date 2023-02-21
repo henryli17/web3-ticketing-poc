@@ -36,7 +36,8 @@ server.get(API_BASE + "/events/:id?", async (req, res) => {
 			id: req.params.id,
 			genres: (req.query?.genres !== "") ? req.query?.genres?.split(",") : null,
 			locations: (req.query?.locations !== "") ? req.query?.locations?.split(",") : null,
-			maxPrice: req.query?.maxPrice
+			maxPrice: req.query?.maxPrice,
+			search: req.query?.search
 		});
 
 		if (req.params.id) {

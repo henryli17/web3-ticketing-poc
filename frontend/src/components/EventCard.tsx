@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import Web3 from "web3";
 import { Event } from "../helpers/api";
-import { prettyDate } from "../helpers/utils";
+import { gweiToEth, prettyDate } from "../helpers/utils";
 import routes from "../routes";
 
 const EventCard = (props: { event: Event, className?: string }) => {
@@ -20,7 +20,7 @@ const EventCard = (props: { event: Event, className?: string }) => {
 							</div>
 						</div>
 						<div className="text-xl font-bold text-indigo-500">
-							{Web3.utils.fromWei(props.event.price.toString(), "gwei")} ETH
+							{gweiToEth(props.event.price)} ETH
 						</div>
 						<div className="text-md block">
 							{props.event.venue} · {props.event.city} · {prettyDate(props.event.time)}

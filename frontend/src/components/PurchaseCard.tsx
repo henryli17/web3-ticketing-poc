@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import Web3 from "web3";
 import {  Purchase } from "../helpers/api";
 import { instance } from "../helpers/contract";
-import { prettyDate } from "../helpers/utils";
+import { gweiToEth, prettyDate } from "../helpers/utils";
 import { useAddressState } from "../middleware/Wallet";
 import routes from "../routes";
 import ConfirmationModal from "./ConfirmationModal";
@@ -14,7 +14,7 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange:
 	const [selectedQuantity, setSelectedQuantity] = useState(props.purchase.quantity);
 	const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 	const [address] = useAddressState();
-	const price = Number(Web3.utils.fromWei(props.purchase.event.price.toString(), "gwei"));
+	const price = gweiToEth(props.purchase.event.price);
 
 	const quantityButtonClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
 		e.preventDefault();

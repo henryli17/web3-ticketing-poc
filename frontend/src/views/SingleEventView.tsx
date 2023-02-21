@@ -8,7 +8,7 @@ import QuantityButton from "../components/QuantityButton";
 import Spinner from "../components/Spinner";
 import { Event, getEvent } from "../helpers/api";
 import { instance } from "../helpers/contract";
-import { prettyDate } from "../helpers/utils";
+import { gweiToEth, gweiToWei, prettyDate } from "../helpers/utils";
 import { useAddressState } from "../middleware/Wallet";
 
 const SingleEventView = () => {
@@ -54,13 +54,13 @@ const SingleEventView = () => {
 						Price
 					</div>
 					<h2 className="font-bold text-indigo-500 mb-8">
-						{Web3.utils.fromWei(event.price.toString(), "gwei")} ETH
+						{gweiToEth(event.price)} ETH
 					</h2>
 					<PurchaseButton event={event} className="mb-8 btn-basic" />
 					<div className="mb-8 text-lg">
 						{event.description}
 					</div>
-					<div className="space-x-2">
+					<div className="space-x-2 flex">
 						{event.genres.map(genre => <GenrePill name={genre} key={genre} />)}
 					</div>
 				</div>
@@ -89,7 +89,7 @@ const PurchaseButton = (props: { className?: string, event: Event }) => {
 				.buyToken(props.event.id, quantity)
 				.send({
 					from: address,
-					value: Web3.utils.toWei(String(props.event.price * quantity), "gwei")
+					value: gweiToWei(props.event.price * quantity)
 				})
 			;
 		} catch (e: any) {

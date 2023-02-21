@@ -6,6 +6,7 @@ import EventCard from "../components/EventCard";
 import NotFound from "../components/NotFound";
 import PaginationButtons from "../components/PaginationButtons";
 import { getEvents, GetEventsResponse, getGenres, getLocations } from "../helpers/api";
+import { ethToGwei } from "../helpers/utils";
 
 const EventsView = () => {
 	const [error, setError] = useState(false);
@@ -13,8 +14,8 @@ const EventsView = () => {
 	const [genres, setGenres] = useState<CheckboxItem[]>([]);
 	const [locations, setLocations] = useState<CheckboxItem[]>([]);
 	const [offset, setOffset] = useState(0);
-	const [maxPrice, setMaxPrice] = useState<number>();
-	const [searchParams, setSearchParams] = useSearchParams();
+	const [maxPrice, setMaxPrice] = useState(0);
+	const [searchParams] = useSearchParams();
 
 	useEffectOnce(() => {
 		const maxPrice = searchParams.get("maxPrice");
@@ -51,35 +52,18 @@ const EventsView = () => {
 	});
 
 	useEffect(() => {
-		const searchParams = new URLSearchParams();
-		const genresToFilter = genres.filter(g => g.checked).map(g => g.name);
-		const locationsToFilter = locations.filter(l => l.checked).map(l => l.name);
 		const params = {
 			offset: offset,
-			genres: genresToFilter,
-			locations: locationsToFilter,
-			maxPrice: (!maxPrice || Number.isNaN(maxPrice)) ? undefined : maxPrice * Math.pow(10, 9)
+			genres: genres.filter(g => g.checked).map(g => g.name),
+			locations: locations.filter(l => l.checked).map(l => l.name),
+			maxPrice: (maxPrice > 0) ? ethToGwei(maxPrice) : undefined
 		};
 
 		getEvents(params)
 			.then(setEventsRes)
 			.catch(() => setError(true))
 		;
-
-		if (genresToFilter.length) {
-			searchParams.append("genres", genresToFilter.join(","))
-		}
-
-		if (locationsToFilter.length) {
-			searchParams.append("locations", locationsToFilter.join(","))
-		}
-
-		if (maxPrice && !Number.isNaN(maxPrice)) {
-			searchParams.append("maxPrice", maxPrice.toString())
-		}
-
-		setSearchParams(searchParams);
-	}, [offset, genres, locations, maxPrice, setSearchParams]);
+	}, [offset, genres, locations, maxPrice]);
 
 	if (error) {
 		return <NotFound />;
@@ -115,7 +99,7 @@ const EventsView = () => {
 							min={0}
 							step="0.01"
 							value={maxPrice}
-							onChange={e => setMaxPrice(Number(e.target.value) || undefined)}
+							onChange={e => setMaxPrice(Number(e.target.value))}
 						/>
 					</div>
 				</div>

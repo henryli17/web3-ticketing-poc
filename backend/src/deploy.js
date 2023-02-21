@@ -2,7 +2,7 @@ require('dotenv').config()
 
 const db = require("./helpers/db.js");
 const contract = require("./helpers/contract");
-const GAS = 999999;
+const gas = 999999;
 
 const main = async () => {
 	const events = await db.getEvents();
@@ -17,15 +17,15 @@ const main = async () => {
 				new Date(event.time).getTime() / 1000,
 				parseInt(event.price),
 				parseInt(event.ticketQuantity)
-		)
+			)
 			.send({
-				from: process.env.ETH_CONTRACT_OWNER,
-				gas: GAS
+				from: contract.owner,
+				gas: gas
 			})
 		;
 	}
 
-	console.log(`Successfully deployed events to contract ${contract.address}!`);
+	console.log(`\nSuccessfully deployed events to contract ${contract.address}!`);
 };
 
 main()

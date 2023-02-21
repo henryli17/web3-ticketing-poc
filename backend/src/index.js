@@ -1,11 +1,25 @@
 require('dotenv').config()
 
+const ganache = require("ganache");
 const restify = require("restify");
 const errs = require('restify-errors');
 const db = require("./helpers/db.js");
 const contract = require("./helpers/contract.js");
+const path = require('path');
 const server = restify.createServer();
 const API_BASE = "/api"
+
+ganache
+	.server({
+		database: { dbPath: path.resolve('../eth/blockchain') },
+		wallet: { seed: "seed" }
+	})
+	.listen(8545, err => {
+		if (err) {
+			throw err;
+		}
+	})
+;
 
 server.listen(3001);
 server.use(restify.plugins.queryParser());

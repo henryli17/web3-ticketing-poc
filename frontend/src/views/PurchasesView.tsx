@@ -37,6 +37,18 @@ const PurchasesView = () => {
 			.catch(() => setError(true))
 		;
 	}, [address, updatePurchases]);
+	
+	useEffect(() => {
+		// If the selected purchase type has no data, try to select one that does
+		if (!purchaseData[purchaseType].length) {
+			for (const type of Object.values(PurchaseType)) {
+				if (purchaseData[type].length) {
+					setPurchaseType(_ => type);
+					break;
+				}
+			}
+		}
+	}, [purchaseData, purchaseType])
 
 	if (error) {
 		return <NotFound />;

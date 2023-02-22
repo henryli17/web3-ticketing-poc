@@ -14,6 +14,7 @@ const EventsView = () => {
 	const [genres, setGenres] = useState<CheckboxItem[]>([]);
 	const [locations, setLocations] = useState<CheckboxItem[]>([]);
 	const [offset, setOffset] = useState(0);
+	const [showFilters, setShowFilters] = useState(true);
 	const [maxPrice, setMaxPrice] = useState(0);
 	const [search, setSearch] = useState<string>();
 	const [searchParams] = useSearchParams();
@@ -73,8 +74,15 @@ const EventsView = () => {
 				search &&
 				<div className="mb-3 text-lg">Showing results for: {search}</div>
 			}
+			<button
+				type="button"
+				className="md:hidden text-gray-500 mb-2 text-xs uppercase"
+				onClick={() => setShowFilters(!showFilters)}
+			>
+				{showFilters ? "Hide" : "Show"} Filters
+			</button>
 			<div className="grid grid-cols-12 gap-x-3">
-				<form className="card-static col-span-12 mb-5 md:mb-0 md:col-span-3 xl:col-span-2 h-fit">
+				<div className={"card-static col-span-12 mb-5 md:mb-0 md:col-span-3 xl:col-span-2 h-fit md:block " + (!showFilters ? "hidden" : "")}>
 					<div className="filter-child">
 						Genre
 					</div>
@@ -106,7 +114,7 @@ const EventsView = () => {
 							/>
 						</div>
 					</div>
-				</form>
+				</div>
 				<div className="space-y-3 col-span-12 md:col-span-9 xl:col-span-10">
 					{
 						!eventsRes.events.length &&

@@ -10,7 +10,7 @@ import { ethToGwei } from "../helpers/utils";
 
 const EventsView = () => {
 	const [error, setError] = useState(false);
-	const [eventsRes, setEventsRes] = useState<GetEventsResponse>({ events: [], nextOffset: false });
+	const [eventsRes, setEventsRes] = useState<GetEventsResponse>();
 	const [genres, setGenres] = useState<CheckboxItem[]>([]);
 	const [locations, setLocations] = useState<CheckboxItem[]>([]);
 	const [offset, setOffset] = useState(0);
@@ -66,6 +66,10 @@ const EventsView = () => {
 
 	if (error) {
 		return <NotFound />;
+	}
+
+	if (!eventsRes) {
+		return <></>;
 	}
 
 	return (

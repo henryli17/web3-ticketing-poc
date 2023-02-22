@@ -13,7 +13,7 @@ enum PurchaseType {
 const PurchasesView = () => {
 	const [error, setError] = useState(false);
 	const [address] = useAddressState();
-	const [purchaseData, setPurchaseData] = useState<PurchaseData>(emptyPurchaseData());
+	const [purchaseData, setPurchaseData] = useState<PurchaseData>();
 	const [updatePurchases, setUpdatePurchases] = useState(false);
 	const [purchaseType, setPurchaseType] = useState<PurchaseType>(PurchaseType.UPCOMING);
 	const [hasPurchases, setHasPurchases] = useState(false);
@@ -21,7 +21,7 @@ const PurchasesView = () => {
 	useEffect(() => {
 		getPurchases(address)
 			.then(purchases => {
-				const purchaseData = emptyPurchaseData();
+				const purchaseData: PurchaseData = { expired: [], upcoming: [], selling: [] };
 
 				for (const purchase of purchases) {
 					if (purchase.expired) {
@@ -40,6 +40,10 @@ const PurchasesView = () => {
 	}, [address, updatePurchases]);
 	
 	useEffect(() => {
+		if (!purchaseData) {
+			return;
+		}
+
 		if (purchaseData[purchaseType].length) {
 			setHasPurchases(true);
 			return;
@@ -61,6 +65,9 @@ const PurchasesView = () => {
 		return <NotFound />;
 	}
 
+	if (!purchaseData) {
+		return <></>;
+	}
 
 	return (
 		<div className="container mx-auto py-16 px-10 space-y-3">
@@ -107,10 +114,6 @@ type PurchaseData = {
 	expired: Purchase[],
 	upcoming: Purchase[],
 	selling: Purchase[]
-};
-
-const emptyPurchaseData = (): PurchaseData => {
-	return { expired: [], upcoming: [], selling: [] };
 };
 
 export default PurchasesView;

@@ -18,8 +18,8 @@ const SingleEventView = () => {
 	const [event, setEvent] = useState<Event>();
 	const [resaleTokens, setResaleTokens] = useState<ResaleToken[]>([]);
 	const [quantityRemaining, setQuantityRemaining] = useState(0);
-	const [showSuccess, setShowSuccess] = useState(false);
-	const [showLocked, setShowLocked] = useState(false);
+	const [success, setSuccess] = useState(false);
+	const [locked, setLocked] = useState(false);
 	const [updateEvent, setUpdateEvent] = useState(false);
 	const [address] = useAddressState();
 
@@ -49,7 +49,7 @@ const SingleEventView = () => {
 
 	useEffect(() => {
 		if (address) {
-			setShowLocked(false);
+			setLocked(false);
 		}
 	}, [address])
 
@@ -64,7 +64,7 @@ const SingleEventView = () => {
 	return (
 		<div className="container mx-auto p-10">
 			{	
-				showSuccess &&
+				success &&
 				<Alert
 					title="Nice!"
 					message="Your tickets were successfully purchased!"
@@ -72,7 +72,7 @@ const SingleEventView = () => {
 				/>
 			}
 			{	
-				showLocked &&
+				locked &&
 				<Alert
 					message="Please manually unlock your MetaMask wallet to allow us to connect to it."
 					className="bg-indigo-50 text-indigo-800"
@@ -109,8 +109,8 @@ const SingleEventView = () => {
 								address={address}
 								event={event}
 								className="btn-basic"
-								onSuccess={() => { setShowSuccess(true); setUpdateEvent(!updateEvent) }}
-								onLocked={() => setShowLocked(true)}
+								onSuccess={() => { setSuccess(true); setUpdateEvent(!updateEvent) }}
+								onLocked={() => setLocked(true)}
 								quantityRemaining={quantityRemaining}
 							/>
 							{

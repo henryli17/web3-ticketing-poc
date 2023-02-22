@@ -9,7 +9,7 @@ import Alert from "../components/Alert";
 import { Event, getEvent } from "../helpers/api";
 import { getInstance, getResaleTokens, ResaleToken } from "../helpers/contract";
 import { gweiToEth, gweiToWei, prettyDate } from "../helpers/utils";
-import { useAddressState } from "../middleware/Wallet";
+import { useAddress } from "../middleware/Wallet";
 import routes from "../routes";
 
 const SingleEventView = () => {
@@ -21,7 +21,7 @@ const SingleEventView = () => {
 	const [success, setSuccess] = useState(false);
 	const [locked, setLocked] = useState(false);
 	const [updateQuantityRemaining, setUpdateQuantityRemaining] = useState(false);
-	const [address] = useAddressState();
+	const [address] = useAddress();
 
 	useEffect(() => {
 		if (address) {

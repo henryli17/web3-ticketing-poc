@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAddressState } from "../middleware/Wallet";
+import { useAddress } from "../middleware/Wallet";
 import routes from "../routes";
 import AlertModal from "./AlertModal";
 import ConnectWallet from "./ConnectWallet";
@@ -8,7 +8,7 @@ import SearchBar from "./SearchBar";
 
 const NavBar = () => {
 	const navigate = useNavigate();
-	const [address] = useAddressState();
+	const [address] = useAddress();
 	const [mobileMenuHidden, setMobileMenuHidden] = useState(true);
 	const [navEntries, setNavEntries] = useState<NavEntry[]>(allNavEntries);
 	const [showAlert, setShowAlert] = useState(false);

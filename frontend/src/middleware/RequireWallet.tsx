@@ -1,9 +1,9 @@
 import { Navigate } from "react-router-dom";
 import routes from "../routes";
-import { useAddressState } from "./Wallet";
+import { useAddress } from "./Wallet";
 
 const RequireWallet = ({ Redirect }: { Redirect: React.FC }) => {
-    const [address] = useAddressState();
+    const [address] = useAddress();
 
     if (address === null) {
         return <></>;

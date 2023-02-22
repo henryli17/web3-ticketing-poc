@@ -47,6 +47,13 @@ server.use((req, res, next) => {
 	return next();
 });
 
+server.opts("*", (req, res, next) => {
+    res.header("Access-Control-Allow-Methods", req.header("Access-Control-Request-Method"));
+    res.header("Access-Control-Allow-Headers", req.header("Access-Control-Request-Headers"));
+    res.send(200);
+	return next();
+});
+
 const response = async (req, res, fn) => {
 	try {
 		const data = await fn(req);

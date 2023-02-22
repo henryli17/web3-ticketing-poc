@@ -7,7 +7,10 @@ const routes = {
 	events: () => "/events",
 	event: (id?: number) => "/events/" + param("id", id),
 	eventResale: (id?: number) => `/events/${param("id", id)}/resale`,
-	purchases: () => "/purchases"
+	purchases: () => "/purchases",
+	admin: {
+		login: () => "/admin/login"
+	}
 };
 
 export default routes;

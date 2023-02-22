@@ -1,12 +1,12 @@
 import { Outlet } from "react-router-dom";
 import NavBar from "../components/NavBar";
-import { useAddressState } from "./Wallet";
+import { useAddress } from "./Wallet";
 
 const ShowNavBar = () => {
 	return (
 		<>
 			<NavBar />
-			<Outlet context={useAddressState()} />
+			<Outlet context={useAddress()} />
 		</>
 	);
 };

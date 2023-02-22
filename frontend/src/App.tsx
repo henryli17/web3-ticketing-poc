@@ -9,6 +9,7 @@ import EventsView from './views/EventsView';
 import PurchasesView from './views/PurchasesView';
 import RequireWallet from './middleware/RequireWallet';
 import SingleEventResaleView from './views/SingleEventResaleView';
+import AdminLoginView from './views/AdminLoginView';
 
 const App = () => {
   	return (
@@ -24,6 +25,7 @@ const App = () => {
 						<Route path="*" element={<Navigate to={routes.home()} replace />} />
 					</Route>
 				</Route>
+				<Route path={routes.admin.login()} element={<AdminLoginView />} />
 			</Routes>
 		</>
 	);

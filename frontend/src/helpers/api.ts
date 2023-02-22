@@ -112,3 +112,11 @@ export const getContract = () => {
 		"contract"
 	);
 };
+
+export const login = (password: string) => {
+	return request<undefined>(
+		HttpMethod.POST,
+		"login",
+		{ data: { password: password } }
+	);
+};

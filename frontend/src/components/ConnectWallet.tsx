@@ -1,11 +1,11 @@
 import Web3 from 'web3';
-import { useAddressState } from '../middleware/Wallet';
+import { useAddress } from '../middleware/Wallet';
 import { useState } from 'react';
 import { useLocalStorage } from 'usehooks-ts';
 
 const ConnectWallet = (props: { className?: string, onLocked?: () => any }) => {
 	const [loggedOut, setLoggedOut] = useLocalStorage("loggedOut", false);
-	const [address, setAddress] = useAddressState();
+	const [address, setAddress] = useAddress();
 	const [hovering, setHovering] = useState(false);
 
 	const connectWallet = async (e: React.MouseEvent<HTMLElement>) => {

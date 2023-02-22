@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import {  Purchase } from "../helpers/api";
 import { getInstance } from "../helpers/contract";
 import { gweiToEth, prettyDate } from "../helpers/utils";
-import { useAddressState } from "../middleware/Wallet";
+import { useAddress } from "../middleware/Wallet";
 import routes from "../routes";
 import ConfirmationModal from "./ConfirmationModal";
 import QuantityButton from "./QuantityButton";
@@ -12,7 +12,7 @@ import QuantityButton from "./QuantityButton";
 const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange: () => any }) => {
 	const [selectedQuantity, setSelectedQuantity] = useState(props.purchase.quantity);
 	const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-	const [address] = useAddressState();
+	const [address] = useAddress();
 	const price = gweiToEth(props.purchase.event.price);
 
 	const quantityButtonClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {

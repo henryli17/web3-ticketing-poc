@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import NotFound from "../components/NotFound";
 import PurchaseCard from "../components/PurchaseCard";
 import { getPurchases, Purchase } from "../helpers/api";
-import { useAddressState } from "../middleware/Wallet";
+import { useAddress } from "../middleware/Wallet";
 
 enum PurchaseType {
 	UPCOMING = "upcoming",
@@ -12,7 +12,7 @@ enum PurchaseType {
 
 const PurchasesView = () => {
 	const [error, setError] = useState(false);
-	const [address] = useAddressState();
+	const [address] = useAddress();
 	const [purchaseData, setPurchaseData] = useState<PurchaseData>();
 	const [updatePurchases, setUpdatePurchases] = useState(false);
 	const [purchaseType, setPurchaseType] = useState<PurchaseType>(PurchaseType.UPCOMING);

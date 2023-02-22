@@ -7,14 +7,14 @@ import Spinner from "../components/Spinner";
 import { getEvent, Event } from "../helpers/api";
 import { getInstance, getResaleTokens, ResaleToken } from "../helpers/contract";
 import { gweiToEth, gweiToWei } from "../helpers/utils";
-import { useAddressState } from "../middleware/Wallet";
+import { useAddress } from "../middleware/Wallet";
 import routes from "../routes";
 
 const SingleEventResaleView = () => {
 	const { id } = useParams();
 	const [event, setEvent] = useState<Event>();
 	const [resaleTokens, setResaleTokens] = useState<ResaleToken[]>([]);
-	const [address] = useAddressState();
+	const [address] = useAddress();
 	const [error, setError] = useState(false);
 	const [success, setSuccess] = useState(false);
 	const [updateResaleTokens, setUpdateResaleTokens] = useState(false);

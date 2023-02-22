@@ -2,12 +2,16 @@ require('dotenv').config()
 
 const ganache = require("ganache");
 const restify = require("restify");
+const cookies = require('restify-cookies');
+const crypto = require('crypto');
 const errs = require('restify-errors');
 const db = require("./helpers/db.js");
 const contract = require("./helpers/contract.js");
 const path = require('path');
 const server = restify.createServer();
-const API_BASE = "/api"
+const sessions = new Map();
+const API_BASE = "/api";
+const API_ADMIN_PASSWORD = "password";
 
 ganache
 	.server({
@@ -23,9 +27,23 @@ ganache
 
 server.listen(3001);
 server.use(restify.plugins.queryParser());
-server.use((_, res, next) => {
+server.use(restify.plugins.bodyParser());
+server.use(cookies.parse);
+server.use((req, res, next) => {
+	const sid = req.cookies.sid || crypto.randomBytes(32).toString('base64');
+
+	if (!req.cookies.sid) {
+		res.setCookie("sid", sid);
+	}
+	
+	if (!sessions.has(sid)) {
+		sessions.set(sid, {});
+	}
+	
 	res.header("Access-Control-Allow-Origin", "*");
 	res.header("Access-Control-Allow-Headers", "X-Requested-With");
+	req.session = sessions.get(sid);
+
 	return next();
 });
 
@@ -34,7 +52,7 @@ const response = async (req, res, fn) => {
 		const data = await fn(req);
 		res.send(
 			200,
-			JSON.parse(JSON.stringify(data))
+			data ? JSON.parse(JSON.stringify(data)) : undefined
 		);
 	} catch (e) {
 		console.error(e);
@@ -186,5 +204,25 @@ server.get(API_BASE + "/contract", async (req, res) => {
 			ABI: contract.ABI,
 			address: contract.address
 		};
+	});
+});
+
+server.post(API_BASE + "/login", async (req, res) => {
+	await response(req, res, async (req) => {
+		if (req.body.password === API_ADMIN_PASSWORD) {
+			req.session.admin = true;
+		} else {
+			throw new errs.UnauthorizedError()
+		}
+	});
+});
+
+server.post(API_BASE + "/events/:id", async (req, res) => {
+	await response(req, res, async (req) => {
+		if (!req.session.admin) {
+			throw new errs.UnauthorizedError()
+		}
+
+		return req.session;
 	});
 });

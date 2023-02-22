@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { CaretLeftFill } from "react-bootstrap-icons";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Alert from "../components/Alert";
 import NotFound from "../components/NotFound";
 import Spinner from "../components/Spinner";
@@ -18,6 +18,7 @@ const SingleEventResaleView = () => {
 	const [error, setError] = useState(false);
 	const [success, setSuccess] = useState(false);
 	const [updateResaleTokens, setUpdateResaleTokens] = useState(false);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		getResaleTokens(Number(id))
@@ -27,12 +28,12 @@ const SingleEventResaleView = () => {
 				if (r.length > 0) {
 					setResaleTokens(r);
 				} else {
-					setError(true);
+					navigate(routes.event(Number(id)))
 				}
 			})
 			.catch(() => setError(true))
 		;
-	}, [id, address, updateResaleTokens]);
+	}, [id, address, updateResaleTokens, navigate]);
 
 	useEffect(() => {
 		getEvent(Number(id))

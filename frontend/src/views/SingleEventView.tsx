@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import ConnectWallet from "../components/ConnectWallet";
 import GenrePill from "../components/GenrePill";
 import NotFound from "../components/NotFound";
@@ -7,14 +7,16 @@ import QuantityButton from "../components/QuantityButton";
 import Spinner from "../components/Spinner";
 import Alert from "../components/Alert";
 import { Event, getEvent } from "../helpers/api";
-import { getInstance } from "../helpers/contract";
+import { getInstance, getResaleTokens, ResaleToken } from "../helpers/contract";
 import { gweiToEth, gweiToWei, prettyDate } from "../helpers/utils";
 import { useAddressState } from "../middleware/Wallet";
+import routes from "../routes";
 
 const SingleEventView = () => {
 	const { id } = useParams();
 	const [error, setError] = useState(false);
 	const [event, setEvent] = useState<Event>();
+	const [resaleTokens, setResaleTokens] = useState<ResaleToken[]>([]);
 	const [quantityRemaining, setQuantityRemaining] = useState(0);
 	const [showSuccess, setShowSuccess] = useState(false);
 	const [showLocked, setShowLocked] = useState(false);
@@ -34,7 +36,16 @@ const SingleEventView = () => {
 			})
 			.catch(() => setError(true))
 		;
-	}, [id, updateEvent]);
+
+		getResaleTokens(Number(id))
+			.then(resaleTokens => {
+				setResaleTokens(
+					resaleTokens.filter(r => !r.sold && r.owner !== address)
+				)
+			})
+			.catch(() => setError(true))
+		;
+	}, [id, updateEvent, address]);
 
 	useEffect(() => {
 		if (address) {
@@ -93,14 +104,22 @@ const SingleEventView = () => {
 						<h2 className="font-bold text-indigo-500 mb-8">
 							{gweiToEth(event.price)} ETH
 						</h2>
-						<PurchaseButton
-							address={address}
-							event={event}
-							className="mb-8 btn-basic"
-							onSuccess={() => { setShowSuccess(true); setUpdateEvent(!updateEvent) }}
-							onLocked={() => setShowLocked(true)}
-							quantityRemaining={quantityRemaining}
-						/>
+						<div className="flex mb-8 space-x-2">
+							<PurchaseButton
+								address={address}
+								event={event}
+								className="btn-basic"
+								onSuccess={() => { setShowSuccess(true); setUpdateEvent(!updateEvent) }}
+								onLocked={() => setShowLocked(true)}
+								quantityRemaining={quantityRemaining}
+							/>
+							{
+								address && resaleTokens.length > 0 &&
+								<Link to={routes.eventResale(Number(id))} type="button" className="btn btn-basic">
+									View Resale
+								</Link>
+							}
+						</div>
 						<div className="mb-8 text-lg">
 							{event.description}
 						</div>

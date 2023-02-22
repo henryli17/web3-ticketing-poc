@@ -8,6 +8,7 @@ import SingleEventView from './views/SingleEventView';
 import EventsView from './views/EventsView';
 import PurchasesView from './views/PurchasesView';
 import RequireWallet from './middleware/RequireWallet';
+import SingleEventResaleView from './views/SingleEventResaleView';
 
 const App = () => {
   	return (
@@ -18,6 +19,7 @@ const App = () => {
 						<Route path={routes.home()} element={<HomeView />} />
 						<Route path={routes.events()} element={<EventsView />} />
 						<Route path={routes.event()} element={<SingleEventView />} />
+						<Route path={routes.eventResale()} element={<RequireWallet Redirect={SingleEventResaleView} />} />
 						<Route path={routes.purchases()} element={<RequireWallet Redirect={PurchasesView} />} />
 						<Route path="*" element={<Navigate to={routes.home()} replace />} />
 					</Route>

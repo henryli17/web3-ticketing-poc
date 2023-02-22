@@ -15,7 +15,8 @@ const PurchasesView = () => {
 	const [address] = useAddressState();
 	const [purchaseData, setPurchaseData] = useState<PurchaseData>(emptyPurchaseData());
 	const [updatePurchases, setUpdatePurchases] = useState(false);
-	const [purchaseType, setPurchaseType] = useState<PurchaseType>(PurchaseType.UPCOMING)
+	const [purchaseType, setPurchaseType] = useState<PurchaseType>(PurchaseType.UPCOMING);
+	const [hasPurchases, setHasPurchases] = useState(false);
 
 	useEffect(() => {
 		getPurchases(address)
@@ -39,15 +40,21 @@ const PurchasesView = () => {
 	}, [address, updatePurchases]);
 	
 	useEffect(() => {
+		if (purchaseData[purchaseType].length) {
+			setHasPurchases(true);
+			return;
+		}
+
 		// If the selected purchase type has no data, try to select one that does
-		if (!purchaseData[purchaseType].length) {
-			for (const type of Object.values(PurchaseType)) {
-				if (purchaseData[type].length) {
-					setPurchaseType(_ => type);
-					break;
-				}
+		for (const type of Object.values(PurchaseType)) {
+			if (purchaseData[type].length) {
+				setPurchaseType(_ => type);
+				return;
 			}
 		}
+
+		// All purchase types had no data
+		setHasPurchases(false);
 	}, [purchaseData, purchaseType])
 
 	if (error) {
@@ -77,6 +84,10 @@ const PurchasesView = () => {
 						})
 				}
 			</div>
+			{
+				!hasPurchases &&
+				<h2 className="px-10">We didn't find any purchases yet.</h2>
+			}
 			{
 				purchaseData[purchaseType].map((purchase, i) => {
 					return (

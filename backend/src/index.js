@@ -107,12 +107,17 @@ server.get(API_BASE + "/locations", async (req, res) => {
 
 server.get(API_BASE + "/purchases/:address", async (req, res) => {
 	await response(req, res, async (req) => {
-		const tokens = await contract.getTokens(req.params.address);
-		const events = await db.getEvents({ id: Array.from(tokens.keys()) })
-		const resaleTokenEntries = await contract.instance.methods.getResaleTokenEntries(req.params.address).call();
 		const eventsById = new Map();
 		const resaleTokenEntriesById = new Map();
 		const purchases = [];
+		const tokens = await contract.getTokens(req.params.address);
+		const resaleTokenEntries = await contract.instance.methods.getResaleTokenEntries(req.params.address).call();
+		const events = await db.getEvents({
+			id: [
+				...Array.from(tokens.keys()),
+				...resaleTokenEntries.map(r => r.eventId)
+			]
+		});
 
 		for (const event of events) {
 			eventsById.set(event.id, event);

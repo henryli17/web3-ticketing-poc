@@ -83,6 +83,7 @@ const SingleEventResaleView = () => {
 					resaleTokens.map((resaleToken, i) => {
 						return (
 							<ResaleListing
+								key={i}
 								event={event}
 								resaleToken={resaleToken}
 								address={address}

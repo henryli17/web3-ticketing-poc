@@ -78,7 +78,7 @@ const NavBar = () => {
 						</div>
 					</div>
 				</div>
-				<div className={"sm:hidden " + (mobileMenuHidden) ? "hidden" : ""}>
+				<div className={"sm:hidden " + (mobileMenuHidden ? "hidden" : "")}>
 					<div className="pt-2 pb-3 w-full">
 						<SearchBar className="mx-2 mb-2" onSubmit={search} />
 						<div className="flex mx-2 mb-3">

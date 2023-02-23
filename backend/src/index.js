@@ -8,6 +8,7 @@ const errs = require('restify-errors');
 const db = require("./helpers/db.js");
 const contract = require("./helpers/contract.js");
 const utils = require("./helpers/utils.js");
+const validators = require("./helpers/validators.js");
 const path = require('path');
 const server = restify.createServer();
 const sessions = new Map();
@@ -157,44 +158,13 @@ server.post(API_BASE + "/login", async (req, res) => {
 });
 
 server.post(API_BASE + "/events", async (req, res) => {
-	const isValidInput = (input) => {
-		const types = {
-			name: "string",
-			artist: "string",
-			venue: "string",
-			city: "string",
-			time: "number",
-			price: "number",
-			quantity: "number",
-			imagePath: "string",
-			description: "string",
-			genres: "object"
-		};
-
-		for (const [key, type] of Object.entries(types)) {
-			if (typeof input[key] !== type) {
-				return false;
-			}
-		}
-		
-		if (
-			new Date(input.time * 1000) <= new Date() ||
-			input.quantity <= 0 ||
-			input.price < 0
-		) {
-			return false;
-		}
-
-		return true;
-	};
-
 	await response(req, res, async (req) => {
 		if (!req.session.admin) {
 			// TODO: uncomment
 			// throw new errs.UnauthorizedError();
 		}
 
-		if (!isValidInput(req.body)) {
+		if (!validators.createEvent(req.body)) {
 			throw new errs.BadRequestError();
 		}
 

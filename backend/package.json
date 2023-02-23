@@ -17,6 +17,7 @@
   "dependencies": {
     "dotenv": "^16.0.3",
     "ganache": "^7.7.5",
+    "jsonschema": "^1.4.1",
     "knex": "^2.4.2",
     "mysql": "^2.18.1",
     "node": "^18.12.1",

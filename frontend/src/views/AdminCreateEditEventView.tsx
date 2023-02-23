@@ -107,7 +107,7 @@ const AdminCreateEditEventView = () => {
 				;
 
 				setEvent(event);
-				setMinQuantity(contractEvent.quantity - contractEvent.supplied);
+				setMinQuantity(contractEvent.supplied);
 			} catch (e) {
 				navigate(routes.admin.events());
 			}

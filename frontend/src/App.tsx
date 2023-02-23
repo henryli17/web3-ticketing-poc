@@ -13,6 +13,7 @@ import AdminLoginView from './views/AdminLoginView';
 import Admin from './middleware/Admin';
 import AdminEventsView from './views/AdminEventsView';
 import RequireAdmin from './middleware/RequireAdmin';
+import AdminSingleEventView from './views/AdminSingleEventView';
 
 const App = () => {
   	return (
@@ -31,6 +32,7 @@ const App = () => {
 				<Route element={<Admin />}>
 					<Route path={routes.admin.login()} element={<AdminLoginView />} />
 					<Route path={routes.admin.events()} element={<RequireAdmin redirect={AdminEventsView} />} />
+					<Route path={routes.admin.event()} element={<RequireAdmin redirect={AdminSingleEventView} />} />
 				</Route>
 			</Routes>
 		</>

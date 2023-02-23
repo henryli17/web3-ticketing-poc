@@ -39,6 +39,7 @@ const AdminLoginView = () => {
 						placeholder="Password"
 						value={password}
 						onChange={e => setPassword(e.target.value)}
+						autoComplete="off"
 					/>
 					<button type="submit" className="absolute inset-y-0 right-0 pr-3 flex items-center">
 						<ArrowRightShort />

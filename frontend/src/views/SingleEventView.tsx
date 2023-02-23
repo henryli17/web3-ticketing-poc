@@ -81,7 +81,7 @@ const SingleEventView = () => {
 			<div className="grid grid-cols-1 py-10 lg:grid-cols-2 ">
 				<div className="grid-span-1 flex mb-16 lg:mb-0">
 					<div className="my-auto">
-						<img className="mx-auto shadow-lg w-10/12 md:w-8/12 lg:w-10/12 xl:w-8/12 rounded" src={event.imagePath} alt={event.artist} />
+						<img className="mx-auto shadow-lg w-10/12 md:w-8/12 lg:w-10/12 xl:w-8/12 rounded" src={event.imageUrl} alt={event.artist} />
 					</div>
 				</div>
 				<div className="grid-span-1 flex">

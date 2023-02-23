@@ -10,7 +10,8 @@ const routes = {
 	purchases: () => "/purchases",
 	admin: {
 		login: () => "/admin",
-		events: () => "/admin/events"
+		events: () => "/admin/events",
+		event: (id?: number | string) => "/admin/events/" + param("id", id),
 	}
 };
 

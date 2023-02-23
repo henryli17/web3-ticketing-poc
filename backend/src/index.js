@@ -43,8 +43,9 @@ server.use((req, res, next) => {
 		sessions.set(sid, {});
 	}
 	
-	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Origin", "http://localhost:3000");
 	res.header("Access-Control-Allow-Headers", "X-Requested-With");
+	res.header("Access-Control-Allow-Credentials", "true");
 	req.session = sessions.get(sid);
 
 	return next();
@@ -109,7 +110,7 @@ server.get(API_BASE + "/events/:id/metadata", async (req, res) => {
 		return {
 			title: event.name,
 			description: event.description,
-			image: event.imagePath,
+			image: event.imageUrl,
 			properties: {
 				artist: event.artist,
 				venue: event.venue,
@@ -150,7 +151,7 @@ server.get(API_BASE + "/contract", async (req, res) => {
 
 server.post(API_BASE + "/login", async (req, res) => {
 	await response(req, res, async (req) => {
-		if (req.body.password === API_ADMIN_PASSWORD) {
+		if (req.session.admin || req.body.password === API_ADMIN_PASSWORD) {
 			req.session.admin = true;
 		} else {
 			throw new errs.UnauthorizedError()

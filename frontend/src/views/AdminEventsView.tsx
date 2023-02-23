@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import EventCard from "../components/EventCard";
 import NotFound from "../components/NotFound";
 import PaginationButtons from "../components/PaginationButtons";
 import SearchBar from "../components/SearchBar";
 import { getEvents, GetEventsResponse } from "../helpers/api";
+import routes from "../routes";
 
 const AdminEventsView = () => {
 	const [eventsRes, setEventsRes] = useState<GetEventsResponse>();
@@ -35,9 +37,9 @@ const AdminEventsView = () => {
 					<div className="font-medium">Events</div>
 				</div>
 				<div className="ml-auto">
-					<button className="btn btn-basic">
+					<Link to={routes.admin.event("create")} className="btn btn-basic">
 						Create Event
-					</button>
+					</Link>
 				</div>
 			</div>
 			<div className="space-y-3">
@@ -53,7 +55,7 @@ const AdminEventsView = () => {
 					!eventsRes.events.length &&
 					<div className="p-5 text-2xl">There are currently no events.</div>
 				}
-				{eventsRes.events.map(event => <EventCard key={event.id} event={event} />)}
+				{eventsRes.events.map(event => <EventCard key={event.id} event={event} to={routes.admin.event(event.id)} />)}
 			</div>
 			<div className="flex justify-end space-x-2">
 				<PaginationButtons

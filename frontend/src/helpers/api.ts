@@ -20,7 +20,7 @@ export type Event = {
 	time: string
 	price: number
 	quantity: number
-	imagePath: string
+	imageUrl: string
 	description: string
 	genres: string[]
 };
@@ -46,7 +46,8 @@ const request = <T>(method: HttpMethod, endpoint: string, options?: { data?: obj
 				method: method,
 				url: `${API_BASE}/${endpoint}`,
 				data: options?.data,
-				params: options?.params
+				params: options?.params,
+				withCredentials: true
 			});
 
 			resolve(res.data);
@@ -113,7 +114,7 @@ export const getContract = () => {
 	);
 };
 
-export const login = (password: string) => {
+export const login = (password?: string) => {
 	return request<undefined>(
 		HttpMethod.POST,
 		"login",

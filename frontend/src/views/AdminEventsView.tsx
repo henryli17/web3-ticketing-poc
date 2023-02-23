@@ -14,7 +14,6 @@ const AdminEventsView = () => {
 	const [search, setSearch] = useState("");
 
 	useEffect(() => {
-
 		getEvents({ offset: offset, search: search })
 			.then(setEventsRes)
 			.catch(() => setError(true))

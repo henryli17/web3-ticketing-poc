@@ -13,7 +13,7 @@ enum Action {
 	EDIT = "Edit"
 };
 
-const AdminSingleEventView = () => {
+const AdminCreateEditEventView = () => {
 	const { id } = useParams();
 	const [action, setAction] = useState<Action>();
 	const [error, setError] = useState(false);
@@ -227,4 +227,4 @@ const Input = (props: {
 	);
 };
 
-export default AdminSingleEventView;
+export default AdminCreateEditEventView;

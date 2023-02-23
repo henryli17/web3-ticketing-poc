@@ -8,7 +8,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Events is ERC1155, Ownable {
 	struct Event {
-		string name; // TODO: remove name
 		uint time;
 		uint price;
 		uint quantity;
@@ -180,15 +179,14 @@ contract Events is ERC1155, Ownable {
 		revert("Invalid parameters.");
 	}
 
-	function createEvent(uint _id, string memory _name, uint _time, uint _price, uint _quantity) external onlyOwner {
+	function createEvent(uint _id, uint _time, uint _price, uint _quantity) external onlyOwner {
 		Event storage e = events[_id];
 
 		require(e.created == false, "An event with this ID has already been created.");
 		require(_quantity > 0, "Quantity must be greater than 0.");
-		// TODO: check time
+		require(_time > block.timestamp, "Time needs to be in the future.");
 
 		events[_id] = Event({
-			name: _name,
 			time: _time,
 			price: _price * (1 gwei),
 			quantity: _quantity,
@@ -197,15 +195,14 @@ contract Events is ERC1155, Ownable {
 		});
 	}
 
-	function updateEvent(uint _id, string memory _name, uint _time, uint _quantity) external onlyOwner {
+	function updateEvent(uint _id, uint _time, uint _quantity) external onlyOwner {
 		Event storage e = events[_id];
 
 		require(e.created == true, "An event with this ID does not exist.");
 		require(_quantity >= e.supplied, "Quantity must be greater or equal than what has been supplied already.");
 		require(_quantity > 0, "Quantity must be greater than 0.");
-		// TODO: check time
+		require(_time > block.timestamp, "Time needs to be in the future.");
 
-		e.name = _name;
 		e.time = _time;
 		e.quantity = _quantity;
 	}

@@ -12,7 +12,6 @@ const main = async () => {
 			.methods
 			.createEvent(
 				parseInt(event.id),
-				event.name,
 				new Date(event.time).getTime() / 1000,
 				parseInt(event.price),
 				parseInt(event.quantity)

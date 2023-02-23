@@ -188,7 +188,6 @@ server.post(API_BASE + "/events", async (req, res) => {
 			.methods
 			.createEvent(
 				event.id,
-				event.name,
 				event.time,
 				event.price,
 				event.quantity
@@ -228,7 +227,6 @@ server.put(API_BASE + "/events", async (req, res) => {
 			.methods
 			.updateEvent(
 				event.id,
-				event.name,
 				event.time,
 				event.quantity
 			)

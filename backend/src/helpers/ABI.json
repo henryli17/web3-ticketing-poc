@@ -544,11 +544,6 @@
     "name": "events",
     "outputs": [
       {
-        "internalType": "string",
-        "name": "name",
-        "type": "string"
-      },
-      {
         "internalType": "uint256",
         "name": "time",
         "type": "uint256"
@@ -1020,11 +1015,6 @@
         "type": "uint256"
       },
       {
-        "internalType": "string",
-        "name": "_name",
-        "type": "string"
-      },
-      {
         "internalType": "uint256",
         "name": "_time",
         "type": "uint256"
@@ -1051,11 +1041,6 @@
         "internalType": "uint256",
         "name": "_id",
         "type": "uint256"
-      },
-      {
-        "internalType": "string",
-        "name": "_name",
-        "type": "string"
       },
       {
         "internalType": "uint256",

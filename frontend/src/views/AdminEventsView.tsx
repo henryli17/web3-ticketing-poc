@@ -12,6 +12,7 @@ const AdminEventsView = () => {
 	const [error, setError] = useState(false);
 	const [offset, setOffset] = useState(0);
 	const [search, setSearch] = useState("");
+	let timeout: NodeJS.Timeout;
 
 	useEffect(() => {
 		getEvents({ offset: offset, search: search })
@@ -43,11 +44,13 @@ const AdminEventsView = () => {
 			</div>
 			<div className="space-y-3 mb-4">
 				<SearchBar
-					onSubmit={(search) => setSearch(search)}
 					onChange={e => {
-						if (e.target.value === "") {
-							setSearch("");
-						}
+						// Only search if there has been no input for 300ms
+						clearTimeout(timeout);
+						
+						timeout = setTimeout(() => {
+							setSearch(e.target.value);
+						}, 300);
 					}}
 				/>
 				{

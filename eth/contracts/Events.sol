@@ -184,7 +184,6 @@ contract Events is ERC1155, Ownable {
 		Event storage e = events[_id];
 
 		require(e.created == false, "An event with this ID has already been created.");
-		require(_price > 0, "Price must be greater than 0.");
 		require(_quantity > 0, "Quantity must be greater than 0.");
 
 		events[_id] = Event({
@@ -197,17 +196,15 @@ contract Events is ERC1155, Ownable {
 		});
 	}
 
-	function updateEvent(uint _id, string memory _name, uint _time, uint _price, uint _quantity) external onlyOwner {
+	function updateEvent(uint _id, string memory _name, uint _time, uint _quantity) external onlyOwner {
 		Event storage e = events[_id];
 
 		require(e.created == true, "An event with this ID does not exist.");
-		require(_price > 0, "Price must be greater than 0.");
 		require(_quantity >= e.supplied, "Quantity must be greater or equal than what has been supplied already.");
 		require(_quantity > 0, "Quantity must be greater than 0.");
 
 		e.name = _name;
 		e.time = _time;
-		e.price = _price * (1 gwei);
 		e.quantity = _quantity;
 	}
 

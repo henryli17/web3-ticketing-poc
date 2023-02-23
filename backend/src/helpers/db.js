@@ -9,7 +9,7 @@ const knex = require('knex')({
 	}
 });
 
-const getEvents = async (options) => {
+const getEvents = async (options, deployedOnly = true) => {
 	const events = {};
 	const rows = await knex
 		.select("events.*")
@@ -17,8 +17,11 @@ const getEvents = async (options) => {
 		.table("events")
 		.leftJoin("event-genre", "events.id", "event-genre.eventId")
 		.leftJoin("genres", "event-genre.genreId", "genres.id")
-		.where("deployed", 1)
 		.modify(query => {
+			if (deployedOnly) {
+				query.where("deployed", 1);
+			}
+
 			if (options?.id) {
 				if (Array.isArray(options.id)) {
 					query.whereIn("events.id", options.id);
@@ -95,7 +98,11 @@ const createEvent = async (event) => {
 	return fields.shift();
 };
 
-const addGenresForEvent = async (eventId, eventGenres) => {
+const updateEvent = (id, event) => {
+	return knex('events').where({ id: id }).update(event);
+};
+
+const setGenresForEvent = async (eventId, eventGenres) => {
 	for (const name of eventGenres) {
 		await knex("genres")
 			.insert({ name: name })
@@ -115,6 +122,11 @@ const addGenresForEvent = async (eventId, eventGenres) => {
 		genresByName.set(genre.name, genre);
 	}
 
+	await knex("event-genre")
+		.where({ eventId: eventId })
+		.del()
+	;
+
 	for (const name of eventGenres) {
 		await knex("event-genre")
 			.insert({
@@ -127,11 +139,11 @@ const addGenresForEvent = async (eventId, eventGenres) => {
 	}
 };
 
-
 module.exports = {
 	getEvents,
 	getGenres,
 	getLocations,
 	createEvent,
-	addGenresForEvent
+	updateEvent,
+	setGenresForEvent
 };

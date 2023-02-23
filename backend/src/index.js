@@ -160,8 +160,7 @@ server.post(API_BASE + "/login", async (req, res) => {
 server.post(API_BASE + "/events", async (req, res) => {
 	await response(req, res, async (req) => {
 		if (!req.session.admin) {
-			// TODO: uncomment
-			// throw new errs.UnauthorizedError();
+			throw new errs.UnauthorizedError();
 		}
 
 		if (!validators.createEvent(req.body)) {
@@ -170,12 +169,12 @@ server.post(API_BASE + "/events", async (req, res) => {
 
 		const event = { ...req.body };
 
-		const dbEvent = { ...event, time: new Date(req.body.time * 1000) };
+		const dbEvent = { ...event, time: new Date(event.time * 1000) };
 		delete dbEvent.genres;
 
 		event.id = await db.createEvent(dbEvent);
 
-		await db.addGenresForEvent(event.id, req.body.genres);
+		await db.setGenresForEvent(event.id, event.genres);
 		await contract
 			.instance
 			.methods
@@ -188,6 +187,49 @@ server.post(API_BASE + "/events", async (req, res) => {
 			)
 			.send({ from: contract.owner, gas: contract.gas })
 		;
-		// update event deployed
+		await db.updateEvent(event.id, { deployed: 1 });
+	});
+});
+
+server.put(API_BASE + "/events", async (req, res) => {
+	await response(req, res, async (req) => {
+		if (!req.session.admin) {
+			throw new errs.UnauthorizedError();
+		}
+
+		if (!validators.updateEvent(req.body)) {
+			throw new errs.BadRequestError();
+		}
+
+		const event = { ...req.body };
+		const contractEvent = await contract
+			.instance
+			.methods
+			.events(event.id)
+			.call()
+		;
+
+		if (!contractEvent.created) {
+			throw new errs.BadRequestError();
+		}
+
+		await contract
+			.instance
+			.methods
+			.updateEvent(
+				event.id,
+				event.name,
+				event.time,
+				event.quantity
+			)
+			.send({ from: contract.owner, gas: contract.gas })
+		;
+
+		await db.setGenresForEvent(event.id, event.genres);
+
+		const dbEvent = { ...event, time: new Date(event.time * 1000) };
+		delete dbEvent.genres;
+
+		await db.updateEvent(event.id, dbEvent);
 	});
 });

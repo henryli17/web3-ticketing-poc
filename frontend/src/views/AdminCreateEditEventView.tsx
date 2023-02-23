@@ -3,10 +3,11 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import routes from "../routes";
 import * as Yup from "yup";
-import { createEvent, Event, getEvent } from "../helpers/api";
-import { ethToGwei, gweiToEth } from "../helpers/utils";
+import { createEvent, Event, getEvent, updateEvent } from "../helpers/api";
+import { ethToGwei, gweiToEth, omit } from "../helpers/utils";
 import { useAdmin } from "../middleware/Admin";
 import Alert from "../components/Alert";
+import { getInstance } from "../helpers/contract";
 
 enum Action {
 	CREATE = "Create",
@@ -16,17 +17,25 @@ enum Action {
 const AdminCreateEditEventView = () => {
 	const { id } = useParams();
 	const [error, setError] = useState(false);
+	const [success, setSuccess] = useState(false);
+	const [minQuantity, setMinQuantity] = useState(1);
 	const [event, setEvent] = useState<Event>();
 	const [, setAdmin]= useAdmin();
 	const navigate = useNavigate();
+	const dateToString = (date: Date) => {
+		return date.toISOString().substring(
+			0,
+			date.toISOString().length - 8)
+		;
+	};
 	const formik = useFormik({
 		initialValues: {
 			name: event?.name || "",
 			artist: event?.artist || "",
 			venue: event?.venue || "",
 			city: event?.city || event?.name || "",
-			time: "", //todo
-			price: event?.price ? gweiToEth(event.price) : "",
+			time: (event?.city) ? dateToString(new Date(event.time)) : "",
+			price: (event?.price) ? gweiToEth(event.price) : "",
 			quantity: event?.quantity || "",
 			imageUrl: event?.imageUrl || "",
 			description: event?.description || "",
@@ -39,23 +48,30 @@ const AdminCreateEditEventView = () => {
 			city: Yup.string().required("Required"),
 			time: Yup.string().required("Required"),
 			price: Yup.number().required("Required").min(0),
-			quantity: Yup.number().required("Required").min(1),
+			quantity: Yup.number().required("Required").min(minQuantity),
 			imageUrl: Yup.string().required("Required"),
 			description: Yup.string().required("Required"),
 			genres: Yup.string().required("Required")
 		}),
 		onSubmit: async values => {
 			try {
-				await createEvent({
+				const event = {
 					...values,
+					id: Number(id),
 					time: new Date(values.time).getTime() / 1000,
 					price: ethToGwei(values.price),
 					quantity: Number(values.quantity),
 					imageUrl: values.imageUrl,
 					genres: values.genres.split("\n")
-				});
+				};
 
-				navigate(routes.admin.events());
+				if (action === Action.CREATE) {
+					await createEvent(omit(event, "id"));
+					navigate(routes.admin.events());
+				} else {
+					await updateEvent(omit(event, "price"));
+					setSuccess(true);
+				}
 			} catch (e: any) {
 				console.error(e);
 
@@ -75,15 +91,28 @@ const AdminCreateEditEventView = () => {
 	
 	tomorrow.setDate(tomorrow.getDate() + 1);
 
-
 	useEffect(() => {
-		if (id && action === Action.EDIT) {
-			getEvent(Number(id))
-				.then(setEvent)
-				.catch(() => navigate(routes.admin.events()))
-			;
-		}
-	}, [id, action, navigate]);
+		(async () => {
+			if (!id || action === Action.CREATE) {
+				return;
+			}
+
+			try {
+				const event = await getEvent(Number(id));
+				const contract = await getInstance();
+				const contractEvent = await contract
+					.methods
+					.events(event.id)
+					.call()
+				;
+
+				setEvent(event);
+				setMinQuantity(contractEvent.quantity - contractEvent.supplied);
+			} catch (e) {
+				navigate(routes.admin.events());
+			}
+		})();
+	}, [id, action, navigate, success]);
 
 	return (
 		<div className="container mx-auto py-16 px-10">
@@ -122,7 +151,7 @@ const AdminCreateEditEventView = () => {
 					name="time"
 					label="Time"
 					type="datetime-local"
-					min={tomorrow.toISOString().substring(0, tomorrow.toISOString().length - 8)}
+					min={dateToString(tomorrow)}
 					formik={formik}
 				/>
 				<Input
@@ -139,7 +168,7 @@ const AdminCreateEditEventView = () => {
 					label="Ticket Quantity"
 					type="number"
 					formik={formik}
-					min={1} // todo: reference with contract
+					min={minQuantity}
 				/>
 				<Input
 					name="imageUrl"
@@ -165,6 +194,13 @@ const AdminCreateEditEventView = () => {
 						title="Error!"
 						message={`Failed to ${action.toLowerCase()} event.`}
 						className="bg-red-50 text-red-700"
+					/>
+				}
+				{
+					success &&
+					<Alert
+						message={`Event successfully updated.`}
+						className="bg-green-50 text-green-700"
 					/>
 				}
 				<div className="flex">

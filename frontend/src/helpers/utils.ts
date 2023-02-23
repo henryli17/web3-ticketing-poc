@@ -16,6 +16,11 @@ export const range = (start: number, end: number) => {
 	return Array(end - start + 1).fill(start).map((x, y) => x + y);
 };
 
+export const omit = (object: any, key: string) => {
+	const { [key]: _, ...rest } = object;
+	return rest;
+};
+
 export const gweiToEth = (gwei: number | string) => Web3.utils.fromWei(gwei.toString(), "gwei");
 export const gweiToWei = (gwei: number | string) => Web3.utils.toWei(gwei.toString(), "gwei");
 export const ethToGwei = (eth: number | string) => Number(eth) * Math.pow(10, 9);

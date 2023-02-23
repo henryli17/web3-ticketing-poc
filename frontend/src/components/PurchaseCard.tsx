@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CurrencyDollar, X, XLg } from "react-bootstrap-icons";
+import { CurrencyDollar, XLg } from "react-bootstrap-icons";
 import {  Purchase } from "../helpers/api";
 import { getInstance } from "../helpers/contract";
 import { gweiToEth } from "../helpers/utils";

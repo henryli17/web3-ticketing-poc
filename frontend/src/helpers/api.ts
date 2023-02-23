@@ -3,7 +3,9 @@ import { AbiItem } from 'web3-utils';
 
 enum HttpMethod {
 	GET = "get",
-	POST = "post"
+	POST = "post",
+	PUT = "put",
+	DELETE = "delete"
 };
 
 export type GetEventsResponse = {
@@ -126,6 +128,14 @@ export const login = (password?: string) => {
 export const createEvent = (event: Omit<Event, "id">) => {
 	return request<undefined>(
 		HttpMethod.POST,
+		"events",
+		{ data: event }
+	);
+};
+
+export const updateEvent = (event: Omit<Event, "price">) => {
+	return request<undefined>(
+		HttpMethod.PUT,
 		"events",
 		{ data: event }
 	);

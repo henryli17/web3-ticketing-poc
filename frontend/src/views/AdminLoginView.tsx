@@ -15,7 +15,7 @@ const AdminLoginView = () => {
 	useEffect(() => {
 		login()
 			.then(() => setAdmin(true))
-			.catch(() => setError(true))
+			.catch(() => setAdmin(false))
 		;
 	}, [setAdmin])
 

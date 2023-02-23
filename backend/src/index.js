@@ -236,9 +236,12 @@ server.put(API_BASE + "/events", async (req, res) => {
 		;
 
 		await db.setGenresForEvent(event.id, event.genres);
-		await db.updateEvent(
+
+		const updatedEvent = await db.updateEvent(
 			event.id,
 			{ ...utils.omit(event, "genres"), time: new Date(event.time * 1000) }
 		);
+
+		return updatedEvent;
 	});
 });

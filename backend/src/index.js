@@ -163,7 +163,7 @@ server.post(API_BASE + "/login", async (req, res) => {
 server.post(API_BASE + "/events", async (req, res) => {
 	await response(req, res, async (req) => {
 		if (!req.session.admin) {
-			// throw new errs.UnauthorizedError();
+			throw new errs.UnauthorizedError();
 		}
 
 		const validator = validators.createEvent(req.body);

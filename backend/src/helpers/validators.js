@@ -43,7 +43,7 @@ const createEvent = (event) => {
 	const schema = { ...eventSchema };
 
 	delete schema.properties.id;
-	delete schema.required[0];
+	schema.properties.required = schema.properties.required.map(r => r !== "id")
 	
 	v.addSchema(genresSchema, '/genres');
 
@@ -52,10 +52,14 @@ const createEvent = (event) => {
 
 const updateEvent = (event) => {
 	const v = new Validator();
+	const schema = { ...eventSchema };
+
+	delete schema.properties.price;
+	schema.properties.required = schema.properties.required.map(r => r !== "price")
 
 	v.addSchema(genresSchema, '/genres');
 
-	return v.validate(event, eventSchema);
+	return v.validate(event, schema);
 };
 
 

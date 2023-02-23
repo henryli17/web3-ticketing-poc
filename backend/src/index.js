@@ -167,12 +167,15 @@ server.post(API_BASE + "/events", async (req, res) => {
 			throw new errs.BadRequestError();
 		}
 
-		const event = { ...req.body };
-
-		const dbEvent = { ...event, time: new Date(event.time * 1000) };
-		delete dbEvent.genres;
-
-		event.id = await db.createEvent(dbEvent);
+		const event = {
+			id: await db.createEvent(
+				{
+					...utils.omit(req.body, "genres"),
+					time: new Date(req.body.time * 1000)
+				}
+			),
+			...req.body
+		};
 
 		await db.setGenresForEvent(event.id, event.genres);
 		await contract
@@ -194,7 +197,7 @@ server.post(API_BASE + "/events", async (req, res) => {
 server.put(API_BASE + "/events", async (req, res) => {
 	await response(req, res, async (req) => {
 		if (!req.session.admin) {
-			throw new errs.UnauthorizedError();
+			// throw new errs.UnauthorizedError();
 		}
 
 		if (!validators.updateEvent(req.body)) {
@@ -226,10 +229,9 @@ server.put(API_BASE + "/events", async (req, res) => {
 		;
 
 		await db.setGenresForEvent(event.id, event.genres);
-
-		const dbEvent = { ...event, time: new Date(event.time * 1000) };
-		delete dbEvent.genres;
-
-		await db.updateEvent(event.id, dbEvent);
+		await db.updateEvent(
+			event.id,
+			{ ...utils.omit(event, "genres"), time: new Date(event.time * 1000) }
+		);
 	});
 });

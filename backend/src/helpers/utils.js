@@ -74,6 +74,12 @@ const getPurchases = async (address) => {
 	return purchases;
 };
 
+const omit = (object, key) => {
+	const { [key]: _, ...rest } = object;
+	return rest;
+};
+
 module.exports = {
-	getPurchases
+	getPurchases,
+	omit
 };

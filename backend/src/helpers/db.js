@@ -17,6 +17,7 @@ const getEvents = async (options, deployedOnly = true) => {
 		.table("events")
 		.leftJoin("event-genre", "events.id", "event-genre.eventId")
 		.leftJoin("genres", "event-genre.genreId", "genres.id")
+		.whereRaw("events.time > NOW()")
 		.modify(query => {
 			if (deployedOnly) {
 				query.where("deployed", 1);

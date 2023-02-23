@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import Web3 from "web3";
 import { Event } from "../helpers/api";
 import { gweiToEth, prettyDate } from "../helpers/utils";
 import routes from "../routes";

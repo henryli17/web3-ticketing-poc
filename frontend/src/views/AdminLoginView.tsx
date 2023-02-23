@@ -1,19 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowRightShort } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
 import { login } from "../helpers/api";
+import { useAdmin } from "../middleware/Admin";
+import routes from "../routes";
 
 const AdminLoginView = () => {
+	const [admin, setAdmin] = useAdmin();
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState(false);
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (admin) {
+			navigate(routes.admin.events());
+		}
+	}, [admin, navigate]);
 	
 	const submit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
 		try {
 			await login(password);
-			setError(false);
+			setAdmin(true);
 		} catch (e) {
 			setError(true);
 		}

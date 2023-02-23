@@ -10,6 +10,9 @@ import PurchasesView from './views/PurchasesView';
 import RequireWallet from './middleware/RequireWallet';
 import SingleEventResaleView from './views/SingleEventResaleView';
 import AdminLoginView from './views/AdminLoginView';
+import Admin from './middleware/Admin';
+import AdminEventsView from './views/AdminEventsView';
+import RequireAdmin from './middleware/RequireAdmin';
 
 const App = () => {
   	return (
@@ -20,12 +23,15 @@ const App = () => {
 						<Route path={routes.home()} element={<HomeView />} />
 						<Route path={routes.events()} element={<EventsView />} />
 						<Route path={routes.event()} element={<SingleEventView />} />
-						<Route path={routes.eventResale()} element={<RequireWallet Redirect={SingleEventResaleView} />} />
-						<Route path={routes.purchases()} element={<RequireWallet Redirect={PurchasesView} />} />
+						<Route path={routes.eventResale()} element={<RequireWallet redirect={SingleEventResaleView} />} />
+						<Route path={routes.purchases()} element={<RequireWallet redirect={PurchasesView} />} />
 						<Route path="*" element={<Navigate to={routes.home()} replace />} />
 					</Route>
 				</Route>
-				<Route path={routes.admin.login()} element={<AdminLoginView />} />
+				<Route element={<Admin />}>
+					<Route path={routes.admin.login()} element={<AdminLoginView />} />
+					<Route path={routes.admin.events()} element={<RequireAdmin redirect={AdminEventsView} />} />
+				</Route>
 			</Routes>
 		</>
 	);

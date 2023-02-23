@@ -9,7 +9,8 @@ const routes = {
 	eventResale: (id?: number) => `/events/${param("id", id)}/resale`,
 	purchases: () => "/purchases",
 	admin: {
-		login: () => "/admin/login"
+		login: () => "/admin",
+		events: () => "/admin/events"
 	}
 };
 

@@ -62,7 +62,6 @@ const updateEvent = (event) => {
 	return v.validate(event, schema);
 };
 
-
 module.exports = {
 	createEvent,
 	updateEvent

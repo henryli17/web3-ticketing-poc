@@ -42,7 +42,7 @@ const AdminEventsView = () => {
 					</Link>
 				</div>
 			</div>
-			<div className="space-y-3">
+			<div className="space-y-3 mb-4">
 				<SearchBar
 					onSubmit={(search) => setSearch(search)}
 					onChange={e => {
@@ -59,7 +59,7 @@ const AdminEventsView = () => {
 			</div>
 			<div className="flex justify-end space-x-2">
 				<PaginationButtons
-					prev={() => setOffset(offset - eventsRes.events.length)}
+					prev={() => setOffset(offset - eventsRes.limit)}
 					next={() => (typeof eventsRes.nextOffset === "number") && setOffset(eventsRes.nextOffset)}
 					prevDisabled={offset === 0}
 					nextDisabled={!Boolean(eventsRes.nextOffset)}

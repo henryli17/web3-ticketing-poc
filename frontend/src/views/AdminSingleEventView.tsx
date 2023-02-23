@@ -1,8 +1,12 @@
 import { useFormik } from "formik";
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import routes from "../routes";
 import * as Yup from "yup";
+import { createEvent } from "../helpers/api";
+import { ethToGwei } from "../helpers/utils";
+import { useAdmin } from "../middleware/Admin";
+import Alert from "../components/Alert";
 
 enum Action {
 	CREATE = "Create",
@@ -12,6 +16,9 @@ enum Action {
 const AdminSingleEventView = () => {
 	const { id } = useParams();
 	const [action, setAction] = useState<Action>();
+	const [error, setError] = useState(false);
+	const [, setAdmin]= useAdmin();
+	const navigate = useNavigate();
 	const formik = useFormik({
 		initialValues: {
 			name: "",
@@ -38,8 +45,27 @@ const AdminSingleEventView = () => {
 			genres: Yup.string().required("Required")
 		}),
 		onSubmit: async values => {
-			console.log("called");
-			console.log(values);
+			try {
+				await createEvent({
+					...values,
+					time: new Date(values.time).getTime() / 1000,
+					price: ethToGwei(values.price),
+					quantity: Number(values.quantity),
+					imageUrl: values.imageUrl,
+					genres: values.genres.split("\n")
+				});
+
+				navigate(routes.admin.events());
+			} catch (e: any) {
+				console.error(e);
+
+				// 401 Unauthorised
+				if (e?.response?.status === 401) {
+					setAdmin(false);
+				} else {
+					setError(true);
+				}
+			}
 		}
 	});
 
@@ -58,7 +84,7 @@ const AdminSingleEventView = () => {
 					{action} Event
 				</div>
 			</div>
-			<form onSubmit={e => { formik.handleSubmit(e); console.log(formik.errors) }} className="space-y-3">
+			<form onSubmit={e => formik.handleSubmit(e)} className="space-y-3">
 				<Input
 					name="name"
 					label="Name"
@@ -123,6 +149,14 @@ const AdminSingleEventView = () => {
 					type="textarea"
 					formik={formik}
 				/>
+				{
+					error &&
+					<Alert
+						title="Error!"
+						message="Failed to create event."
+						className="bg-red-50 text-red-700"
+					/>
+				}
 				<div className="flex">
 					<div className="ml-auto flex space-x-2">
 						<Link to={routes.admin.events()} className="btn text-red-600 hover:text-red-800">
@@ -133,6 +167,7 @@ const AdminSingleEventView = () => {
 						</button>
 					</div>
 				</div>
+				
 			</form>
 		</div>
 	);

@@ -8,7 +8,8 @@ enum HttpMethod {
 
 export type GetEventsResponse = {
 	events: Event[],
-	nextOffset: number | boolean
+	nextOffset: number | boolean,
+	limit: number
 };
 
 export type Event = {
@@ -17,7 +18,7 @@ export type Event = {
 	artist: string
 	venue: string
 	city: string
-	time: string
+	time: string | number
 	price: number
 	quantity: number
 	imageUrl: string
@@ -119,5 +120,13 @@ export const login = (password?: string) => {
 		HttpMethod.POST,
 		"login",
 		{ data: { password: password } }
+	);
+};
+
+export const createEvent = (event: Omit<Event, "id">) => {
+	return request<undefined>(
+		HttpMethod.POST,
+		"events",
+		{ data: event }
 	);
 };

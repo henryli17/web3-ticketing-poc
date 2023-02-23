@@ -18,4 +18,4 @@ export const range = (start: number, end: number) => {
 
 export const gweiToEth = (gwei: number | string) => Web3.utils.fromWei(gwei.toString(), "gwei");
 export const gweiToWei = (gwei: number | string) => Web3.utils.toWei(gwei.toString(), "gwei");
-export const ethToGwei = (eth: number) => eth * Math.pow(10, 9);
+export const ethToGwei = (eth: number | string) => Number(eth) * Math.pow(10, 9);

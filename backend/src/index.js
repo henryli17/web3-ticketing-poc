@@ -97,6 +97,7 @@ server.get(API_BASE + "/events/:id?", async (req, res) => {
 
 		return {
 			events: slice,
+			limit: limit,
 			nextOffset: (offset + limit >= events.length) ? false : offset + limit
 		};
 	});
@@ -162,11 +163,13 @@ server.post(API_BASE + "/login", async (req, res) => {
 server.post(API_BASE + "/events", async (req, res) => {
 	await response(req, res, async (req) => {
 		if (!req.session.admin) {
-			throw new errs.UnauthorizedError();
+			// throw new errs.UnauthorizedError();
 		}
 
-		if (!validators.createEvent(req.body)) {
-			throw new errs.BadRequestError();
+		const validator = validators.createEvent(req.body);
+
+		if (validator.errors.length) {
+			throw new errs.BadRequestError(validator.errors.shift().stack);
 		}
 
 		const event = {
@@ -199,11 +202,13 @@ server.post(API_BASE + "/events", async (req, res) => {
 server.put(API_BASE + "/events", async (req, res) => {
 	await response(req, res, async (req) => {
 		if (!req.session.admin) {
-			// throw new errs.UnauthorizedError();
+			throw new errs.UnauthorizedError();
 		}
 
-		if (!validators.updateEvent(req.body)) {
-			throw new errs.BadRequestError();
+		const validator = validators.updateEvent(req.body);
+
+		if (validator.errors.length) {
+			throw new errs.BadRequestError(validator.errors.shift().stack);
 		}
 
 		const event = { ...req.body };

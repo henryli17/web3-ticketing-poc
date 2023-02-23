@@ -47,7 +47,7 @@ const createEvent = (event) => {
 	
 	v.addSchema(genresSchema, '/genres');
 
-	return v.validate(event, schema).valid;
+	return v.validate(event, schema);
 };
 
 const updateEvent = (event) => {
@@ -55,7 +55,7 @@ const updateEvent = (event) => {
 
 	v.addSchema(genresSchema, '/genres');
 
-	return v.validate(event, eventSchema).valid;
+	return v.validate(event, eventSchema);
 };
 
 

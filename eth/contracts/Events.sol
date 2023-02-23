@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Events is ERC1155, Ownable {
 	struct Event {
-		string name;
+		string name; // TODO: remove name
 		uint time;
 		uint price;
 		uint quantity;
@@ -185,6 +185,7 @@ contract Events is ERC1155, Ownable {
 
 		require(e.created == false, "An event with this ID has already been created.");
 		require(_quantity > 0, "Quantity must be greater than 0.");
+		// TODO: check time
 
 		events[_id] = Event({
 			name: _name,
@@ -202,6 +203,7 @@ contract Events is ERC1155, Ownable {
 		require(e.created == true, "An event with this ID does not exist.");
 		require(_quantity >= e.supplied, "Quantity must be greater or equal than what has been supplied already.");
 		require(_quantity > 0, "Quantity must be greater than 0.");
+		// TODO: check time
 
 		e.name = _name;
 		e.time = _time;

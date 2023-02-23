@@ -65,6 +65,10 @@ h2 {
 	@apply w-full rounded-md border-gray-300 text-sm focus:ring-0;
 }
 
+.input[disabled] {
+	opacity: 0.5;
+}
+
 .input:focus {
 	@apply border-indigo-500 ring-indigo-500 border;
 }

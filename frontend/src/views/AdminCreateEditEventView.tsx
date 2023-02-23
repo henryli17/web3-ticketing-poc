@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import routes from "../routes";
 import * as Yup from "yup";
-import { createEvent } from "../helpers/api";
-import { ethToGwei } from "../helpers/utils";
+import { createEvent, Event, getEvent } from "../helpers/api";
+import { ethToGwei, gweiToEth } from "../helpers/utils";
 import { useAdmin } from "../middleware/Admin";
 import Alert from "../components/Alert";
 
@@ -15,22 +15,22 @@ enum Action {
 
 const AdminCreateEditEventView = () => {
 	const { id } = useParams();
-	const [action, setAction] = useState<Action>();
 	const [error, setError] = useState(false);
+	const [event, setEvent] = useState<Event>();
 	const [, setAdmin]= useAdmin();
 	const navigate = useNavigate();
 	const formik = useFormik({
 		initialValues: {
-			name: "",
-			artist: "",
-			venue: "",
-			city: "",
-			time: "",
-			price: "",
-			quantity: "",
-			imageUrl: "",
-			description: "",
-			genres: ""
+			name: event?.name || "",
+			artist: event?.artist || "",
+			venue: event?.venue || "",
+			city: event?.city || event?.name || "",
+			time: "", //todo
+			price: event?.price ? gweiToEth(event.price) : "",
+			quantity: event?.quantity || "",
+			imageUrl: event?.imageUrl || "",
+			description: event?.description || "",
+			genres: event?.genres.join("\n") || ""
 		},
 		validationSchema: Yup.object({
 			name: Yup.string().required("Required"),
@@ -69,12 +69,30 @@ const AdminCreateEditEventView = () => {
 		}
 	});
 
+	const action = (id === "create") ? Action.CREATE : Action.EDIT;
 	const tomorrow = new Date();
+	
 	tomorrow.setDate(tomorrow.getDate() + 1);
 
 	useEffect(() => {
-		setAction((id === "create") ? Action.CREATE : Action.EDIT);
-	}, [id]);
+		if (id && action === Action.EDIT) {
+			getEvent(Number(id))
+				.then(event =>{
+					setEvent(event);
+					formik.values.name = event.name;
+					formik.values.artist = event.artist;
+					formik.values.venue = event.venue;
+					formik.values.city = event.city;
+					formik.values.price = gweiToEth(event.price);
+					formik.values.quantity = event.quantity;
+					formik.values.imageUrl = event.imageUrl;
+					formik.values.description = event.description;
+					formik.values.genres = event.genres.join("\n");
+				})
+				.catch(() => navigate(routes.admin.events()))
+			;
+		}
+	}, [id, action, navigate, formik]);
 
 	return (
 		<div className="container mx-auto py-16 px-10">
@@ -123,13 +141,14 @@ const AdminCreateEditEventView = () => {
 					formik={formik}
 					step={0.01}
 					min={0}
+					disabled={action === Action.EDIT}
 				/>
 				<Input
 					name="quantity"
 					label="Ticket Quantity"
 					type="number"
 					formik={formik}
-					min={1}
+					min={1} // todo: reference with contract
 				/>
 				<Input
 					name="imageUrl"
@@ -153,7 +172,7 @@ const AdminCreateEditEventView = () => {
 					error &&
 					<Alert
 						title="Error!"
-						message="Failed to create event."
+						message={`Failed to ${action.toLowerCase()} event.`}
 						className="bg-red-50 text-red-700"
 					/>
 				}
@@ -180,7 +199,8 @@ const Input = (props: {
 	label: string
 	min?: string | number,
 	max?: string | number,
-	step?: string | number
+	step?: string | number,
+	disabled?: boolean
 }) => {
 	return (
 		<div>
@@ -205,6 +225,7 @@ const Input = (props: {
 						value={props.formik.values[props.name]}
 						onChange={e => props.formik.handleChange(e)}
 						rows={5}
+						disabled={props.disabled}
 					/>
 				}
 				{
@@ -219,6 +240,7 @@ const Input = (props: {
 						min={props.min}
 						max={props.max}
 						step={props.step}
+						disabled={props.disabled}
 					/>
 				}
 		

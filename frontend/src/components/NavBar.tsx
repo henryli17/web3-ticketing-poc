@@ -110,8 +110,7 @@ interface NavEntry {
 const allNavEntries = [
 	{ location: routes.home(), text: "Home", active: false, requiresWallet: false },
 	{ location: routes.events(), text: "Events", active: false, requiresWallet: false },
-	{ location: routes.purchases(), text: "Purchases", active: false, requiresWallet: true },
-	{ location: routes.admin.login(), text: "Admin", active: false, requiresWallet: false },
+	{ location: routes.purchases(), text: "Purchases", active: false, requiresWallet: true }
 ];
 
 const Tab = (props: { navEntry: NavEntry, className?: string }) => {

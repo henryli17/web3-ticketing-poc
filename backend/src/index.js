@@ -121,13 +121,13 @@ server.get(API_BASE + "/events/:id/metadata", async (req, res) => {
 
 server.get(API_BASE + "/genres", async (req, res) => {
 	await response(req, res, async (req) => {
-		return await db.getGenres();
+		return db.getGenres();
 	});
 });
 
 server.get(API_BASE + "/locations", async (req, res) => {
 	await response(req, res, async (req) => {
-		return await db.getLocations();
+		return db.getLocations();
 	});
 });
 
@@ -156,12 +156,52 @@ server.post(API_BASE + "/login", async (req, res) => {
 	});
 });
 
-server.post(API_BASE + "/events/:id", async (req, res) => {
-	await response(req, res, async (req) => {
-		if (!req.session.admin) {
-			throw new errs.UnauthorizedError()
+server.post(API_BASE + "/events", async (req, res) => {
+	const isValidInput = (input) => {
+		const types = {
+			name: "string",
+			artist: "string",
+			venue: "string",
+			city: "string",
+			time: "number",
+			price: "number",
+			ticketQuantity: "number",
+			imagePath: "string",
+			description: "string",
+			genres: "object"
+		};
+
+		for (const [key, type] of Object.entries(types)) {
+			if (typeof input[key] !== type) {
+				return false;
+			}
+		}
+		
+		if (
+			new Date(input.time * 1000) <= new Date() ||
+			input.ticketQuantity <= 0 ||
+			input.price < 0
+		) {
+			return false;
 		}
 
-		return req.session;
+		return true;
+	};
+
+	await response(req, res, async (req) => {
+		if (!req.session.admin) {
+			// TODO: uncomment
+			// throw new errs.UnauthorizedError();
+		}
+
+		if (!isValidInput(req.body)) {
+			throw new errs.BadRequestError();
+		}
+
+		const event = { ...req.body, time: new Date(req.body.time * 1000) };
+		delete event.genres;
+
+		const id = await db.createEvent(event);
+		await db.addGenresForEvent(id, req.body.genres);
 	});
 });

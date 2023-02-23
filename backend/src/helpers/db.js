@@ -77,7 +77,7 @@ const getGenres = async () => {
 	;
 
 	return genres;
-}
+};
 
 const getLocations = async () => {
 	const locations = await knex
@@ -87,10 +87,50 @@ const getLocations = async () => {
 	;
 
 	return locations;
-}
+};
+
+const createEvent = async (event) => {
+	const id = await knex('events').insert(event);
+	return id;
+};
+
+const addGenresForEvent = async (eventId, eventGenres) => {
+	for (const name of eventGenres) {
+		await knex("genres")
+			.insert({ name: name })
+			.onConflict("name")
+			.ignore()
+		;
+	}
+
+	const genresByName = new Map();
+	const genres = await knex
+		.select("id")
+		.select("name")
+		.table("genres")
+	;
+
+	for (const genre of genres) {
+		genresByName.set(genre.name, genre);
+	}
+
+	for (const name of eventGenres) {
+		await knex("event-genre")
+			.insert({
+				eventId: eventId,
+				genreId: genresByName.get(name).id
+			})
+			.onConflict(["eventId", "genreId"])
+			.ignore()
+		;
+	}
+};
+
 
 module.exports = {
 	getEvents,
 	getGenres,
-	getLocations
+	getLocations,
+	createEvent,
+	addGenresForEvent
 };

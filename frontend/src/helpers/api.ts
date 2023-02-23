@@ -19,7 +19,7 @@ export type Event = {
 	city: string
 	time: string
 	price: number
-	ticketQuantity: number
+	quantity: number
 	imagePath: string
 	description: string
 	genres: string[]

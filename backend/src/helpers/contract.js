@@ -8,6 +8,7 @@ const ABI = require("./ABI.json");
 const owner = "0x3b26935917de7f5fac60f6d15ff02b1cf468dfb0"; // 0x4397dbd437030df7c8ed3cb213f34aeea9786debd4bbd62767021eb19ae7d345
 const address = process.env.ETH_CONTRACT_ADDRESS;
 const instance = new web3.eth.Contract(ABI, address);
+const gas = 999999;
 
 const getTokens = async (address) => {
 	const tokens = new Map();
@@ -43,5 +44,6 @@ module.exports = {
 	address,
 	owner,
 	instance,
-	getTokens
+	getTokens,
+	gas
 }

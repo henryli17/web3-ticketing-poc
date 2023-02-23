@@ -17,6 +17,7 @@ const getEvents = async (options) => {
 		.table("events")
 		.leftJoin("event-genre", "events.id", "event-genre.eventId")
 		.leftJoin("genres", "event-genre.genreId", "genres.id")
+		.where("deployed", 1)
 		.modify(query => {
 			if (options?.id) {
 				if (Array.isArray(options.id)) {
@@ -90,8 +91,8 @@ const getLocations = async () => {
 };
 
 const createEvent = async (event) => {
-	const id = await knex('events').insert(event);
-	return id;
+	const fields = await knex('events').insert(event);
+	return fields.shift();
 };
 
 const addGenresForEvent = async (eventId, eventGenres) => {

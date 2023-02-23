@@ -113,7 +113,7 @@ server.get(API_BASE + "/events/:id/metadata", async (req, res) => {
 				venue: event.venue,
 				city: event.city,
 				time: event.time,
-				ticketQuantity: event.ticketQuantity
+				quantity: event.quantity
 			}
 		}
 	});
@@ -165,7 +165,7 @@ server.post(API_BASE + "/events", async (req, res) => {
 			city: "string",
 			time: "number",
 			price: "number",
-			ticketQuantity: "number",
+			quantity: "number",
 			imagePath: "string",
 			description: "string",
 			genres: "object"
@@ -179,7 +179,7 @@ server.post(API_BASE + "/events", async (req, res) => {
 		
 		if (
 			new Date(input.time * 1000) <= new Date() ||
-			input.ticketQuantity <= 0 ||
+			input.quantity <= 0 ||
 			input.price < 0
 		) {
 			return false;
@@ -198,10 +198,26 @@ server.post(API_BASE + "/events", async (req, res) => {
 			throw new errs.BadRequestError();
 		}
 
-		const event = { ...req.body, time: new Date(req.body.time * 1000) };
-		delete event.genres;
+		const event = { ...req.body };
 
-		const id = await db.createEvent(event);
-		await db.addGenresForEvent(id, req.body.genres);
+		const dbEvent = { ...event, time: new Date(req.body.time * 1000) };
+		delete dbEvent.genres;
+
+		event.id = await db.createEvent(dbEvent);
+
+		await db.addGenresForEvent(event.id, req.body.genres);
+		await contract
+			.instance
+			.methods
+			.createEvent(
+				event.id,
+				event.name,
+				event.time,
+				event.price,
+				event.quantity
+			)
+			.send({ from: contract.owner, gas: contract.gas })
+		;
+		// update event deployed
 	});
 });

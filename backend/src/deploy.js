@@ -2,7 +2,6 @@ require('dotenv').config()
 
 const db = require("./helpers/db.js");
 const contract = require("./helpers/contract");
-const gas = 999999;
 
 const main = async () => {
 	const events = await db.getEvents();
@@ -16,11 +15,11 @@ const main = async () => {
 				event.name,
 				new Date(event.time).getTime() / 1000,
 				parseInt(event.price),
-				parseInt(event.ticketQuantity)
+				parseInt(event.quantity)
 			)
 			.send({
 				from: contract.owner,
-				gas: gas
+				gas: contract.gas
 			})
 		;
 	}

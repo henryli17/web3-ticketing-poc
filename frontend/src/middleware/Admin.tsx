@@ -1,18 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Outlet, useOutletContext } from "react-router-dom";
-import { login } from "../helpers/api";
 
 const Admin = () => {
-	const [admin, setAdmin] = useState(false);
-
-	useEffect(() => {
-		login()
-			.then(() => setAdmin(true))
-			.catch(() => setAdmin(false))
-		;
-	}, []);
-
-	return <Outlet context={[admin, setAdmin]} />;
+	return <Outlet context={useState(false)} />;
 };
 
 export const useAdmin = () => {

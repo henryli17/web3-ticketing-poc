@@ -6,7 +6,12 @@ const RequireAdmin = ({ redirect: Redirect }: { redirect: React.FC }) => {
 	const [admin] = useAdmin();
 
 	if (!admin) {
-		return <Navigate to={routes.admin.login()} replace />;
+		return (
+			<Navigate
+				to={routes.admin.login() + `?redirect=${encodeURIComponent(window.location.pathname)}`}
+				replace
+			/>
+		);
 	}
 
 	return <Redirect />;

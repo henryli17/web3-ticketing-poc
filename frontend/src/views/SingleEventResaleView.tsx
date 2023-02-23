@@ -28,7 +28,7 @@ const SingleEventResaleView = () => {
 				if (r.length > 0) {
 					setResaleTokens(r);
 				} else {
-					navigate(routes.event(Number(id)))
+					navigate(routes.event(Number(id)), { replace: true })
 				}
 			})
 			.catch(() => setError(true))

@@ -1,6 +1,6 @@
 {
   "watch": ["src", ".env"],
-  "ext": ".ts,.js",
+  "ext": ".js,.json",
   "ignore": [],
   "exec": "npx node ./src/index.js"
 }

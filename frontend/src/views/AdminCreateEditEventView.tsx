@@ -66,7 +66,8 @@ const AdminCreateEditEventView = () => {
 					setError(true);
 				}
 			}
-		}
+		},
+		enableReinitialize: true
 	});
 
 	const action = (id === "create") ? Action.CREATE : Action.EDIT;
@@ -74,25 +75,15 @@ const AdminCreateEditEventView = () => {
 	
 	tomorrow.setDate(tomorrow.getDate() + 1);
 
+
 	useEffect(() => {
 		if (id && action === Action.EDIT) {
 			getEvent(Number(id))
-				.then(event =>{
-					setEvent(event);
-					formik.values.name = event.name;
-					formik.values.artist = event.artist;
-					formik.values.venue = event.venue;
-					formik.values.city = event.city;
-					formik.values.price = gweiToEth(event.price);
-					formik.values.quantity = event.quantity;
-					formik.values.imageUrl = event.imageUrl;
-					formik.values.description = event.description;
-					formik.values.genres = event.genres.join("\n");
-				})
+				.then(setEvent)
 				.catch(() => navigate(routes.admin.events()))
 			;
 		}
-	}, [id, action, navigate, formik]);
+	}, [id, action, navigate]);
 
 	return (
 		<div className="container mx-auto py-16 px-10">
@@ -186,7 +177,6 @@ const AdminCreateEditEventView = () => {
 						</button>
 					</div>
 				</div>
-				
 			</form>
 		</div>
 	);

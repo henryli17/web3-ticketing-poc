@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import { CurrencyDollar, X, XLg } from "react-bootstrap-icons";
-import { Link } from "react-router-dom";
 import {  Purchase } from "../helpers/api";
 import { getInstance } from "../helpers/contract";
-import { gweiToEth, prettyDate } from "../helpers/utils";
+import { gweiToEth } from "../helpers/utils";
 import { useAddress } from "../middleware/Wallet";
-import routes from "../routes";
 import ConfirmationModal from "./ConfirmationModal";
 import EventCard from "./EventCard";
 import QuantityButton from "./QuantityButton";

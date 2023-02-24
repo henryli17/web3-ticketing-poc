@@ -26,6 +26,7 @@ export type Event = {
 	imageUrl: string
 	description: string
 	genres: string[]
+	cancelled: number
 };
 
 export type Purchase = {
@@ -125,7 +126,7 @@ export const login = (password?: string) => {
 	);
 };
 
-export const createEvent = (event: Omit<Event, "id">) => {
+export const createEvent = (event: Omit<Event, "id" | "cancelled">) => {
 	return request<undefined>(
 		HttpMethod.POST,
 		"events",
@@ -133,7 +134,7 @@ export const createEvent = (event: Omit<Event, "id">) => {
 	);
 };
 
-export const updateEvent = (event: Omit<Event, "price">) => {
+export const updateEvent = (event: Omit<Event, "price" | "cancelled">) => {
 	return request<undefined>(
 		HttpMethod.PUT,
 		"events",

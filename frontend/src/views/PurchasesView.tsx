@@ -7,7 +7,8 @@ import { useAddress } from "../middleware/Wallet";
 enum PurchaseType {
 	UPCOMING = "upcoming",
 	SELLING = "selling",
-	EXPIRED = "expired"
+	EXPIRED = "expired",
+	CANCELLED = "cancelled"
 };
 
 const PurchasesView = () => {
@@ -21,10 +22,17 @@ const PurchasesView = () => {
 	useEffect(() => {
 		getPurchases(address)
 			.then(purchases => {
-				const purchaseData: PurchaseData = { expired: [], upcoming: [], selling: [] };
+				const purchaseData: PurchaseData = {
+					expired: [],
+					upcoming: [],
+					selling: [],
+					cancelled: []
+				};
 
 				for (const purchase of purchases) {
-					if (purchase.expired) {
+					if (purchase.event.cancelled) {
+						purchaseData.cancelled.push(purchase);
+					} else if (purchase.expired) {
 						purchaseData.expired.push(purchase);
 					} else if (purchase.forSale) {
 						purchaseData.selling.push(purchase);
@@ -113,7 +121,8 @@ const PurchasesView = () => {
 type PurchaseData = {
 	expired: Purchase[],
 	upcoming: Purchase[],
-	selling: Purchase[]
+	selling: Purchase[],
+	cancelled: Purchase[]
 };
 
 export default PurchasesView;

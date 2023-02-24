@@ -5,11 +5,20 @@ const knex = require('knex')({
 		port: process.env.DB_PORT,
 		user: process.env.DB_USER,
 		password: process.env.DB_PASSWORD,
-		database: process.env.DB_NAME
+		database: process.env.DB_NAME,
+		typeCast: (field, next) => {
+			// Treat MySQL BIT as boolean
+			if (field.type == "BIT" && field.length === 1) {
+				const bytes = field.buffer();
+				return (bytes[0] === 1);
+			}
+	
+			return next();
+		}
 	}
 });
 
-const getEvents = async (options, deployedOnly = true) => {
+const getEvents = async (options, deployedOnly = true, showCancelled = false) => {
 	const events = {};
 	const rows = await knex
 		.select("events.*")
@@ -20,7 +29,11 @@ const getEvents = async (options, deployedOnly = true) => {
 		.whereRaw("events.time > NOW()")
 		.modify(query => {
 			if (deployedOnly) {
-				query.where("deployed", 1);
+				query.where("deployed", true);
+			}
+
+			if (!showCancelled) {
+				query.where("cancelled", false);
 			}
 
 			if (options?.id) {

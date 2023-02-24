@@ -13,7 +13,7 @@ const getPurchases = async (address) => {
 			...Array.from(tokens.keys()),
 			...resaleTokenEntries.map(r => r.eventId)
 		]
-	});
+	}, false, true);
 
 	for (const event of events) {
 		eventsById.set(event.id, event);
@@ -72,7 +72,7 @@ const getPurchases = async (address) => {
 		}
 	}
 
-	return purchases;
+	return purchases.filter(p => p.event.deployed);
 };
 
 const omit = (object, key) => {

@@ -53,9 +53,11 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange:
 			<EventCard
 				event={props.purchase.event}
 				quantity={props.purchase.quantity}
+				to={(props.purchase.event.cancelled) ? "#" : undefined}
 			>
 				{
 					!props.purchase.expired &&
+					!props.purchase.event.cancelled &&
 					<div className="col-span-12 lg:col-span-3 xl:col-span-2 mb-5 lg:mt-5 mx-5 mr-5 flex">
 						<div className="lg:ml-auto">
 							<QuantityButton

@@ -84,7 +84,7 @@ server.get(API_BASE + "/events/:id?", async (req, res) => {
 		});
 
 		if (req.params.id) {
-			if (!events) {
+			if (!events.length) {
 				throw new errs.ResourceNotFoundError();
 			} else {
 				return events.shift();
@@ -105,7 +105,7 @@ server.get(API_BASE + "/events/:id?", async (req, res) => {
 
 server.get(API_BASE + "/events/:id/metadata", async (req, res) => {
 	await response(req, res, async (req) => {
-		const events = await db.getEvents({ id: Number(req.params.id) });
+		const events = await db.getEvents({ id: Number(req.params.id) }, true, true);
 		const event = events.shift();
 
 		return {
@@ -194,7 +194,7 @@ server.post(API_BASE + "/events", async (req, res) => {
 			)
 			.send({ from: contract.owner, gas: contract.gas })
 		;
-		await db.updateEvent(event.id, { deployed: 1 });
+		await db.updateEvent(event.id, { deployed: true });
 	});
 });
 
@@ -291,6 +291,6 @@ server.del(API_BASE + "/events/:id", async (req, res) => {
 		;
 
 		// Contract event update did not throw exception, update DB event
-		await db.updateEvent(id, { cancelled: 1 });
+		await db.updateEvent(id, { cancelled: true });
 	});
 });

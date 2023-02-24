@@ -33,10 +33,46 @@ const getTokens = async (address) => {
 		tokens.set(
 			eventId,
 			(tokens.has(eventId)) ? (tokens.get(eventId) + diff) : diff
-		)
+		);
 	}
 
 	return tokens;
+};
+
+const getOwners = async (eventId) => {
+	const owners = new Map();
+	const events = await instance.getPastEvents(
+		'TransferSingle',
+		{ fromBlock: 0, toBlock: 'latest' }
+	);
+
+	for (const event of events) {
+		if (Number(event.returnValues.id) !== eventId) {
+			continue;
+		}
+	
+		const quantity = Number(event.returnValues.value);
+		const to = event.returnValues.to;
+		const from = event.returnValues.from;
+
+		owners.set(
+			to,
+			(owners.has(to)) ? (owners.get(to) + quantity) : quantity
+		);
+
+		owners.set(
+			from,
+			(owners.has(from)) ? (owners.get(from) - quantity) : -quantity
+		);
+	}
+
+	for (const [address, quantity] of owners) {
+		if (quantity <= 0) {
+			owners.delete(address);
+		}
+	}
+
+	return owners;
 };
 
 module.exports = {
@@ -45,5 +81,6 @@ module.exports = {
 	owner,
 	instance,
 	getTokens,
+	getOwners,
 	gas
 }

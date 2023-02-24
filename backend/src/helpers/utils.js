@@ -1,5 +1,6 @@
 const contract = require("./contract");
 const db = require("./db");
+const Web3 = require("web3");
 
 const getPurchases = async (address) => {
 	const eventsById = new Map();
@@ -79,7 +80,10 @@ const omit = (object, key) => {
 	return rest;
 };
 
+const weiToEth = (wei) => Web3.utils.fromWei(wei.toString());
+
 module.exports = {
 	getPurchases,
-	omit
+	omit,
+	weiToEth
 };

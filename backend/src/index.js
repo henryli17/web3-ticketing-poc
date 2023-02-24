@@ -252,6 +252,45 @@ server.del(API_BASE + "/events/:id", async (req, res) => {
 			// TODO
 			// throw new errs.UnauthorizedError();
 		}
-		
+
+		const id = Number(req.params.id);
+
+		const contractEvent = await contract
+			.instance
+			.methods
+			.events(id)
+			.call()
+		;
+
+		if (!contractEvent.created || contractEvent.cancelled) {
+			throw new errs.BadRequestError();
+		}
+
+		const owners = await contract.getOwners(id);
+		const totalQuantity = Array.from(owners.values()).reduce((acc, quantity) => acc + quantity, 0);
+		const contractBalance = await contract.instance.methods.getBalance().call({ from: contract.owner });
+		const refundAmount = totalQuantity * contractEvent.price;
+
+		if (contractBalance < refundAmount) {
+			throw new errs.InternalServerError(
+				`Contract requires ${utils.weiToEth(refundAmount)} ETH to refund` +
+				`owners but currently only has ${utils.weiToEth(contractBalance)}.`
+			);
+		}
+
+		// Attempt to update contract event first
+		await contract
+			.instance
+			.methods
+			.cancelEvent(
+				id,
+				Array.from(owners.keys()),
+				Array.from(owners.values())
+			)
+			.send({ from: contract.owner, gas: contract.gas })
+		;
+
+		// Contract event update did not throw exception, update DB event
+		await db.updateEvent(id, { cancelled: 1 });
 	});
 });

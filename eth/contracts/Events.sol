@@ -212,6 +212,7 @@ contract Events is ERC1155, Ownable {
 		Event storage e = events[_id];
 		uint totalTransferAmount = 0;
 
+		require(e.cancelled == false, "This event has already been cancelled.");
 		require(e.created == true, "An event with this ID does not exist.");
 		require(owners.length == quantity.length, "`owners` and `quantity` parameters must be of equal length.");
 

@@ -8,7 +8,7 @@ import { getEvents, GetEventsResponse } from "../helpers/api";
 import routes from "../routes";
 
 const AdminEventsView = () => {
-	const [eventsRes, setEventsRes] = useState<GetEventsResponse>();
+	const [eventsData, setEventsData] = useState<GetEventsResponse>();
 	const [error, setError] = useState(false);
 	const [offset, setOffset] = useState(0);
 	const [search, setSearch] = useState("");
@@ -26,7 +26,7 @@ const AdminEventsView = () => {
 
 	useEffect(() => {
 		getEvents({ offset: offset, search: search })
-			.then(setEventsRes)
+			.then(setEventsData)
 			.catch(() => setError(true))
 		;
 	}, [offset, search, updateEvents]);
@@ -35,7 +35,7 @@ const AdminEventsView = () => {
 		return <NotFound />;
 	}
 
-	if (!eventsRes) {
+	if (!eventsData) {
 		return <></>;
 	}
 
@@ -64,17 +64,17 @@ const AdminEventsView = () => {
 					}}
 				/>
 				{
-					!eventsRes.events.length &&
+					!eventsData.events.length &&
 					<div className="p-5 text-2xl">There are currently no events.</div>
 				}
-				{eventsRes.events.map(event => <AdminEventCard event={event} key={event.id} onCancel={() => onEventCancel()} />)}
+				{eventsData.events.map(event => <AdminEventCard event={event} key={event.id} onCancel={() => onEventCancel()} />)}
 			</div>
 			<div className="flex justify-end space-x-2">
 				<PaginationButtons
-					prev={() => setOffset(offset - eventsRes.limit)}
-					next={() => (typeof eventsRes.nextOffset === "number") && setOffset(eventsRes.nextOffset)}
+					prev={() => setOffset(offset - eventsData.limit)}
+					next={() => (typeof eventsData.nextOffset === "number") && setOffset(eventsData.nextOffset)}
 					prevDisabled={offset === 0}
-					nextDisabled={!Boolean(eventsRes.nextOffset)}
+					nextDisabled={!Boolean(eventsData.nextOffset)}
 					className="btn btn-basic"
 					hideWhenDisabled={true}
 				/>

@@ -10,7 +10,7 @@ import { ethToGwei } from "../helpers/utils";
 
 const EventsView = () => {
 	const [error, setError] = useState(false);
-	const [eventsRes, setEventsRes] = useState<GetEventsResponse>();
+	const [eventsData, setEventsData] = useState<GetEventsResponse>();
 	const [genres, setGenres] = useState<CheckboxItem[]>([]);
 	const [locations, setLocations] = useState<CheckboxItem[]>([]);
 	const [offset, setOffset] = useState(0);
@@ -57,7 +57,7 @@ const EventsView = () => {
 		};
 
 		getEvents(params)
-			.then(setEventsRes)
+			.then(setEventsData)
 			.catch(() => setError(true))
 		;
 
@@ -68,7 +68,7 @@ const EventsView = () => {
 		return <NotFound />;
 	}
 
-	if (!eventsRes) {
+	if (!eventsData) {
 		return <></>;
 	}
 
@@ -121,16 +121,16 @@ const EventsView = () => {
 				</div>
 				<div className="space-y-3 col-span-12 md:col-span-9 xl:col-span-10">
 					{
-						!eventsRes.events.length &&
+						!eventsData.events.length &&
 						<div className="p-5 text-2xl">No events matching your query could be found.</div>
 					}
-					{eventsRes.events.map(event => <EventCard key={event.id} event={event} />)}
+					{eventsData.events.map(event => <EventCard key={event.id} event={event} />)}
 					<div className="flex justify-end space-x-2">
 						<PaginationButtons
-							prev={() => setOffset(offset - eventsRes.limit)}
-							next={() => (typeof eventsRes.nextOffset === "number") && setOffset(eventsRes.nextOffset)}
+							prev={() => setOffset(offset - eventsData.limit)}
+							next={() => (typeof eventsData.nextOffset === "number") && setOffset(eventsData.nextOffset)}
 							prevDisabled={offset === 0}
-							nextDisabled={!Boolean(eventsRes.nextOffset)}
+							nextDisabled={!Boolean(eventsData.nextOffset)}
 							className="btn btn-basic"
 							hideWhenDisabled={true}
 						/>

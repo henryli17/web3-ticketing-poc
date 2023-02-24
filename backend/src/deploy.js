@@ -4,7 +4,8 @@ const db = require("./helpers/db.js");
 const contract = require("./helpers/contract");
 
 const main = async () => {
-	const events = await db.getEvents();
+	// TODO: handle this properly and update events on finish
+	const events = await db.getEvents(undefined, false);
 
 	for (const event of events) {
 		await contract

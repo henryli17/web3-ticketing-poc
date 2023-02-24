@@ -41,6 +41,11 @@ export type Contract = {
 	address: string
 };
 
+export type DeleteEventResponse = {
+	code: string
+	message: string
+};
+
 const request = <T>(method: HttpMethod, endpoint: string, options?: { data?: object, params?: object }) => {
 	const API_BASE = "http://localhost:3001/api";
 
@@ -139,5 +144,12 @@ export const updateEvent = (event: Omit<Event, "price" | "cancelled">) => {
 		HttpMethod.PUT,
 		"events",
 		{ data: event }
+	);
+};
+
+export const deleteEvent = (id: number) => {
+	return request<undefined>(
+		HttpMethod.DELETE,
+		"events/" + id
 	);
 };

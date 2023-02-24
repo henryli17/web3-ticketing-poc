@@ -249,12 +249,10 @@ server.put(API_BASE + "/events", async (req, res) => {
 server.del(API_BASE + "/events/:id", async (req, res) => {
 	await response(req, res, async (req) => {
 		if (!req.session.admin) {
-			// TODO
-			// throw new errs.UnauthorizedError();
+			throw new errs.UnauthorizedError();
 		}
 
 		const id = Number(req.params.id);
-
 		const contractEvent = await contract
 			.instance
 			.methods

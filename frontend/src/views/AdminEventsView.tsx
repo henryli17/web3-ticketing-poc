@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import EventCard from "../components/EventCard";
+import AdminEventCard from "../components/AdminEventCard";
 import NotFound from "../components/NotFound";
 import PaginationButtons from "../components/PaginationButtons";
 import SearchBar from "../components/SearchBar";
@@ -12,14 +12,24 @@ const AdminEventsView = () => {
 	const [error, setError] = useState(false);
 	const [offset, setOffset] = useState(0);
 	const [search, setSearch] = useState("");
+	const [updateEvents, setUpdateEvents] = useState(false);
 	let timeout: NodeJS.Timeout;
+
+	const onEventCancel = () => {
+		// Trigger events update either by resetting offset to 0 or updating `updateEvents`
+		if (offset !== 0) {
+			setOffset(0);
+		} else {
+			setUpdateEvents(!updateEvents);
+		}
+	}
 
 	useEffect(() => {
 		getEvents({ offset: offset, search: search })
 			.then(setEventsRes)
 			.catch(() => setError(true))
 		;
-	}, [offset, search]);
+	}, [offset, search, updateEvents]);
 
 	if (error) {
 		return <NotFound />;
@@ -57,7 +67,7 @@ const AdminEventsView = () => {
 					!eventsRes.events.length &&
 					<div className="p-5 text-2xl">There are currently no events.</div>
 				}
-				{eventsRes.events.map(event => <EventCard key={event.id} event={event} to={routes.admin.event(event.id)} />)}
+				{eventsRes.events.map(event => <AdminEventCard event={event} key={event.id} onCancel={() => onEventCancel()} />)}
 			</div>
 			<div className="flex justify-end space-x-2">
 				<PaginationButtons

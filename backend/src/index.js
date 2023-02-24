@@ -222,6 +222,7 @@ server.put(API_BASE + "/events", async (req, res) => {
 			throw new errs.BadRequestError();
 		}
 
+		// Attempt to update contract event first
 		await contract
 			.instance
 			.methods
@@ -233,6 +234,7 @@ server.put(API_BASE + "/events", async (req, res) => {
 			.send({ from: contract.owner, gas: contract.gas })
 		;
 
+		// Contract event update did not throw exception, update DB event
 		await db.setGenresForEvent(event.id, event.genres);
 
 		const updatedEvent = await db.updateEvent(
@@ -241,5 +243,15 @@ server.put(API_BASE + "/events", async (req, res) => {
 		);
 
 		return updatedEvent;
+	});
+});
+
+server.del(API_BASE + "/events/:id", async (req, res) => {
+	await response(req, res, async (req) => {
+		if (!req.session.admin) {
+			// TODO
+			// throw new errs.UnauthorizedError();
+		}
+		
 	});
 });

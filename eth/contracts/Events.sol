@@ -13,6 +13,7 @@ contract Events is ERC1155, Ownable {
 		uint quantity;
 		uint supplied;
 		bool created;
+		bool cancelled;
 	}
 
 	struct ResaleToken {
@@ -158,7 +159,6 @@ contract Events is ERC1155, Ownable {
 		require(msg.value >= events[_eventId].price, "Insufficient amount of ETH provided.");
 
 		ResaleTokenEntry[] storage ownerResaleTokenEntries = resaleTokenEntries[_owner];
-		address payable seller = payable(_owner);
 	
 		for (uint i = 0; i < ownerResaleTokenEntries.length; i++) {
 			if (ownerResaleTokenEntries[i].eventId == _eventId) {
@@ -166,7 +166,7 @@ contract Events is ERC1155, Ownable {
 					ResaleTokenEntry storage ownerResaleTokenEntry = ownerResaleTokenEntries[i];
 
 					_safeTransferFrom(_owner, msg.sender, _eventId, 1, "");
-					seller.transfer(msg.value);
+					payable(_owner).transfer(msg.value);
 
 					ownerResaleTokenEntry.sold = true;
 					resaleTokens[_eventId][ownerResaleTokenEntry.idx].sold = true;
@@ -191,7 +191,8 @@ contract Events is ERC1155, Ownable {
 			price: _price * (1 gwei),
 			quantity: _quantity,
 			supplied: 0,
-			created: true
+			created: true,
+			cancelled: false
 		});
 	}
 
@@ -205,6 +206,27 @@ contract Events is ERC1155, Ownable {
 
 		e.time = _time;
 		e.quantity = _quantity;
+	}
+
+	function cancelEvent(uint _id, address[] calldata owners, uint[] calldata quantity) external onlyOwner {
+		Event storage e = events[_id];
+		uint totalTransferAmount = 0;
+
+		require(e.created == true, "An event with this ID does not exist.");
+		require(owners.length == quantity.length, "`owners` and `quantity` parameters must be of equal length.");
+
+		for (uint i = 0; i < quantity.length; i++) {
+			totalTransferAmount +=  e.price * quantity[i];
+		}
+
+		require(getBalance() >= totalTransferAmount, "Insufficient ETH in contract to refund owners.");
+
+		e.cancelled = true;
+
+		// Refund token owners
+		for (uint i = 0; i < owners.length; i++) {
+			payable(owners[i]).transfer(e.price * quantity[i]);
+		}
 	}
 
 	function getBalance() public view onlyOwner returns(uint) {

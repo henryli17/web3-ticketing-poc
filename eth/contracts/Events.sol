@@ -55,6 +55,7 @@ contract Events is ERC1155, Ownable {
 		Event storage e = events[_eventId];
 
 		require(e.created, "An event with this ID does not exist.");
+		require(!e.cancelled, "This event has been cancelled.");
 		require(msg.value >= e.price * _quantity, "Insufficient amount of ETH provided.");
 		require(e.supplied + _quantity <= e.quantity, "Maximum number of tickets have been issued.");
 		require(block.timestamp < e.time, "This event has already passed.");
@@ -155,8 +156,11 @@ contract Events is ERC1155, Ownable {
 	}
 
 	function buyResaleToken(address _owner, uint _eventId) external payable {
-		require(events[_eventId].created, "An event with this ID does not exist.");
-		require(msg.value >= events[_eventId].price, "Insufficient amount of ETH provided.");
+		Event storage e = events[_eventId];
+
+		require(e.created, "An event with this ID does not exist.");
+		require(!e.cancelled, "This event has been cancelled.");
+		require(msg.value >= e.price, "Insufficient amount of ETH provided.");
 
 		ResaleTokenEntry[] storage ownerResaleTokenEntries = resaleTokenEntries[_owner];
 	
@@ -182,7 +186,7 @@ contract Events is ERC1155, Ownable {
 	function createEvent(uint _id, uint _time, uint _price, uint _quantity) external onlyOwner {
 		Event storage e = events[_id];
 
-		require(e.created == false, "An event with this ID has already been created.");
+		require(!e.created, "An event with this ID has already been created.");
 		require(_quantity > 0, "Quantity must be greater than 0.");
 		require(_time > block.timestamp, "Time needs to be in the future.");
 
@@ -199,7 +203,8 @@ contract Events is ERC1155, Ownable {
 	function updateEvent(uint _id, uint _time, uint _quantity) external onlyOwner {
 		Event storage e = events[_id];
 
-		require(e.created == true, "An event with this ID does not exist.");
+		require(e.created, "An event with this ID does not exist.");
+		require(!e.cancelled, "This event has been cancelled.");
 		require(_quantity >= e.supplied, "Quantity must be greater or equal than what has been supplied already.");
 		require(_quantity > 0, "Quantity must be greater than 0.");
 		require(_time > block.timestamp, "Time needs to be in the future.");
@@ -212,8 +217,8 @@ contract Events is ERC1155, Ownable {
 		Event storage e = events[_id];
 		uint totalTransferAmount = 0;
 
-		require(e.cancelled == false, "This event has already been cancelled.");
-		require(e.created == true, "An event with this ID does not exist.");
+		require(e.created, "An event with this ID does not exist.");
+		require(!e.cancelled, "This event has already been cancelled.");
 		require(owners.length == quantity.length, "`owners` and `quantity` parameters must be of equal length.");
 
 		for (uint i = 0; i < quantity.length; i++) {

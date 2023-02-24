@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { CaretLeftFill } from "react-bootstrap-icons";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Alert from "../components/Alert";
+import BackCaret from "../components/BackCaret";
 import NotFound from "../components/NotFound";
 import Spinner from "../components/Spinner";
 import { getEvent, Event } from "../helpers/api";
@@ -52,10 +52,7 @@ const SingleEventResaleView = () => {
 
 	return (
 		<div className="container mx-auto p-10">
-			<Link to={routes.event(Number(id))} className="flex items-center text-indigo-500 mb-5">
-				<CaretLeftFill className="mr-1.5" />
-				Back
-			</Link>
+			<BackCaret to={routes.event(Number(id))} />
 			<div>
 				<h1 className="italic uppercase font-bold">
 					{event.artist}

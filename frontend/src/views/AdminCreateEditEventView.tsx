@@ -8,6 +8,7 @@ import { ethToGwei, gweiToEth, omit } from "../helpers/utils";
 import { useAdmin } from "../middleware/Admin";
 import Alert from "../components/Alert";
 import { getInstance } from "../helpers/contract";
+import { CaretLeftFill } from "react-bootstrap-icons";
 
 enum Action {
 	CREATE = "Create",
@@ -116,6 +117,10 @@ const AdminCreateEditEventView = () => {
 
 	return (
 		<div className="container mx-auto py-16 px-10">
+			<Link to={routes.admin.events()} className="flex items-center text-indigo-500 mb-5">
+				<CaretLeftFill className="mr-1.5" />
+				Back
+			</Link>
 			<div className="text-gray-500 mb-8 items-center">
 				<h2 className="font-bold">Admin</h2>
 				<div className="font-medium">

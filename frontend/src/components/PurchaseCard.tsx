@@ -20,6 +20,7 @@ export type QrData = {
 const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange: () => any }) => {
 	const [selectedQuantity, setSelectedQuantity] = useState(props.purchase.quantity);
 	const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+	const [remainingQuantity, setRemainingQuantity] = useState(0);
 	const [qrData, setQrData] = useState<QrData>();
 	const [address] = useAddress();
 	const price = gweiToEth(props.purchase.event.price);
@@ -31,14 +32,22 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange:
 	};
 
 	useEffect(() => {
-		setSelectedQuantity(props.purchase.quantity);
-	}, [props.purchase]);
+		(async () => {
+			setSelectedQuantity(props.purchase.quantity);
+
+			try {
+				const contract = await getInstance();
+				const usedCount = await contract.methods.getUsedCount(address, props.purchase.event.id).call();
+				setRemainingQuantity(props.purchase.quantity - usedCount);
+			} catch (e) {
+				console.error(e);
+			}
+		})();
+	}, [props.purchase, address]);
 
 	const toggleTokenListing = async () => {
 		try {
 			const contract = await getInstance();
-
-			// TODO: handle used tickets
 			
 			if (props.purchase.forSale) {
 				await contract
@@ -64,7 +73,13 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange:
 		e.preventDefault();
 
 		try {
-			const signature = await (window as any).ethereum.request({
+			const w = (window as any);
+
+			if (!w.ethereum) {
+				return;
+			}
+
+			const signature = await w.ethereum.request({
 				method: "personal_sign",
 				params: [
 					Web3.utils.toHex("Please sign this transaction to view your ticket QR code."),
@@ -103,28 +118,31 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange:
 									QR
 								</button>
 							}
-							<QuantityButton
-								quantity={props.purchase.quantity}
-								className={props.purchase.forSale ? "outline-red-700 text-red-700 hover:outline-red-900 hover:text-red-900" : "outline-green-700 text-green-700 hover:outline-green-900 hover:text-green-900"}
-								value={selectedQuantity}
-								onClick={e => quantityButtonClick(e)}
-								onChange={e => setSelectedQuantity(parseInt(e.target.value))}
-							>
-								{
-									!props.purchase.forSale &&
-									<>
-										<CurrencyDollar size={16} className="mr-1" />
-										Sell
-									</>
-								}
-								{
-									props.purchase.forSale &&
-									<>
-										<XLg size={16} className="mr-1" />
-										Unlist
-									</>
-								}
-							</QuantityButton>
+							{
+								remainingQuantity > 0 &&
+								<QuantityButton
+									quantity={remainingQuantity}
+									className={props.purchase.forSale ? "outline-red-700 text-red-700 hover:outline-red-900 hover:text-red-900" : "outline-green-700 text-green-700 hover:outline-green-900 hover:text-green-900"}
+									value={selectedQuantity}
+									onClick={e => quantityButtonClick(e)}
+									onChange={e => setSelectedQuantity(parseInt(e.target.value))}
+								>
+									{
+										!props.purchase.forSale &&
+										<>
+											<CurrencyDollar size={16} className="mr-1" />
+											Sell
+										</>
+									}
+									{
+										props.purchase.forSale &&
+										<>
+											<XLg size={16} className="mr-1" />
+											Unlist
+										</>
+									}
+								</QuantityButton>
+							}
 						</div>
 					</div>
 				}

@@ -11,9 +11,10 @@ import EventCard from "./EventCard";
 import QRModal from "./QRModal";
 import QuantityButton from "./QuantityButton";
 
-type QrData = {
+export type QrData = {
 	signature: string,
-	eventId: number
+	eventId: number,
+	quantity: number
 };
 
 const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange: () => any }) => {
@@ -69,7 +70,13 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange:
 				]
 			});
 	
-			setQrData({ signature: signature, eventId: props.purchase.event.id });
+			setQrData(
+				{ 
+					signature: signature,
+					eventId: props.purchase.event.id,
+					quantity: props.purchase.quantity
+				}
+			);
 		} catch (e) {
 			console.error(e);
 		}

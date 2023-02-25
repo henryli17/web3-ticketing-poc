@@ -14,6 +14,7 @@ import Admin from './middleware/Admin';
 import AdminEventsView from './views/AdminEventsView';
 import RequireAdmin from './middleware/RequireAdmin';
 import AdminCreateEditEventView from './views/AdminCreateEditEventView';
+import AdminQrScanView from './views/AdminQrScanView';
 
 const App = () => {
   	return (
@@ -33,6 +34,7 @@ const App = () => {
 					<Route path={routes.admin.login()} element={<AdminLoginView />} />
 					<Route path={routes.admin.events()} element={<RequireAdmin redirect={AdminEventsView} />} />
 					<Route path={routes.admin.event()} element={<RequireAdmin redirect={AdminCreateEditEventView} />} />
+					<Route path={routes.admin.qr()} element={<RequireAdmin redirect={AdminQrScanView} />} />
 				</Route>
 			</Routes>
 		</>

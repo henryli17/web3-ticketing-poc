@@ -5,7 +5,8 @@ const ConfirmationModal = (props: {
 	close: () => any,
 	action: () => any,
 	title: string,
-	message: string
+	message: string,
+	children?: React.ReactNode
 }) => {
 	const [disabled, setDisabled] = useState(false);
 
@@ -36,6 +37,7 @@ const ConfirmationModal = (props: {
 										<p className="text-sm text-gray-500">
 											{props.message}
 										</p>
+										{props.children}
 									</div>
 								</div>
 							</div>

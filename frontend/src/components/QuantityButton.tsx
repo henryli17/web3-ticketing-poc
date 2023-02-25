@@ -1,7 +1,7 @@
 import { range } from "../helpers/utils";
 
 const QuantityButton = (props: {
-	children: React.ReactNode,
+	children?: React.ReactNode,
 	quantity: number,
 	value: number,
 	className?: string,
@@ -21,9 +21,12 @@ const QuantityButton = (props: {
 			onClick={e => props.onClick && props.onClick(e)}
 			disabled={props.disabled}
 		>
-			<div className="flex pr-3 items-center border-r border-current h-full">
-				{props.children}
-			</div>
+			{
+				props.children &&	
+				<div className="flex pr-3 items-center border-r border-current h-full">
+					{props.children}
+				</div>
+			}
 			<select
 				className="border-transparent h-full bg-transparent py-0 pl-3 pr-8 text-sm focus:ring-0 focus:border-transparent"
 				onClick={e => quantityOnClick(e)}

@@ -153,3 +153,11 @@ export const deleteEvent = (id: number) => {
 		"events/" + id
 	);
 };
+
+export const eventToken = (signature: string, eventId: number, quantity: number) => {
+	return request<undefined>(
+		HttpMethod.POST,
+		`events/${eventId}/token`,
+		{ data: { signature: signature, quantity: quantity } }
+	);
+};

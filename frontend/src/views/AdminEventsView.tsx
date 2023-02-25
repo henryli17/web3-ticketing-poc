@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { MusicNote, QrCodeScan } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 import AdminEventCard from "../components/AdminEventCard";
 import NotFound from "../components/NotFound";
@@ -46,8 +47,13 @@ const AdminEventsView = () => {
 					<h2 className="font-bold">Admin</h2>
 					<div className="font-medium">Events</div>
 				</div>
-				<div className="ml-auto">
+				<div className="ml-auto flex space-x-2">
+					<Link to={routes.admin.qr()} className="btn btn-basic">
+						<QrCodeScan className="mr-1" />
+						Scan QR
+					</Link>
 					<Link to={routes.admin.event("create")} className="btn btn-basic">
+						<MusicNote className="mr-1" />
 						Create Event
 					</Link>
 				</div>

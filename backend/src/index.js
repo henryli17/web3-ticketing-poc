@@ -127,7 +127,9 @@ server.get(API_BASE + "/events/:id/metadata", async (req, res) => {
 
 server.post(API_BASE + "/events/:id/token", async (req, res) => {
 	await response(req, res, async (req) => {
-		// TODO: secret
+		if (!req.session.admin) {
+			throw new errs.UnauthorizedError();
+		}
 
 		const validator = validators.eventToken(req.body);
 

@@ -12,6 +12,7 @@ const routes = {
 		login: () => "/admin",
 		events: () => "/admin/events",
 		event: (id?: number | string) => "/admin/events/" + param("id", id),
+		qr: () => "/admin/qr"
 	}
 };
 

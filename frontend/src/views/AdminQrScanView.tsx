@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { QrReader } from 'react-qr-reader';
 import AlertModal from '../components/AlertModal';
 import BackCaret from '../components/BackCaret';
@@ -17,13 +17,32 @@ const AdminQrScanView = () => {
 	const [showAlertModal, setShowAlertModal] = useState(false);
 	let scanned = showAlertModal;
 
+	useEffect(() => {
+		// Reset quantity to 1 when ticket changes
+		setQuantity(1);
+	}, [ticket]);
+
 	const scan = (data: any) => {
 		if (scanned || !data) {
 			return;
 		}
-
-		setTicket(JSON.parse(data.text));
-		setShowConfirmationModal(true);
+		
+		try {
+			const ticket = JSON.parse(data.text);
+			const keys = Object.keys(ticket);
+	
+			// Check the QR code is for a ticket
+			for (const key of ["signature", "eventId", "quantity"]) {
+				if (!keys.includes(key)) {
+					return;
+				}
+			}
+	
+			setTicket(JSON.parse(data.text));
+			setShowConfirmationModal(true);
+		} catch (e) {
+			return;
+		}
 	};
 
 	const markTicketAsUsed = async () => {

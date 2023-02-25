@@ -38,6 +38,8 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange:
 		try {
 			const contract = await getInstance();
 
+			// TODO: handle used tickets
+			
 			if (props.purchase.forSale) {
 				await contract
 					.methods

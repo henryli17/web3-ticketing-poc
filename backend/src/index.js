@@ -142,16 +142,14 @@ server.post(API_BASE + "/events/:id/token", async (req, res) => {
 			throw new errs.BadRequestError();
 		}
 
-		const signature = req.body.signature;
+		const address = await contract.signatureToAddress(req.body.signature);
+		console.log(address);
 
 		await contract
 			.instance
 			.methods
 			.markTokenAsUsed(
-				Web3.utils.sha3("Please sign this transaction to view your ticket QR code."),
-				parseInt(signature.slice(130, 132), 16),
-				(signature.slice(0, 66)),
-				("0x" + signature.slice(66, 130)),
+				address,
 				parseInt(req.params.id),
 				parseInt(req.body.quantity)
 			)

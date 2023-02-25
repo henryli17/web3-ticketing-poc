@@ -75,6 +75,13 @@ const getOwners = async (eventId) => {
 	return owners;
 };
 
+const signatureToAddress = (signature) => {
+	return web3.eth.accounts.recover(
+		Web3.utils.toHex("Please sign this transaction to view your ticket QR code."),
+		signature
+	);
+}
+
 module.exports = {
 	ABI,
 	address,
@@ -82,5 +89,6 @@ module.exports = {
 	instance,
 	getTokens,
 	getOwners,
+	signatureToAddress,
 	gas
 }

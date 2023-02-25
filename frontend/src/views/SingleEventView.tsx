@@ -44,13 +44,15 @@ const SingleEventView = () => {
 	}, [id, address]);
 
 	useEffect(() => {
-		getInstance()
-			.then(async contract => {
+		(async () => {
+			try {
+				const contract = await getInstance();
 				const event = await contract.methods.events(id).call();
 				setQuantityRemaining(event.quantity - event.supplied);
-			})
-			.catch(() => setError(true))
-		;
+			} catch (e) {
+				setError(true);
+			}
+		})();
 	}, [id, updateQuantityRemaining])
 
 	if (error) {

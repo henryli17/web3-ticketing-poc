@@ -63,7 +63,27 @@ const updateEvent = (event) => {
 	return v.validate(event, schema);
 };
 
+const eventToken = (data) => {
+	const v = new Validator();
+	const schema = {
+		"id": "/Data",
+		"type": "object",
+		"properties": {
+			"signature": { "type": "string", "minLength": 132, "maxLength": 132 },
+			"quantity": { "type": "integer", "minimum": 1 }
+		},
+		"required": [
+			"signature",
+			"quantity"
+		],
+		"additionalProperties": false
+	};
+
+	return v.validate(data, schema);
+}
+
 module.exports = {
 	createEvent,
-	updateEvent
+	updateEvent,
+	eventToken
 };

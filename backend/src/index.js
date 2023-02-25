@@ -1,6 +1,7 @@
 require('dotenv').config()
 console.clear()
 
+const Web3 = require("web3");
 const ganache = require("ganache");
 const restify = require("restify");
 const cookies = require('restify-cookies');
@@ -68,7 +69,7 @@ const response = async (req, res, fn) => {
 	} catch (e) {
 		console.error(e);
 		res.send(
-			(e instanceof errs.HttpError) ? e : new errs.InternalServerError()
+			(e instanceof errs.HttpError) ? e : new errs.InternalServerError(e.reason)
 		);
 	}
 };
@@ -117,9 +118,43 @@ server.get(API_BASE + "/events/:id/metadata", async (req, res) => {
 				venue: event.venue,
 				city: event.city,
 				time: event.time,
-				quantity: event.quantity
+				quantity: event.quantity,
+				cancelled: event.cancelled
 			}
 		}
+	});
+});
+
+server.post(API_BASE + "/events/:id/token", async (req, res) => {
+	await response(req, res, async (req) => {
+		// TODO: secret
+
+		const validator = validators.eventToken(req.body);
+
+		if (validator.errors.length) {
+			throw new errs.BadRequestError(validator.errors.shift().stack);
+		}
+
+		// Check the signature is a valid hex string of 132 characters (0x prefixed)
+		if (!(/^0x[A-Fa-f0-9]{130}$/).test(req.body.signature)) {
+			throw new errs.BadRequestError();
+		}
+
+		const signature = req.body.signature;
+
+		await contract
+			.instance
+			.methods
+			.markTokenAsUsed(
+				Web3.utils.sha3("Please sign this transaction to view your ticket QR code."),
+				parseInt(signature.slice(130, 132), 16),
+				(signature.slice(0, 66)),
+				("0x" + signature.slice(66, 130)),
+				parseInt(req.params.id),
+				parseInt(req.body.quantity)
+			)
+			.send({ from: contract.owner, gas: contract.gas })
+		;
 	});
 });
 

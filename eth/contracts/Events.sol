@@ -82,7 +82,7 @@ contract Events is ERC1155, Ownable {
 		}
 	}
 
-	function getListedCount(address _addr, uint _eventId) private view returns(uint) {
+	function getListedCount(address _addr, uint _eventId) public view returns(uint) {
 		ResaleTokenEntry[] storage addrResaleTokenEntries = resaleTokenEntries[_addr];
 		uint listedCount = 0;
 
@@ -97,7 +97,7 @@ contract Events is ERC1155, Ownable {
 		return listedCount;
 	}
 
-	function getUsedCount(address _addr, uint _eventId) private view returns(uint) {
+	function getUsedCount(address _addr, uint _eventId) public view returns(uint) {
 		uint[] storage addrUsedTokens = usedTokens[_addr];
 		uint usedCount = 0;
 

@@ -24,7 +24,7 @@ const AdminEventCard = (props: { event: Event, onCancel: () => any }) => {
 	return (
 		<>
 			<EventCard event={props.event} to={routes.admin.event(props.event.id)}>
-				<div className="col-span-12 lg:col-span-3 xl:col-span-2 mb-5 lg:mt-5 mx-5 mr-5 flex">
+				<div className="col-span-12 lg:col-span-4 xl:col-span-3 mb-5 lg:mt-5 mx-5 mr-5 flex">
 					<div className="lg:ml-auto">
 						<button
 							className="btn btn-base text-red-700 hover:text-red-900"

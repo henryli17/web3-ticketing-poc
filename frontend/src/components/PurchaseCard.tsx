@@ -1,16 +1,25 @@
 import { useEffect, useState } from "react";
-import { CurrencyDollar, XLg } from "react-bootstrap-icons";
+import { CurrencyDollar, QrCode, XLg } from "react-bootstrap-icons";
+import QRCode from "react-qr-code";
+import Web3 from "web3";
 import {  Purchase } from "../helpers/api";
 import { getInstance } from "../helpers/contract";
 import { gweiToEth } from "../helpers/utils";
 import { useAddress } from "../middleware/Wallet";
 import ConfirmationModal from "./ConfirmationModal";
 import EventCard from "./EventCard";
+import QRModal from "./QRModal";
 import QuantityButton from "./QuantityButton";
+
+type QrData = {
+	signature: string,
+	eventId: number
+};
 
 const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange: () => any }) => {
 	const [selectedQuantity, setSelectedQuantity] = useState(props.purchase.quantity);
 	const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+	const [qrData, setQrData] = useState<QrData>();
 	const [address] = useAddress();
 	const price = gweiToEth(props.purchase.event.price);
 
@@ -24,7 +33,7 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange:
 		setSelectedQuantity(props.purchase.quantity);
 	}, [props.purchase]);
 
-	const action = async () => {
+	const toggleTokenListing = async () => {
 		try {
 			const contract = await getInstance();
 
@@ -48,6 +57,24 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange:
 		props.onChange();
 	};
 
+	const generateQr = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+		e.preventDefault();
+
+		try {
+			const signature = await (window as any).ethereum.request({
+				method: "personal_sign",
+				params: [
+					Web3.utils.toHex("Please sign this transaction to view your ticket QR code."),
+					address
+				]
+			});
+	
+			setQrData({ signature: signature, eventId: props.purchase.event.id });
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
 	return (
 		<>
 			<EventCard
@@ -58,8 +85,15 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange:
 				{
 					!props.purchase.expired &&
 					!props.purchase.event.cancelled &&
-					<div className="col-span-12 lg:col-span-3 xl:col-span-2 mb-5 lg:mt-5 mx-5 mr-5 flex">
-						<div className="lg:ml-auto">
+					<div className="col-span-12 lg:col-span-4 xl:col-span-3 mb-5 lg:mt-5 mx-5 mr-5 flex">
+						<div className="lg:ml-auto flex h-fit space-x-2">
+							{
+								!props.purchase.forSale &&
+								<button className="btn btn-basic" onClick={e => generateQr(e)}>
+									<QrCode className="mr-1" />
+									QR
+								</button>
+							}
 							<QuantityButton
 								quantity={props.purchase.quantity}
 								className={props.purchase.forSale ? "outline-red-700 text-red-700 hover:outline-red-900 hover:text-red-900" : "outline-green-700 text-green-700 hover:outline-green-900 hover:text-green-900"}
@@ -92,8 +126,17 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange:
 					title={props.purchase.forSale ? "Unlist Ticket" : "Sell Ticket"}
 					message={`Are you sure you want to ${props.purchase.forSale ? "unlist" : "list"} ${selectedQuantity} tickets${props.purchase.forSale ? "?" : " for " + price + " ETH each?"}`}
 					close={() => setShowConfirmationModal(false)}
-					action={() => action()}
+					action={() => toggleTokenListing()}
 				/>
+			}
+			{
+				qrData &&
+				<QRModal
+					close={() => setQrData(undefined)}
+					title="Ticket QR"
+				>
+					<QRCode className="my-5" value={JSON.stringify(qrData)} size={200} />
+				</QRModal>
 			}
 		</>
 	);

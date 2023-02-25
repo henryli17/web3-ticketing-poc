@@ -4,7 +4,7 @@ const web3 = new Web3(
 	new Web3.providers.HttpProvider("http://127.0.0.1:8545")
 );
 
-const ABI = require("./ABI.json");
+const ABI = require("./contractABI.json");
 const owner = "0x3b26935917de7f5fac60f6d15ff02b1cf468dfb0";
 const address = process.env.ETH_CONTRACT_ADDRESS;
 const instance = new web3.eth.Contract(ABI, address);

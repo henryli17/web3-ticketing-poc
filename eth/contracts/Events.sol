@@ -65,15 +65,21 @@ contract Events is ERC1155, Ownable {
 		_mint(msg.sender, _eventId, _quantity, "");
 	}
 
-	function markTokenAsUsed(address _owner, uint _eventId) external onlyOwner {
+	function markTokenAsUsed(bytes32 _hashedMessage, uint8 _v, bytes32 _r, bytes32 _s, uint _eventId, uint _quantity) external onlyOwner {	
 		require(events[_eventId].created, "An event with this ID does not exist.");
 
-		uint listedCount = getListedCount(msg.sender, _eventId);
-		uint usedCount = getUsedCount(msg.sender, _eventId);
+		bytes memory prefix = "\x19Ethereum Signed Message:\n32";
+        bytes32 message = keccak256(abi.encodePacked(prefix, _hashedMessage));
+        address owner = ecrecover(message, _v, _r, _s);
 
-		require(listedCount + usedCount < balanceOf(msg.sender, _eventId), "No tickets left to mark as used.");
+		uint listedCount = getListedCount(owner, _eventId);
+		uint usedCount = getUsedCount(owner, _eventId);
 
-		usedTokens[_owner].push(_eventId);
+		require(listedCount + usedCount + _quantity <= balanceOf(msg.sender, _eventId), "Insufficient tickets remaining.");
+
+		for (uint i = 0; i < _quantity; i++) {
+			usedTokens[owner].push(_eventId);
+		}
 	}
 
 	function getListedCount(address _addr, uint _eventId) private view returns(uint) {

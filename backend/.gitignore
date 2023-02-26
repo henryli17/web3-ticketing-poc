@@ -2,3 +2,4 @@
 /node_modules
 /src/img/events
 events.db
+/ganache

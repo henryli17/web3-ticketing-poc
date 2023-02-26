@@ -22,7 +22,7 @@ const IMG_PATH = "src/img";
 
 ganache
 	.server({
-		database: { dbPath: path.resolve('../eth/blockchain') },
+		database: { dbPath: path.resolve('./ganache') },
 		wallet: { seed: "seed" }
 	})
 	.listen(8545, err => {

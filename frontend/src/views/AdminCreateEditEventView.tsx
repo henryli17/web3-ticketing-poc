@@ -201,6 +201,16 @@ const AdminCreateEditEventView = () => {
 						types={["PNG", "JPG", "JPEG", "WEBP", "TIF", "GIF", "HEIC", "BMP"]}
 						required={action === Action.CREATE}
 					/>
+					{
+						(event?.imageUrl || image) &&
+						<img
+							className="mt-3 rounded shadow-lg"
+							src={image ? URL.createObjectURL((image as Blob)) : event?.imageUrl}
+							alt={event?.artist || formik.values.artist}
+							width={200}
+							height={275}
+						/>
+					}
 				</div>
 				{
 					error &&

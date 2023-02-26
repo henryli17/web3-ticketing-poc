@@ -208,8 +208,7 @@ server.post(API_BASE + "/login", async (req, res) => {
 server.post(API_BASE + "/events", async (req, res) => {
 	await response(req, res, async (req) => {
 		if (!req.session.admin) {
-			// TODO
-			// throw new errs.UnauthorizedError();
+			throw new errs.UnauthorizedError();
 		}
 
 		// Convert FormData strings to numbers
@@ -264,8 +263,7 @@ server.post(API_BASE + "/events", async (req, res) => {
 server.put(API_BASE + "/events", async (req, res) => {
 	await response(req, res, async (req) => {
 		if (!req.session.admin) {
-			// TODO
-			// throw new errs.UnauthorizedError();
+			throw new errs.UnauthorizedError();
 		}
 
 		// Convert FormData strings to numbers

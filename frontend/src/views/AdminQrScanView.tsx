@@ -40,7 +40,7 @@ const AdminQrScanView = () => {
 				}
 			}
 	
-			setTicket(JSON.parse(data.text));
+			setTicket(ticket);
 			setShowConfirmationModal(true);
 		} catch (e: any) {
 			return;

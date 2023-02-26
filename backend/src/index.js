@@ -216,8 +216,8 @@ server.post(API_BASE + "/events", async (req, res) => {
 			req.body[key] = Number(req.body[key]);
 		}
 
-		// Convert FormData string to array
-		req.body.genres = req.body?.genres.split("\n");
+		// Convert FormData string to array, filtering empty genres
+		req.body.genres = req.body?.genres.split(/\r?\n/).filter(g => !!g);
 
 		const validator = validators.createEvent(req.body);
 
@@ -271,8 +271,8 @@ server.put(API_BASE + "/events", async (req, res) => {
 			req.body[key] = Number(req.body[key]);
 		}
 
-		// Convert FormData string to array
-		req.body.genres = req.body?.genres.split("\n");
+		// Convert FormData string to array, filtering empty genres
+		req.body.genres = req.body?.genres.split(/\r?\n/).filter(g => !!g);
 
 		const validator = validators.updateEvent(req.body);
 

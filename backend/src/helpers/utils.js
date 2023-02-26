@@ -129,6 +129,7 @@ const omit = (object, keys) => {
 
 const weiToEth = (wei) => Web3.utils.fromWei(wei.toString());
 const ethToGwei = (eth) => eth * Math.pow(10, 9);
+const random = (min, max) => Math.random() * (max - min) + min;
 
 const moveFile = (from, to) => {
     const read = fs.createReadStream(from);
@@ -141,7 +142,9 @@ const moveFile = (from, to) => {
     });
 };
 
+
 module.exports = {
+	random,
 	getPurchases,
 	getEvent,
 	omit,

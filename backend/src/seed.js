@@ -5,21 +5,19 @@ const utils = require("./helpers/utils.js");
 const { faker } = require('@faker-js/faker');
 const SEED_COUNT = 50;
 
-const random = (min, max) => Math.random() * (max - min) + min;
-
 const generateEvents = (n) => {
 	const events = [];
 
 	for (let i = 0; i < n; i++) {
 		const genres = [];
-		const count = random(1, 4);
+		const count = utils.random(1, 4);
 		const time = new Date();
 	
 		for (let j = 0; j < count; j++) {
 			genres.push(faker.music.genre());
 		}
 	
-		time.setDate(time.getDate() + random(1, 1000));
+		time.setDate(time.getDate() + utils.random(1, 1000));
 	
 		events.push({
 			name: faker.music.songName(),
@@ -27,7 +25,7 @@ const generateEvents = (n) => {
 			venue: faker.lorem.words(2),
 			city: faker.address.cityName(),
 			time: time,
-			price: parseInt(utils.ethToGwei(random(0.01, 0.5))),
+			price: parseInt(utils.ethToGwei(utils.random(0.01, 0.5))),
 			imageUrl: faker.image.fashion(707, 976, true),
 			description: faker.lorem.lines(5),
 			genres: genres,

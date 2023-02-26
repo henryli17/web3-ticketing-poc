@@ -9,6 +9,7 @@ const owner = "0x3b26935917de7f5fac60f6d15ff02b1cf468dfb0";
 const address = process.env.ETH_CONTRACT_ADDRESS;
 const instance = new web3.eth.Contract(ABI, address, { handleRevert: true });
 const gas = 999999;
+const signatureMessage = Web3.utils.toHex("Please sign this transaction to view your ticket QR code.");
 
 const getTokens = async (address) => {
 	const tokens = new Map();
@@ -75,12 +76,7 @@ const getOwners = async (eventId) => {
 	return owners;
 };
 
-const signatureToAddress = (signature) => {
-	return web3.eth.accounts.recover(
-		Web3.utils.toHex("Please sign this transaction to view your ticket QR code."),
-		signature
-	);
-}
+const signatureToAddress = signature => web3.eth.accounts.recover(signatureMessage, signature);
 
 module.exports = {
 	ABI,
@@ -90,5 +86,6 @@ module.exports = {
 	getTokens,
 	getOwners,
 	signatureToAddress,
-	gas
-}
+	gas,
+	signatureMessage
+};

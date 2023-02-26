@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { CurrencyDollar, QrCode, XLg } from "react-bootstrap-icons";
 import QRCode from "react-qr-code";
 import Web3 from "web3";
-import {  Purchase } from "../helpers/api";
+import {  getSignature, Purchase } from "../helpers/api";
 import { getInstance } from "../helpers/contract";
 import { gweiToEth } from "../helpers/utils";
 import { useAddress } from "../middleware/Wallet";
@@ -79,12 +79,10 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange:
 				return;
 			}
 
+			const message = (await getSignature()).message;
 			const signature = await w.ethereum.request({
 				method: "personal_sign",
-				params: [
-					Web3.utils.toHex("Please sign this transaction to view your ticket QR code."),
-					address
-				]
+				params: [message, address]
 			});
 	
 			setQrData(
@@ -112,7 +110,7 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange:
 					<div className="col-span-12 lg:col-span-4 xl:col-span-3 mb-5 lg:mt-5 mx-5 mr-5 flex">
 						<div className="lg:ml-auto flex h-fit space-x-2">
 							{
-								!props.purchase.forSale &&
+								!props.purchase.forSale && remainingQuantity > 0 &&
 								<button className="btn btn-basic" onClick={e => generateQr(e)}>
 									<QrCode className="mr-1" />
 									QR

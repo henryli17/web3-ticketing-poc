@@ -46,6 +46,10 @@ export type DeleteEventResponse = {
 	message: string
 };
 
+export type GetSignatureResponse = {
+	message: string
+};
+
 const request = <T>(method: HttpMethod, endpoint: string, options?: { data?: object, params?: object }) => {
 	const API_BASE = "http://localhost:3001/api";
 
@@ -159,5 +163,12 @@ export const eventToken = (signature: string, eventId: number, quantity: number)
 		HttpMethod.POST,
 		`events/${eventId}/token`,
 		{ data: { signature: signature, quantity: quantity } }
+	);
+};
+
+export const getSignature = () => {
+	return request<GetSignatureResponse>(
+		HttpMethod.GET,
+		"signature"
 	);
 };

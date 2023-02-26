@@ -125,6 +125,12 @@ server.get(API_BASE + "/events/:id/metadata", async (req, res) => {
 	});
 });
 
+server.get(API_BASE + "/signature", async (req, res) => {
+	await response(req, res, async (req) => {
+		return { message: contract.signatureMessage };
+	});
+});
+
 server.post(API_BASE + "/events/:id/token", async (req, res) => {
 	await response(req, res, async (req) => {
 		if (!req.session.admin) {

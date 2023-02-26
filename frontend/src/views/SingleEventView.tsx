@@ -48,6 +48,10 @@ const SingleEventView = () => {
 
 	useEffect(() => {
 		(async () => {
+			if (!address) {
+				return;
+			}
+
 			try {
 				const contract = await getInstance();
 				const event = await contract.methods.events(id).call();
@@ -56,13 +60,13 @@ const SingleEventView = () => {
 				setError(true);
 			}
 		})();
-	}, [id, updateQuantityRemaining])
+	}, [id, updateQuantityRemaining, address])
 
 	if (error) {
 		return <NotFound />;
 	}
 
-	if (!event || !address) {
+	if (!event) {
 		return <></>;
 	}
 
@@ -143,7 +147,7 @@ const SingleEventView = () => {
 
 const PurchaseButton = (props: {
 	className?: string,
-	address: string,
+	address: string | null,
 	event: Event,
 	onSuccess: () => any,
 	onLocked: () => any,

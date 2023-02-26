@@ -7,6 +7,8 @@ import PaginationButtons from "../components/PaginationButtons";
 import SearchBar from "../components/SearchBar";
 import { getEvents, GetEventsResponse } from "../helpers/api";
 import routes from "../routes";
+import Web3 from "web3";
+import Alert from "../components/Alert";
 
 const AdminEventsView = () => {
 	const [eventsData, setEventsData] = useState<GetEventsResponse>();
@@ -59,6 +61,14 @@ const AdminEventsView = () => {
 				</div>
 			</div>
 			<div className="space-y-3 mb-4">
+				{
+					!Web3.givenProvider &&
+					<Alert
+						className="bg-red-50 text-red-900"
+						title="MetaMask client not installed!"
+						message="Functionality will be limited."
+					/>
+				}
 				<SearchBar
 					onChange={e => {
 						// Only search if there has been no input for 300ms

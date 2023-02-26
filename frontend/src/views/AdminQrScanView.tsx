@@ -49,8 +49,6 @@ const AdminQrScanView = () => {
 
 	const markTicketAsUsed = async () => {
 		if (!ticket || quantity <= 0) {
-			console.log(ticket);
-			console.log(quantity);
 			return;
 		}
 
@@ -70,7 +68,7 @@ const AdminQrScanView = () => {
 			if (e?.response?.data?.message) {
 				setAlertMessage("Tickets were invalid. Reason: " + e.response.data.message);
 			} else {
-				setAlertMessage("There was an issue whilst trying to mark tickets as used.")
+				setAlertMessage("There was an issue whilst trying to mark tickets as used.");
 			}
 		}
 

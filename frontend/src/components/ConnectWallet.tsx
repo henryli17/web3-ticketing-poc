@@ -9,26 +9,28 @@ const ConnectWallet = (props: { className?: string, onLocked?: () => any }) => {
 	const [hovering, setHovering] = useState(false);
 
 	const connectWallet = async (e: React.MouseEvent<HTMLElement>) => {
-		if (Web3.givenProvider) {
-			e.preventDefault();
+		if (!Web3.givenProvider) {
+			return;
+		}
 
-			// Logout
-			if (!loggedOut) {
-				setAddress("");
-				setLoggedOut(true);
-				return;
-			}
-	
-			const web3 = new Web3(Web3.givenProvider);
+		e.preventDefault();
+		
+		// Logout
+		if (!loggedOut) {
+			setAddress("");
+			setLoggedOut(true);
+			return;
+		}
 
-			try {
-				const accounts = await web3.eth.requestAccounts();
-				setAddress(accounts[0]);
-				setLoggedOut(false);
-			} catch (e: any) {
-				if (e.code && e.code === -32002 && props.onLocked) {
-					props.onLocked();
-				}
+		const web3 = new Web3(Web3.givenProvider);
+
+		try {
+			const accounts = await web3.eth.requestAccounts();
+			setAddress(accounts[0]);
+			setLoggedOut(false);
+		} catch (e: any) {
+			if (e.code && e.code === -32002 && props.onLocked) {
+				props.onLocked();
 			}
 		}
 	}

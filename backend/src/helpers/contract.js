@@ -9,7 +9,7 @@ const owner = "0x3b26935917de7f5fac60f6d15ff02b1cf468dfb0";
 const address = process.env.ETH_CONTRACT_ADDRESS;
 const instance = new web3.eth.Contract(ABI, address, { handleRevert: true });
 const gas = 999999;
-const signatureMessage = Web3.utils.toHex("Please sign this transaction to view your ticket QR code.");
+const signatureMessage = Web3.utils.toHex("Please sign this transaction to authenticate via your Ethereum wallet.");
 
 const getTokens = async (address) => {
 	const tokens = new Map();

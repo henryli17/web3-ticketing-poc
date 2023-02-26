@@ -163,7 +163,7 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange:
 					<div className="mt-5 mb-1 space-y-3">
 						<QRCode value={JSON.stringify(qrData)} size={200} />
 						<div className="font-medium text-gray-800">
-							Quantity: {remainingQuantity}
+							Remaining Tickets: {remainingQuantity}
 						</div>
 					</div>
 				</QRModal>

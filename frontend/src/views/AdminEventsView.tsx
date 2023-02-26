@@ -90,7 +90,7 @@ const AdminEventsView = () => {
 					prev={() => setOffset(offset - eventsData.limit)}
 					next={() => (typeof eventsData.nextOffset === "number") && setOffset(eventsData.nextOffset)}
 					prevDisabled={offset === 0}
-					nextDisabled={!Boolean(eventsData.nextOffset)}
+					nextDisabled={!eventsData.nextOffset}
 					className="btn btn-basic"
 					hideWhenDisabled={true}
 				/>

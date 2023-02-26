@@ -36,7 +36,7 @@ const EventCard = (props: {
 								}
 								{gweiToEth(props.event.price)} ETH
 								{
-									props.used && props.used > 0 &&
+									!!props.used && props.used > 0 &&
 									<span className="text-indigo-500 font-medium text-xs uppercase mx-2">
 										[{props.used} Used]
 									</span>

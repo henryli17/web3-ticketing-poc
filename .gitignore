@@ -3,3 +3,5 @@
 .env
 
 eth/blockchain
+ssh
+ssh-cert.pub

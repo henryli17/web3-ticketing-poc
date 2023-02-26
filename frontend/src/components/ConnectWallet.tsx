@@ -29,27 +29,25 @@ const ConnectWallet = (props: { className?: string, onLocked?: () => any }) => {
 			setAddress(accounts[0]);
 			setLoggedOut(false);
 		} catch (e: any) {
+			// Wallet is locked
 			if (e.code && e.code === -32002 && props.onLocked) {
 				props.onLocked();
 			}
 		}
-	}
-	
-	const buttonClasses = address ? "w-36 hover:text-red-700 hover:outline-red-700" : "w-44";
-	const buttonText = address ? (hovering ? "Disconnect" : "Connected") : "Connect Wallet";
+	};
 
 	return (
 		<a
 			href="https://metamask.io/"
 			target="_blank"
 			rel="noreferrer"
-			className={`btn btn-basic ${buttonClasses} ${props.className} `}
+			className={`btn btn-basic ${address ? "w-36 hover:text-red-700 hover:outline-red-700" : "w-44"} ${props.className} `}
 			onClick={(e) => connectWallet(e)}
 			onMouseEnter={() => setHovering(true)}
 			onMouseLeave={() => setHovering(false)}
 		>
 			<img src="../../assets/metamask.svg" className="mr-2" alt="MetaMask icon" height={20} width={20}/>
-			{buttonText}
+			{address ? (hovering ? "Disconnect" : "Connected") : "Connect Wallet"}
 		</a>
 	);
 };

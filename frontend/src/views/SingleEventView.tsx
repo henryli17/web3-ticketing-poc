@@ -24,15 +24,18 @@ const SingleEventView = () => {
 	const [address] = useAddress();
 
 	useEffect(() => {
-		if (address) {
-			setLocked(false);
-		}
-
 		getEvent(Number(id))
 			.then(setEvent)
 			.catch(() => setError(true))
 		;
+	}, [id]);
 
+	useEffect(() => {
+		if (!address) {
+			return;
+		}
+
+		setLocked(false);
 		getResaleTokens(Number(id))
 			.then(resaleTokens => {
 				setResaleTokens(
@@ -59,7 +62,7 @@ const SingleEventView = () => {
 		return <NotFound />;
 	}
 
-	if (!event) {
+	if (!event || !address) {
 		return <></>;
 	}
 

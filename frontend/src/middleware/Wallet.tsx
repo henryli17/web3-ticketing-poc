@@ -58,7 +58,7 @@ const Wallet = () => {
 }
 
 export const useAddress = () => {
-	return useOutletContext<[string, React.Dispatch<React.SetStateAction<string>>]>();
+	return useOutletContext<[string | null, React.Dispatch<React.SetStateAction<string | null>>]>();
 }
 
 export default Wallet;

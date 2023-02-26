@@ -23,7 +23,7 @@ const AdminEventsView = () => {
 		} else {
 			setUpdateEvents(!updateEvents);
 		}
-	}
+	};
 
 	useEffect(() => {
 		getEvents({ offset: offset, search: search })

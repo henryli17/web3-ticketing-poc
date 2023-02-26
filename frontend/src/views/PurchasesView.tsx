@@ -20,6 +20,10 @@ const PurchasesView = () => {
 	const [hasPurchases, setHasPurchases] = useState(false);
 
 	useEffect(() => {
+		if (!address) {
+			return;
+		}
+
 		getPurchases(address)
 			.then(purchases => {
 				const purchaseData: PurchaseData = {

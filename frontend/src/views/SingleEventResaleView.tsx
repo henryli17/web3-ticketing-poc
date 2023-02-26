@@ -21,6 +21,10 @@ const SingleEventResaleView = () => {
 	const navigate = useNavigate();
 
 	useEffect(() => {
+		if (!address) {
+			return;
+		}
+
 		getResaleTokens(Number(id))
 			.then(resaleTokens => {
 				const r = resaleTokens.filter(r => !r.sold && r.owner !== address);
@@ -46,7 +50,7 @@ const SingleEventResaleView = () => {
 		return <NotFound />;
 	}
 
-	if (!event) {
+	if (!event || !address) {
 		return <></>;
 	}
 

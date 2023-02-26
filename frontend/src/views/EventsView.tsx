@@ -122,7 +122,7 @@ const EventsView = () => {
 				<div className="space-y-3 col-span-12 md:col-span-9 xl:col-span-10">
 					{
 						!eventsData.events.length &&
-						<div className="p-5 text-2xl">No events matching your query could be found.</div>
+						<h2 className="px-5 py-1 uppercase italic font-medium">No Events Found</h2>
 					}
 					{eventsData.events.map(event => <EventCard key={event.id} event={event} />)}
 					<div className="flex justify-end space-x-2">

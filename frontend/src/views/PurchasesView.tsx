@@ -105,7 +105,7 @@ const PurchasesView = () => {
 			</div>
 			{
 				!hasPurchases &&
-				<h2 className="px-10">We didn't find any purchases yet.</h2>
+				<h2 className="italic uppercase text-center font-medium">No Purchases Found</h2>
 			}
 			{
 				purchaseData[purchaseType].map((purchase, i) => {

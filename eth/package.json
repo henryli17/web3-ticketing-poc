@@ -11,5 +11,9 @@
   "devDependencies": {
     "solidity-coverage": "^0.7.22",
     "ganache-cli": "^6.12.2"
+  },
+  "scripts": {
+    "deploy": "truffle migrate",
+    "abi": "npx truffle-export-abi"
   }
 }

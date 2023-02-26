@@ -24,7 +24,7 @@ const main = async () => {
 		;
 	}
 
-	console.log(`\nSuccessfully deployed events to contract ${contract.address}!`);
+	console.log(`\nSuccessfully deployed events to contract ${contract.ADDRESS}!`);
 };
 
 main()

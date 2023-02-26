@@ -16,7 +16,7 @@ const NavBar = () => {
 	const search = (search: string) => {
 		navigate(
 			`${routes.events()}?search=${encodeURIComponent(search)}`
-		)
+		);
 	};
 
 	useEffect(() => {

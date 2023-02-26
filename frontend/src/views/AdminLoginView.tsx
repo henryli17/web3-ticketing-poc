@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { ArrowRightShort } from "react-bootstrap-icons";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { login } from "../helpers/api";
 import { useAdmin } from "../middleware/Admin";
 import routes from "../routes";
 
 const AdminLoginView = () => {
+	const { state } = useLocation();
 	const [admin, setAdmin] = useAdmin();
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState(false);
-	const [searchParams] = useSearchParams();
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -22,11 +22,11 @@ const AdminLoginView = () => {
 	useEffect(() => {
 		if (admin) {
 			navigate(
-				searchParams.get("redirect") || routes.admin.events(),
+				state?.next || routes.admin.events(),
 				{ replace: true }
 			);
 		}
-	}, [admin, navigate, searchParams]);
+	}, [admin, navigate, state]);
 	
 	const submit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();

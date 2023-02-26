@@ -8,7 +8,8 @@ const RequireAdmin = ({ redirect: Redirect }: { redirect: React.FC }) => {
 	if (!admin) {
 		return (
 			<Navigate
-				to={routes.admin.login() + `?redirect=${encodeURIComponent(window.location.pathname)}`}
+				to={routes.admin.login()}
+				state={{ next: window.location.pathname }}
 				replace
 			/>
 		);

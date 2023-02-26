@@ -107,6 +107,7 @@ const getGenres = () => {
 	return knex
 		.select("name")
 		.table("genres")
+		.orderBy("name")
 		.pluck("name")
 	;
 };
@@ -115,6 +116,7 @@ const getLocations = () => {
 	return knex
 		.distinct("city")
 		.table("events")
+		.orderBy("city")
 		.pluck("city")
 	;
 };

@@ -1,16 +1,16 @@
 import { useFormik } from "formik";
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import routes from "../routes";
-import * as Yup from "yup";
-import { createEvent, Event, getEvent, updateEvent } from "../helpers/api";
-import { ethToGwei, gweiToEth, omit } from "../helpers/utils";
-import { useAdmin } from "../middleware/Admin";
-import Alert from "../components/Alert";
-import { getInstance } from "../helpers/contract";
-import BackCaret from "../components/BackCaret";
-import AdminHeader from "../components/AdminHeader";
 import { FileUploader } from "react-drag-drop-files";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import * as Yup from "yup";
+import AdminHeader from "../components/AdminHeader";
+import Alert from "../components/Alert";
+import BackCaret from "../components/BackCaret";
+import { createEvent, Event, getEvent, updateEvent } from "../helpers/api";
+import { getInstance } from "../helpers/contract";
+import { ethToGwei, gweiToEth } from "../helpers/utils";
+import { useAdmin } from "../middleware/Admin";
+import routes from "../routes";
 
 enum Action {
 	CREATE = "Create",

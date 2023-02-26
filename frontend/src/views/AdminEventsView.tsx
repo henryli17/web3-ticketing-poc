@@ -9,6 +9,7 @@ import { getEvents, GetEventsResponse } from "../helpers/api";
 import routes from "../routes";
 import Web3 from "web3";
 import Alert from "../components/Alert";
+import AdminHeader from "../components/AdminHeader";
 
 const AdminEventsView = () => {
 	const [eventsData, setEventsData] = useState<GetEventsResponse>();
@@ -44,11 +45,7 @@ const AdminEventsView = () => {
 
 	return (
 		<div className="container mx-auto py-16 px-10">
-			<div className="text-gray-500 mb-8 flex items-center">
-				<div>
-					<h2 className="font-bold">Admin</h2>
-					<div className="font-medium">Events</div>
-				</div>
+			<AdminHeader subtitle="Events" className="mb-8 flex items-center">
 				<div className="ml-auto flex space-x-2">
 					<Link to={routes.admin.qr()} className="btn btn-basic">
 						<QrCodeScan className="mr-1" />
@@ -59,7 +56,7 @@ const AdminEventsView = () => {
 						Create Event
 					</Link>
 				</div>
-			</div>
+			</AdminHeader>
 			<div className="space-y-3 mb-4">
 				{
 					!Web3.givenProvider &&

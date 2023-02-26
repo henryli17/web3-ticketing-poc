@@ -9,6 +9,7 @@ import { useAdmin } from "../middleware/Admin";
 import Alert from "../components/Alert";
 import { getInstance } from "../helpers/contract";
 import BackCaret from "../components/BackCaret";
+import AdminHeader from "../components/AdminHeader";
 
 enum Action {
 	CREATE = "Create",
@@ -118,12 +119,7 @@ const AdminCreateEditEventView = () => {
 	return (
 		<div className="container mx-auto py-16 px-10">
 			<BackCaret to={routes.admin.events()} />
-			<div className="text-gray-500 mb-8 items-center">
-				<h2 className="font-bold">Admin</h2>
-				<div className="font-medium">
-					{action} Event
-				</div>
-			</div>
+			<AdminHeader className="mb-8" subtitle={action + " Event"} />
 			<form onSubmit={e => formik.handleSubmit(e)} className="space-y-3">
 				<Input
 					name="name"

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { QrReader } from 'react-qr-reader';
+import AdminHeader from '../components/AdminHeader';
 import AlertModal from '../components/AlertModal';
 import BackCaret from '../components/BackCaret';
 import ConfirmationModal from '../components/ConfirmationModal';
@@ -78,10 +79,7 @@ const AdminQrScanView = () => {
 	return (
 		<div className="container mx-auto py-16 px-10">
 			<BackCaret to={routes.admin.events()} />
-			<div className="text-gray-500">
-				<h2 className="font-bold">Admin</h2>
-				<div className="font-medium">Scan QR</div>
-			</div>
+			<AdminHeader subtitle="Scan QR" />
 			<div className="w-1/2">
 				<QrReader
 					onResult={data => scan(data)}

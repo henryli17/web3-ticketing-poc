@@ -13,24 +13,18 @@ const getEvents = async (options, deployedOnly = true, showCancelled = false) =>
 		.table("events")
 		.leftJoin("event-genre", "events.id", "event-genre.eventId")
 		.leftJoin("genres", "event-genre.genreId", "genres.id")
-		.whereRaw("events.time > time('now')")
+		.whereRaw("events.time > unixepoch('now')")
 		.modify(query => {
 			if (deployedOnly) {
-				query.where("deployed", true);
+				query.where("deployed", 1);
 			}
 
 			if (!showCancelled) {
-				query.where("cancelled", false);
+				query.where("cancelled", 0);
 			}
 
-			if (options?.id) {
-				if (Array.isArray(options.id)) {
-					query.whereIn("events.id", options.id);
-				} else {
-					query.where("events.id", options.id);
-				}
-				
-				return;
+			if (options?.ids && options.ids.length) {
+				query.whereIn("events.id", options.ids);
 			}
 
 			if (options?.search) {
@@ -74,24 +68,53 @@ const getEvents = async (options, deployedOnly = true, showCancelled = false) =>
 	return Object.values(events);
 };
 
-const getGenres = async () => {
-	const genres = await knex
+const getEvent = async (id) => {
+	let event;
+	const rows = await knex
+		.select("events.*")
+		.select("genres.name AS genre")
+		.table("events")
+		.leftJoin("event-genre", "events.id", "event-genre.eventId")
+		.leftJoin("genres", "event-genre.genreId", "genres.id")
+		.where("events.id", id)
+		.whereRaw("events.time > unixepoch('now')")
+	;
+
+	if (!rows.length) {
+		return false;
+	}
+
+	// Group genres into array for each event
+	for (const row of rows) {
+		if (!event) {
+			event = {
+				...row,
+				genres: row.genre ? [row.genre] : []
+			};
+
+			delete event.genre;
+		} else {
+			event.genres.push(row.genre);
+		}
+	}
+
+	return event;
+};
+
+const getGenres = () => {
+	return knex
 		.select("name")
 		.table("genres")
 		.pluck("name")
 	;
-
-	return genres;
 };
 
-const getLocations = async () => {
-	const locations = await knex
+const getLocations = () => {
+	return knex
 		.distinct("city")
 		.table("events")
 		.pluck("city")
 	;
-
-	return locations;
 };
 
 const createEvent = async (event) => {
@@ -142,6 +165,7 @@ const setGenresForEvent = async (eventId, eventGenres) => {
 
 module.exports = {
 	getEvents,
+	getEvent,
 	getGenres,
 	getLocations,
 	createEvent,

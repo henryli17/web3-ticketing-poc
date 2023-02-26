@@ -7,7 +7,6 @@ import AdminHeader from "../components/AdminHeader";
 import Alert from "../components/Alert";
 import BackCaret from "../components/BackCaret";
 import { createEvent, Event, getEvent, updateEvent } from "../helpers/api";
-import { getInstance } from "../helpers/contract";
 import { ethToGwei, gweiToEth } from "../helpers/utils";
 import { useAdmin } from "../middleware/Admin";
 import routes from "../routes";
@@ -21,7 +20,7 @@ const AdminCreateEditEventView = () => {
 	const { id } = useParams();
 	const [error, setError] = useState(false);
 	const [success, setSuccess] = useState(false);
-	const [minQuantity, setMinQuantity] = useState(1);
+	const [refreshEvent, setRefreshEvent] = useState(false);
 	const [event, setEvent] = useState<Event>();
 	const [image, setImage] = useState<File>();
 	const [, setAdmin]= useAdmin();
@@ -51,7 +50,7 @@ const AdminCreateEditEventView = () => {
 			city: Yup.string().required("Required"),
 			time: Yup.string().required("Required"),
 			price: Yup.number().required("Required").min(0),
-			quantity: Yup.number().required("Required").min(minQuantity),
+			quantity: Yup.number().required("Required").min(event?.supplied || 1),
 			description: Yup.string().required("Required"),
 			genres: Yup.string().required("Required")
 		}),
@@ -83,6 +82,7 @@ const AdminCreateEditEventView = () => {
 					formData.delete("price");
 					await updateEvent(formData);
 					setSuccess(true);
+					setRefreshEvent(!refreshEvent);
 				}
 			} catch (e: any) {
 				console.error(e);
@@ -104,27 +104,15 @@ const AdminCreateEditEventView = () => {
 	tomorrow.setDate(tomorrow.getDate() + 1);
 
 	useEffect(() => {
-		(async () => {
-			if (!id || action === Action.CREATE) {
-				return;
-			}
+		if (!id || action === Action.CREATE) {
+			return;
+		}
 
-			try {
-				const event = await getEvent(Number(id));
-				const contract = await getInstance();
-				const contractEvent = await contract
-					.methods
-					.events(event.id)
-					.call()
-				;
-
-				setEvent(event);
-				setMinQuantity(contractEvent.supplied);
-			} catch (e) {
-				navigate(routes.admin.events());
-			}
-		})();
-	}, [id, action, navigate, success]);
+		getEvent(Number(id))
+			.then(setEvent)
+			.catch(() => navigate(routes.admin.events()))
+		;
+	}, [id, action, navigate, success, refreshEvent]);
 
 	return (
 		<div className="container mx-auto py-16 px-10">
@@ -176,7 +164,7 @@ const AdminCreateEditEventView = () => {
 					label="Ticket Quantity"
 					type="number"
 					formik={formik}
-					min={minQuantity}
+					min={event?.supplied || 1}
 				/>
 				<Input
 					name="description"
@@ -223,7 +211,7 @@ const AdminCreateEditEventView = () => {
 				{
 					success &&
 					<Alert
-						message={`Event successfully updated.`}
+						message="Event successfully updated."
 						className="bg-green-50 text-green-700"
 					/>
 				}

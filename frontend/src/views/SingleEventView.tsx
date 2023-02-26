@@ -17,7 +17,7 @@ const SingleEventView = () => {
 	const [error, setError] = useState(false);
 	const [event, setEvent] = useState<Event>();
 	const [resaleTokens, setResaleTokens] = useState<ResaleToken[]>([]);
-	const [quantityRemaining, setQuantityRemaining] = useState(0);
+	const [refreshEvent, setRefreshEvent] = useState(false);
 	const [success, setSuccess] = useState(false);
 	const [locked, setLocked] = useState(false);
 	const [updateQuantityRemaining, setUpdateQuantityRemaining] = useState(false);
@@ -44,23 +44,7 @@ const SingleEventView = () => {
 			})
 			.catch(() => setError(true))
 		;
-	}, [id, address]);
-
-	useEffect(() => {
-		(async () => {
-			if (!address) {
-				return;
-			}
-
-			try {
-				const contract = await getInstance();
-				const event = await contract.methods.events(id).call();
-				setQuantityRemaining(event.quantity - event.supplied);
-			} catch (e) {
-				setError(true);
-			}
-		})();
-	}, [id, updateQuantityRemaining, address])
+	}, [id, address, refreshEvent]);
 
 	if (error) {
 		return <NotFound />;
@@ -120,10 +104,10 @@ const SingleEventView = () => {
 								className="btn-basic"
 								onSuccess={() => {
 									setSuccess(true);
-									setUpdateQuantityRemaining(!updateQuantityRemaining);
+									setRefreshEvent(!refreshEvent);
 								}}
 								onLocked={() => setLocked(true)}
-								quantityRemaining={quantityRemaining}
+								quantityRemaining={event.remaining || 0}
 							/>
 							{
 								address && resaleTokens.length > 0 &&

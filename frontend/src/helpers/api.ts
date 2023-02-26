@@ -22,11 +22,13 @@ export type Event = {
 	city: string
 	time: string | number
 	price: number
-	quantity: number
 	imageUrl: string
 	description: string
 	genres: string[]
 	cancelled: number
+	quantity?: number
+	supplied?: number
+	remaining?: number
 };
 
 export type Purchase = {

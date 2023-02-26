@@ -79,23 +79,14 @@ const response = async (req, res, fn) => {
 
 server.get("/img/*", restify.plugins.serveStatic({ directory: __dirname }));
 
-server.get(API_BASE + "/events/:id?", async (req, res) => {
+server.get(API_BASE + "/events", async (req, res) => {
 	await response(req, res, async (req) => {
 		const events = await db.getEvents({
-			id: req.params.id,
 			genres: (req.query?.genres !== "") ? req.query?.genres?.split(",") : null,
 			locations: (req.query?.locations !== "") ? req.query?.locations?.split(",") : null,
 			maxPrice: req.query?.maxPrice,
 			search: req.query?.search
 		});
-
-		if (req.params.id) {
-			if (!events.length) {
-				throw new errs.ResourceNotFoundError();
-			} else {
-				return events.shift();
-			}
-		}
 
 		const limit = 10;
 		const offset = Math.max(parseInt(req.query?.offset) || 0, 0);
@@ -109,22 +100,24 @@ server.get(API_BASE + "/events/:id?", async (req, res) => {
 	});
 });
 
+server.get(API_BASE + "/events/:id", async (req, res) => {
+	await response(req, res, async (req) => {
+		return (
+			await utils.getEvent(req.params.id)
+		);
+	});
+});
+
 server.get(API_BASE + "/events/:id/metadata", async (req, res) => {
 	await response(req, res, async (req) => {
-		const events = await db.getEvents({ id: Number(req.params.id) }, true, true);
-		const event = events.shift();
+		const event = await utils.getEvent(req.params.id);
 
 		return {
 			title: event.name,
 			description: event.description,
 			image: event.imageUrl,
 			properties: {
-				artist: event.artist,
-				venue: event.venue,
-				city: event.city,
-				time: event.time,
-				quantity: event.quantity,
-				cancelled: event.cancelled
+				...utils.omit(event, ["description", "name", "imageUrl"])
 			}
 		}
 	});
@@ -236,7 +229,7 @@ server.post(API_BASE + "/events", async (req, res) => {
 		const event = {
 			id: await db.createEvent(
 				{
-					...utils.omit(req.body, "genres"),
+					...utils.omit(req.body, ["genres", "quantity"]),
 					time: new Date(req.body.time * 1000),
 					imageUrl: `${API_HOST}/${filePath.replace("src/", "")}`
 				}
@@ -317,7 +310,7 @@ server.put(API_BASE + "/events", async (req, res) => {
 		const updatedEvent = await db.updateEvent(
 			event.id,
 			{
-				...utils.omit(event, "genres"),
+				...utils.omit(event, ["genres", "quantity"]),
 				time: new Date(event.time * 1000),
 				imageUrl: filePath ? `${API_HOST}/${filePath.replace("src/", "")}` : undefined
 			}

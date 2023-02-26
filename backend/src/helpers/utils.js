@@ -12,7 +12,7 @@ const getPurchases = async (address) => {
 	const resaleTokenEntries = await contract.instance.methods.getResaleTokenEntries(address).call();
 	const usedTokens = await contract.instance.methods.getUsedTokens(address).call();
 	const events = await db.getEvents({
-		id: [
+		ids: [
 			...Array.from(tokens.keys()),
 			...resaleTokenEntries.map(r => r.eventId)
 		]
@@ -95,9 +95,36 @@ const getPurchases = async (address) => {
 	return purchases.filter(p => p.event.deployed);
 };
 
-const omit = (object, key) => {
-	const { [key]: _, ...rest } = object;
-	return rest;
+const getEvent = async (id) => {
+	const event = await db.getEvent(id);
+
+	if (!event) {
+		return false;
+	}
+
+	const contractEvent = await contract.instance.methods.events(event.id).call();
+
+	return {
+		...event,
+		quantity: parseInt(contractEvent.quantity),
+		supplied: parseInt(contractEvent.supplied),
+		remaining: parseInt(contractEvent.quantity - contractEvent.supplied)
+	};
+};
+
+const omit = (object, keys) => {
+	let final = object;
+
+	const omitOne = (object, key) => {
+		const { [key]: _, ...rest } = object;
+		return rest;
+	};
+
+	for (const key of keys) {
+		final = omitOne(final, key);
+	}
+
+	return final;
 };
 
 const weiToEth = (wei) => Web3.utils.fromWei(wei.toString());
@@ -115,6 +142,7 @@ const moveFile = (from, to) => {
 
 module.exports = {
 	getPurchases,
+	getEvent,
 	omit,
 	weiToEth,
 	moveFile

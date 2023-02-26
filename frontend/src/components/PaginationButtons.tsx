@@ -2,7 +2,7 @@ import { ArrowLeft, ArrowRight } from "react-bootstrap-icons";
 
 const PaginationButtons = (props: {
 	prev: () => any,
-	next: () => any
+	next: () => any,
 	prevDisabled: boolean,
 	nextDisabled: boolean,
 	hideWhenDisabled: boolean,

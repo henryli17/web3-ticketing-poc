@@ -18,8 +18,8 @@ const main = async () => {
 				parseInt(event.quantity)
 			)
 			.send({
-				from: contract.owner,
-				gas: contract.gas
+				from: contract.OWNER,
+				gas: contract.GAS
 			})
 		;
 	}

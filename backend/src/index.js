@@ -1,7 +1,6 @@
 require('dotenv').config()
 console.clear()
 
-const Web3 = require("web3");
 const ganache = require("ganache");
 const restify = require("restify");
 const cookies = require('restify-cookies');
@@ -127,7 +126,7 @@ server.get(API_BASE + "/events/:id/metadata", async (req, res) => {
 
 server.get(API_BASE + "/signature", async (req, res) => {
 	await response(req, res, async (req) => {
-		return { message: contract.signatureMessage };
+		return { message: contract.SIGNATURE_MESSAGE };
 	});
 });
 
@@ -159,7 +158,7 @@ server.post(API_BASE + "/events/:id/token", async (req, res) => {
 				parseInt(req.params.id),
 				parseInt(req.body.quantity)
 			)
-			.send({ from: contract.owner, gas: contract.gas })
+			.send({ from: contract.OWNER, gas: contract.GAS })
 		;
 	});
 });
@@ -186,7 +185,7 @@ server.get(API_BASE + "/contract", async (req, res) => {
 	await response(req, res, async (req) => {
 		return {
 			ABI: contract.ABI,
-			address: contract.address
+			address: contract.ADDRESS
 		};
 	});
 });
@@ -233,7 +232,7 @@ server.post(API_BASE + "/events", async (req, res) => {
 				event.price,
 				event.quantity
 			)
-			.send({ from: contract.owner, gas: contract.gas })
+			.send({ from: contract.OWNER, gas: contract.GAS })
 		;
 		await db.updateEvent(event.id, { deployed: true });
 	});
@@ -272,7 +271,7 @@ server.put(API_BASE + "/events", async (req, res) => {
 				event.time,
 				event.quantity
 			)
-			.send({ from: contract.owner, gas: contract.gas })
+			.send({ from: contract.OWNER, gas: contract.GAS })
 		;
 
 		// Contract event update did not throw exception, update DB event
@@ -307,7 +306,7 @@ server.del(API_BASE + "/events/:id", async (req, res) => {
 
 		const owners = await contract.getOwners(id);
 		const totalQuantity = Array.from(owners.values()).reduce((acc, quantity) => acc + quantity, 0);
-		const contractBalance = await contract.instance.methods.getBalance().call({ from: contract.owner });
+		const contractBalance = await contract.instance.methods.getBalance().call({ from: contract.OWNER });
 		const refundAmount = totalQuantity * contractEvent.price;
 
 		if (contractBalance < refundAmount) {
@@ -326,7 +325,7 @@ server.del(API_BASE + "/events/:id", async (req, res) => {
 				Array.from(owners.keys()),
 				Array.from(owners.values())
 			)
-			.send({ from: contract.owner, gas: contract.gas })
+			.send({ from: contract.OWNER, gas: contract.GAS })
 		;
 
 		// Contract event update did not throw exception, update DB event

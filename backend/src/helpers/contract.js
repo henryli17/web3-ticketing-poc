@@ -5,11 +5,11 @@ const web3 = new Web3(
 );
 
 const ABI = require("./contractABI.json");
-const owner = "0x3b26935917de7f5fac60f6d15ff02b1cf468dfb0";
-const address = process.env.ETH_CONTRACT_ADDRESS;
-const instance = new web3.eth.Contract(ABI, address, { handleRevert: true });
-const gas = 999999;
-const signatureMessage = Web3.utils.toHex("Please sign this transaction to authenticate via your Ethereum wallet.");
+const GAS = 999999;
+const SIGNATURE_MESSAGE = Web3.utils.toHex("Please sign this transaction to authenticate via your Ethereum wallet.");
+const OWNER = "0x3b26935917de7f5fac60f6d15ff02b1cf468dfb0";
+const ADDRESS = process.env.ETH_CONTRACT_ADDRESS;
+const instance = new web3.eth.Contract(ABI, ADDRESS, { handleRevert: true });
 
 const getTokens = async (address) => {
 	const tokens = new Map();
@@ -76,16 +76,16 @@ const getOwners = async (eventId) => {
 	return owners;
 };
 
-const signatureToAddress = signature => web3.eth.accounts.recover(signatureMessage, signature);
+const signatureToAddress = signature => web3.eth.accounts.recover(SIGNATURE_MESSAGE, signature);
 
 module.exports = {
 	ABI,
-	address,
-	owner,
+	ADDRESS,
+ 	OWNER,
 	instance,
 	getTokens,
 	getOwners,
 	signatureToAddress,
-	gas,
-	signatureMessage
+ 	GAS,
+	SIGNATURE_MESSAGE
 };

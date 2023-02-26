@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { CurrencyDollar, QrCode, XLg } from "react-bootstrap-icons";
 import QRCode from "react-qr-code";
-import Web3 from "web3";
 import {  getSignature, Purchase } from "../helpers/api";
 import { getInstance } from "../helpers/contract";
 import { gweiToEth } from "../helpers/utils";

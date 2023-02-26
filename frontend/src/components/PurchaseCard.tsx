@@ -17,7 +17,7 @@ export type QrData = {
 };
 
 const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange: () => any }) => {
-	const [selectedQuantity, setSelectedQuantity] = useState(props.purchase.quantity);
+	const [selectedQuantity, setSelectedQuantity] = useState(1);
 	const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 	const [remainingQuantity, setRemainingQuantity] = useState(0);
 	const [qrData, setQrData] = useState<QrData>();
@@ -31,12 +31,12 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange:
 	};
 
 	useEffect(() => {
-		setSelectedQuantity(props.purchase.quantity);
-
 		if (props.purchase.used) {
 			setRemainingQuantity(props.purchase.quantity - props.purchase.used);
+			setSelectedQuantity(props.purchase.quantity - props.purchase.used);
 		} else {
 			setRemainingQuantity(props.purchase.quantity);
+			setSelectedQuantity(props.purchase.quantity);
 		}
 	}, [props.purchase, address]);
 

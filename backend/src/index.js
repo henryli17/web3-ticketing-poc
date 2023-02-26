@@ -319,7 +319,7 @@ server.put(API_BASE + "/events", async (req, res) => {
 			{
 				...utils.omit(event, "genres"),
 				time: new Date(event.time * 1000),
-				imageUrl: `${API_HOST}/${filePath.replace("src/", "")}`
+				imageUrl: filePath ? `${API_HOST}/${filePath.replace("src/", "")}` : undefined
 			}
 		);
 

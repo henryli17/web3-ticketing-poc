@@ -18,7 +18,6 @@ const eventSchema = {
 		"time": { "type": "integer", "minimum": new Date().getTime() / 1000 },
 		"price": { "type": "integer", "minimum": 0 },
 		"quantity": { "type": "integer", "minimum": 1 },
-		"imageUrl": { "type": "string" },
 		"description": { "type": "string" },
 		"genres": { "$ref": "/genres" }
 	},
@@ -31,7 +30,6 @@ const eventSchema = {
 		"time",
 		"price",
 		"quantity",
-		"imageUrl",
 		"description",
 		"genres"
 	],
@@ -56,7 +54,6 @@ const updateEvent = (event) => {
 
 	delete schema.properties.price;
 	schema.required = schema.required.filter(r => r !== "price")
-	console.log(schema);
 
 	v.addSchema(genresSchema, '/genres');
 

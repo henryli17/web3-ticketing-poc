@@ -136,7 +136,7 @@ export const login = (password?: string) => {
 	);
 };
 
-export const createEvent = (event: Omit<Event, "id" | "cancelled">) => {
+export const createEvent = (event: FormData) => {
 	return request<undefined>(
 		HttpMethod.POST,
 		"events",
@@ -144,7 +144,7 @@ export const createEvent = (event: Omit<Event, "id" | "cancelled">) => {
 	);
 };
 
-export const updateEvent = (event: Omit<Event, "price" | "cancelled">) => {
+export const updateEvent = (event: FormData) => {
 	return request<undefined>(
 		HttpMethod.PUT,
 		"events",

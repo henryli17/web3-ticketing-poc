@@ -10,6 +10,7 @@ import Alert from "../components/Alert";
 import { getInstance } from "../helpers/contract";
 import BackCaret from "../components/BackCaret";
 import AdminHeader from "../components/AdminHeader";
+import { FileUploader } from "react-drag-drop-files";
 
 enum Action {
 	CREATE = "Create",
@@ -22,6 +23,7 @@ const AdminCreateEditEventView = () => {
 	const [success, setSuccess] = useState(false);
 	const [minQuantity, setMinQuantity] = useState(1);
 	const [event, setEvent] = useState<Event>();
+	const [image, setImage] = useState<File>();
 	const [, setAdmin]= useAdmin();
 	const navigate = useNavigate();
 	const dateToString = (date: Date) => {
@@ -39,7 +41,6 @@ const AdminCreateEditEventView = () => {
 			time: (event?.city) ? dateToString(new Date(event.time)) : "",
 			price: (event?.price) ? gweiToEth(event.price) : "",
 			quantity: event?.quantity || "",
-			imageUrl: event?.imageUrl || "",
 			description: event?.description || "",
 			genres: event?.genres.join("\n") || ""
 		},
@@ -51,27 +52,36 @@ const AdminCreateEditEventView = () => {
 			time: Yup.string().required("Required"),
 			price: Yup.number().required("Required").min(0),
 			quantity: Yup.number().required("Required").min(minQuantity),
-			imageUrl: Yup.string().required("Required"),
 			description: Yup.string().required("Required"),
 			genres: Yup.string().required("Required")
 		}),
 		onSubmit: async values => {
 			try {
-				const event = {
+				const event: any = {
 					...values,
 					id: Number(id),
 					time: new Date(values.time).getTime() / 1000,
 					price: ethToGwei(values.price),
-					quantity: Number(values.quantity),
-					imageUrl: values.imageUrl,
-					genres: values.genres.split("\n")
+					quantity: Number(values.quantity)
 				};
 
+				const formData = new FormData();
+
+				if (image) {
+					formData.append("image", image);
+				}
+
+				for (const [key, value] of Object.entries(event)) {
+					formData.append(key, String(value));
+				}
+
 				if (action === Action.CREATE) {
-					await createEvent(omit(event, "id"));
+					formData.delete("id");
+					await createEvent(formData);
 					navigate(routes.admin.events());
 				} else {
-					await updateEvent(omit(event, "price"));
+					formData.delete("price");
+					await updateEvent(formData);
 					setSuccess(true);
 				}
 			} catch (e: any) {
@@ -169,12 +179,6 @@ const AdminCreateEditEventView = () => {
 					min={minQuantity}
 				/>
 				<Input
-					name="imageUrl"
-					label="Image URL"
-					type="text"
-					formik={formik}
-				/>
-				<Input
 					name="description"
 					label="Description"
 					type="textarea"
@@ -186,6 +190,18 @@ const AdminCreateEditEventView = () => {
 					type="textarea"
 					formik={formik}
 				/>
+				<div>
+					<div className="flex my-0.5">
+						<label className="uppercase text-sm text-indigo-500 mx-1">
+							Image (4:5 Aspect Ratio)
+						</label>
+					</div>
+					<FileUploader
+						handleChange={(file: File) => setImage(file)}
+						types={["PNG", "JPG", "JPEG", "WEBP", "TIF", "GIF", "HEIC", "BMP"]}
+						required={action === Action.CREATE}
+					/>
+				</div>
 				{
 					error &&
 					<Alert

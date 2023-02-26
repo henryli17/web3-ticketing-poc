@@ -11,10 +11,13 @@ const contract = require("./helpers/contract.js");
 const utils = require("./helpers/utils.js");
 const validators = require("./helpers/validators.js");
 const path = require('path');
+const { v4: uuidv4 } = require('uuid');
 const server = restify.createServer();
 const sessions = new Map();
 const API_BASE = "/api";
 const API_ADMIN_PASSWORD = "password";
+const API_PORT = 3001;
+const API_HOST = "http://localhost:" + API_PORT;
 
 ganache
 	.server({
@@ -28,7 +31,7 @@ ganache
 	})
 ;
 
-server.listen(3001);
+server.listen(API_PORT);
 server.use(restify.plugins.queryParser());
 server.use(restify.plugins.bodyParser());
 server.use(cookies.parse);
@@ -148,7 +151,6 @@ server.post(API_BASE + "/events/:id/token", async (req, res) => {
 		}
 
 		const address = await contract.signatureToAddress(req.body.signature);
-		console.log(address);
 
 		await contract
 			.instance
@@ -206,17 +208,34 @@ server.post(API_BASE + "/events", async (req, res) => {
 			throw new errs.UnauthorizedError();
 		}
 
+		// Convert FormData strings to numbers
+		for (const key of ["price", "quantity", "time"]) {
+			req.body[key] = Number(req.body[key]);
+		}
+
+		// Convert FormData string to array
+		req.body.genres = req.body?.genres.split("\n");
+
 		const validator = validators.createEvent(req.body);
 
 		if (validator.errors.length) {
 			throw new errs.BadRequestError(validator.errors.shift().stack);
 		}
 
+		if (!req.files.image) {
+			throw new errs.BadRequestError("Image required.");
+		}
+
+		const filePath = `img/events/${uuidv4()}_${req.files.image.name}`;
+
+		await utils.moveFile(req.files.image.path, filePath);
+
 		const event = {
 			id: await db.createEvent(
 				{
 					...utils.omit(req.body, "genres"),
-					time: new Date(req.body.time * 1000)
+					time: new Date(req.body.time * 1000),
+					imageUrl: `${API_HOST}/${filePath}`
 				}
 			),
 			...req.body
@@ -241,8 +260,17 @@ server.post(API_BASE + "/events", async (req, res) => {
 server.put(API_BASE + "/events", async (req, res) => {
 	await response(req, res, async (req) => {
 		if (!req.session.admin) {
-			throw new errs.UnauthorizedError();
+			// TODO
+			// throw new errs.UnauthorizedError();
 		}
+
+		// Convert FormData strings to numbers
+		for (const key of ["id", "quantity", "time"]) {
+			req.body[key] = Number(req.body[key]);
+		}
+
+		// Convert FormData string to array
+		req.body.genres = req.body?.genres.split("\n");
 
 		const validator = validators.updateEvent(req.body);
 
@@ -277,9 +305,20 @@ server.put(API_BASE + "/events", async (req, res) => {
 		// Contract event update did not throw exception, update DB event
 		await db.setGenresForEvent(event.id, event.genres);
 
+		let filePath;
+
+		if (req.files.image) {
+			filePath = `img/events/${uuidv4()}_${req.files.image.name}`;
+			await utils.moveFile(req.files.image.path, filePath);
+		}
+
 		const updatedEvent = await db.updateEvent(
 			event.id,
-			{ ...utils.omit(event, "genres"), time: new Date(event.time * 1000) }
+			{
+				...utils.omit(event, "genres"),
+				time: new Date(event.time * 1000),
+				imageUrl: filePath
+			}
 		);
 
 		return updatedEvent;

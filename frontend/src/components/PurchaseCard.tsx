@@ -31,17 +31,13 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange:
 	};
 
 	useEffect(() => {
-		(async () => {
-			setSelectedQuantity(props.purchase.quantity);
+		setSelectedQuantity(props.purchase.quantity);
 
-			try {
-				const contract = await getInstance();
-				const usedCount = await contract.methods.getUsedCount(address, props.purchase.event.id).call();
-				setRemainingQuantity(props.purchase.quantity - usedCount);
-			} catch (e) {
-				console.error(e);
-			}
-		})();
+		if (props.purchase.used) {
+			setRemainingQuantity(props.purchase.quantity - props.purchase.used);
+		} else {
+			setRemainingQuantity(props.purchase.quantity);
+		}
 	}, [props.purchase, address]);
 
 	const toggleTokenListing = async () => {
@@ -102,6 +98,7 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange:
 				event={props.purchase.event}
 				quantity={props.purchase.quantity}
 				to={(props.purchase.event.cancelled) ? "#" : undefined}
+				used={props.purchase.used}
 			>
 				{
 					!props.purchase.expired &&
@@ -148,7 +145,11 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange:
 				showConfirmationModal &&
 				<ConfirmationModal
 					title={props.purchase.forSale ? "Unlist Ticket" : "Sell Ticket"}
-					message={`Are you sure you want to ${props.purchase.forSale ? "unlist" : "list"} ${selectedQuantity} tickets${props.purchase.forSale ? "?" : " for " + price + " ETH each?"}`}
+					message={
+						props.purchase.forSale
+							? `Are you sure you want to unlist ${selectedQuantity} tickets?`
+							: `Are you sure you want to list ${selectedQuantity} tickets for ${price} ETH each?`
+					}
 					close={() => setShowConfirmationModal(false)}
 					action={() => toggleTokenListing()}
 				/>
@@ -162,7 +163,7 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange:
 					<div className="mt-5 mb-1 space-y-3">
 						<QRCode value={JSON.stringify(qrData)} size={200} />
 						<div className="font-medium text-gray-800">
-							Quantity: {props.purchase.quantity}
+							Quantity: {remainingQuantity}
 						</div>
 					</div>
 				</QRModal>

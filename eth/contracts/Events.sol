@@ -51,6 +51,10 @@ contract Events is ERC1155, Ownable {
 		return resaleTokens[_eventId];
 	}
 
+	function getUsedTokens(address _owner) public view returns(uint[] memory) {
+		return usedTokens[_owner];
+	}
+
 	function buyToken(uint _eventId, uint _quantity) external payable {
 		Event storage e = events[_eventId];
 

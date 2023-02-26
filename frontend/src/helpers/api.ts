@@ -33,7 +33,8 @@ export type Purchase = {
 	event: Event,
 	quantity: number,
 	forSale: boolean,
-	expired: boolean
+	expired: boolean,
+	used?: number
 };
 
 export type Contract = {

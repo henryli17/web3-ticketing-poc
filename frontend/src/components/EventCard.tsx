@@ -9,7 +9,8 @@ const EventCard = (props: {
 	className?: string,
 	to?: string,
 	quantity?: number,
-	children?: React.ReactNode
+	children?: React.ReactNode,
+	used?: number
 }) => {
 	return (
 		<Link to={props.to || routes.event(props.event.id)} className={"card flex w-full " + props.className}>
@@ -34,6 +35,12 @@ const EventCard = (props: {
 									</>
 								}
 								{gweiToEth(props.event.price)} ETH
+								{
+									props.used && props.used > 0 &&
+									<span className="text-indigo-500 font-medium text-xs uppercase mx-2">
+										[{props.used} Used]
+									</span>
+								}
 							</div>
 							<div className="text-md block">
 								{props.event.venue} · {props.event.city} · {prettyDate(props.event.time)}

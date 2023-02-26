@@ -6,6 +6,7 @@ import ConfirmationModal from '../components/ConfirmationModal';
 import { QrData } from '../components/PurchaseCard';
 import QuantityButton from '../components/QuantityButton';
 import { eventToken } from '../helpers/api';
+import { useAdmin } from '../middleware/Admin';
 import routes from '../routes';
 
 const AdminQrScanView = () => {
@@ -15,6 +16,7 @@ const AdminQrScanView = () => {
 	const [quantity, setQuantity] = useState(1);
 	const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 	const [showAlertModal, setShowAlertModal] = useState(false);
+	const [, setAdmin] = useAdmin();
 	let scanned = showAlertModal;
 
 	useEffect(() => {
@@ -40,7 +42,7 @@ const AdminQrScanView = () => {
 	
 			setTicket(JSON.parse(data.text));
 			setShowConfirmationModal(true);
-		} catch (e) {
+		} catch (e: any) {
 			return;
 		}
 	};
@@ -58,6 +60,12 @@ const AdminQrScanView = () => {
 			setAlertMessage("Tickets were validated and have now been marked as used.")
 		} catch (e: any) {
 			setAlertTitle("Error");
+
+			// 401 Unauthorised
+			if (e?.response?.status === 401) {
+				setAdmin(false);
+				return;
+			} 
 
 			if (e?.response?.data?.message) {
 				setAlertMessage("Tickets were invalid. Reason: " + e.response.data.message);

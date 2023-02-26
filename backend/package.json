@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "npx nodemon",
-    "deploy": "npx node src/seed.js",
+    "migrate": "npx knex migrate:latest",
+    "seed": "npx node src/seed.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

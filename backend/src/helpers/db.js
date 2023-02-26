@@ -1,8 +1,10 @@
+const DB_FILE = "events.db";
 const knex = require('knex')({
 	client: "sqlite3",
 	connection: {
-		filename: 'db.sqlite'
-	}
+		filename: DB_FILE
+	},
+	useNullAsDefault: true
 });
 
 const getEvents = async (options, deployedOnly = false, showCancelled = false) => {
@@ -164,6 +166,7 @@ const setGenresForEvent = async (eventId, eventGenres) => {
 };
 
 module.exports = {
+	DB_FILE,
 	getEvents,
 	getEvent,
 	getGenres,

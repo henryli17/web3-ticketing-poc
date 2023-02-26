@@ -1,4 +1,4 @@
 /build
 /node_modules
 /src/img/events
-db.sqlite
+events.db

@@ -2,7 +2,6 @@ require('dotenv').config()
 
 const db = require("./helpers/db.js");
 const utils = require("./helpers/utils.js");
-const contract = require("./helpers/contract");
 const { faker } = require('@faker-js/faker');
 const SEED_COUNT = 50;
 
@@ -28,7 +27,7 @@ const generateEvents = (n) => {
 			venue: faker.lorem.words(2),
 			city: faker.address.cityName(),
 			time: time,
-			price: parseInt(utils.ethToGwei(random(0.01, 1))),
+			price: parseInt(utils.ethToGwei(random(0.01, 0.5))),
 			imageUrl: faker.image.fashion(707, 976, true),
 			description: faker.lorem.lines(5),
 			genres: genres,
@@ -42,8 +41,10 @@ const generateEvents = (n) => {
 
 const main = async () => {
 	for (const event of generateEvents(50)) {
-		const id = await db.createEvent(utils.omit(event, ["genres"]));
-		await db.setGenresForEvent(id, event.genres);
+		await db.setGenresForEvent(
+			await db.createEvent(utils.omit(event, ["genres"])),
+			event.genres
+		);
 	}
 
 	console.log(`Successfully seeded ${SEED_COUNT} events to the database!`);

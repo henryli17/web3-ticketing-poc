@@ -4,7 +4,7 @@ import Alert from "../components/Alert";
 import BackCaret from "../components/BackCaret";
 import NotFound from "../components/NotFound";
 import Spinner from "../components/Spinner";
-import { getEvent, Event } from "../helpers/api";
+import { Event, getEvent } from "../helpers/api";
 import { getInstance, getResaleTokens, ResaleToken } from "../helpers/contract";
 import { gweiToEth, gweiToWei } from "../helpers/utils";
 import { useAddress } from "../middleware/Wallet";

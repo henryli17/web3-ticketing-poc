@@ -1,7 +1,7 @@
-import Web3 from 'web3';
-import { useAddress } from '../middleware/Wallet';
 import { useState } from 'react';
 import { useLocalStorage } from 'usehooks-ts';
+import Web3 from 'web3';
+import { useAddress } from '../middleware/Wallet';
 
 const ConnectWallet = (props: { className?: string, onLocked?: () => any }) => {
 	const [loggedOut, setLoggedOut] = useLocalStorage("loggedOut", false);

@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import Alert from "../components/Alert";
 import ConnectWallet from "../components/ConnectWallet";
 import GenrePill from "../components/GenrePill";
 import NotFound from "../components/NotFound";
 import QuantityButton from "../components/QuantityButton";
 import Spinner from "../components/Spinner";
-import Alert from "../components/Alert";
 import { Event, getEvent } from "../helpers/api";
 import { getInstance, getResaleTokens, ResaleToken } from "../helpers/contract";
 import { gweiToEth, gweiToWei, prettyDate } from "../helpers/utils";

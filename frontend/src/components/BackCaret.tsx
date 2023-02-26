@@ -1,5 +1,5 @@
-import { CaretLeftFill } from "react-bootstrap-icons"
-import { Link } from "react-router-dom"
+import { CaretLeftFill } from "react-bootstrap-icons";
+import { Link } from "react-router-dom";
 
 const BackCaret = (props: { to: string }) => {
 	return (

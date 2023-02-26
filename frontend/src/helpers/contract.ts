@@ -1,5 +1,5 @@
-import { getContract } from './api';
 import Web3 from "web3";
+import { getContract } from './api';
 
 const web3 = new Web3(Web3.givenProvider);
 

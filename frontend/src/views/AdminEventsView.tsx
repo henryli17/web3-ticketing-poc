@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { MusicNote, QrCodeScan } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
+import Web3 from "web3";
 import AdminEventCard from "../components/AdminEventCard";
+import AdminHeader from "../components/AdminHeader";
+import Alert from "../components/Alert";
 import NotFound from "../components/NotFound";
 import PaginationButtons from "../components/PaginationButtons";
 import SearchBar from "../components/SearchBar";
 import { getEvents, GetEventsResponse } from "../helpers/api";
 import routes from "../routes";
-import Web3 from "web3";
-import Alert from "../components/Alert";
-import AdminHeader from "../components/AdminHeader";
 
 const AdminEventsView = () => {
 	const [eventsData, setEventsData] = useState<GetEventsResponse>();

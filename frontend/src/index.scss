@@ -86,3 +86,12 @@ h2 {
 .text-shadow {
 	text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 }
+
+.thumbnail {
+	height: 138px;
+	width: 100px;
+}
+
+img:not([src]):not([srcset]) {
+	visibility: hidden;
+}

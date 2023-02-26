@@ -5,13 +5,14 @@
   "main": "index.js",
   "scripts": {
     "start": "npx nodemon",
-    "deploy": "npx node src/deploy.js",
+    "deploy": "npx node src/seed.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@faker-js/faker": "^7.6.0",
     "@types/node": "^18.11.18",
     "nodemon": "^2.0.20"
   },

@@ -192,11 +192,9 @@ const AdminCreateEditEventView = () => {
 					{
 						(event?.imageUrl || image) &&
 						<img
-							className="mt-3 rounded shadow-lg"
+							className="mt-3 rounded shadow-lg thumbnail"
 							src={image ? URL.createObjectURL((image as Blob)) : event?.imageUrl}
 							alt={event?.artist || formik.values.artist}
-							width={200}
-							height={275}
 						/>
 					}
 				</div>

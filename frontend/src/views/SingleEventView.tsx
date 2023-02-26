@@ -20,7 +20,6 @@ const SingleEventView = () => {
 	const [refreshEvent, setRefreshEvent] = useState(false);
 	const [success, setSuccess] = useState(false);
 	const [locked, setLocked] = useState(false);
-	const [updateQuantityRemaining, setUpdateQuantityRemaining] = useState(false);
 	const [address] = useAddress();
 
 	useEffect(() => {
@@ -78,7 +77,7 @@ const SingleEventView = () => {
 					</div>
 				</div>
 				<div className="grid-span-1 flex">
-					<div className="my-auto">
+					<div className="my-auto w-full">
 						<h1 className="italic uppercase font-bold mb-1">
 							{event.artist}
 						</h1>
@@ -88,7 +87,7 @@ const SingleEventView = () => {
 						<div className="text-2xl">
 							{prettyDate(event.time)}
 						</div>
-						<div className="text-2xl mb-8">
+						<div className="text-2xl mb-8 capitalize">
 							{event.venue}, {event.city}
 						</div>
 						<div className="text-2xl uppercase font-bold">
@@ -119,8 +118,8 @@ const SingleEventView = () => {
 						<div className="mb-8 text-lg">
 							{event.description}
 						</div>
-						<div className="space-x-2 flex">
-							{event.genres.map(genre => <GenrePill name={genre} key={genre} />)}
+						<div className="flex-wrap flex">
+							{event.genres.map(genre => <GenrePill name={genre} key={genre} className="my-1 mr-2" />)}
 						</div>
 					</div>
 				</div>

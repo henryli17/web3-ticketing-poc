@@ -15,8 +15,8 @@ const EventCard = (props: {
 	return (
 		<Link to={props.to || routes.event(props.event.id)} className={"card flex w-full " + props.className}>
 			<div className="my-auto grid grid-cols-12 w-full">
-				<div className="col-span-12 lg:col-span-8 xl:col-span-9 flex">
-					<img className="rounded shadow-lg m-5 hidden sm:block" src={props.event.imageUrl} alt={props.event.artist} width={100} />
+				<div className="col-span-12 lg:col-span-8 xl:col-span-9 flex items-center">
+					<img className="rounded shadow-lg m-5 hidden sm:block thumbnail" src={props.event.imageUrl} alt={props.event.artist} />
 					<div className="my-5 mx-5 sm:mr-5 sm:ml-0 text-left w-full flex">
 						<div className="my-auto w-full">
 							<div className="italic mb-2">
@@ -42,7 +42,7 @@ const EventCard = (props: {
 									</span>
 								}
 							</div>
-							<div className="text-md block">
+							<div className="text-md block capitalize">
 								{props.event.venue} · {props.event.city} · {prettyDate(props.event.time)}
 							</div>
 						</div>

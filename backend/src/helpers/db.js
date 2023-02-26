@@ -5,7 +5,7 @@ const knex = require('knex')({
 	}
 });
 
-const getEvents = async (options, deployedOnly = true, showCancelled = false) => {
+const getEvents = async (options, deployedOnly = false, showCancelled = false) => {
 	const events = {};
 	const rows = await knex
 		.select("events.*")

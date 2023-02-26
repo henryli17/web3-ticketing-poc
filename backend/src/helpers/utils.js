@@ -128,6 +128,7 @@ const omit = (object, keys) => {
 };
 
 const weiToEth = (wei) => Web3.utils.fromWei(wei.toString());
+const ethToGwei = (eth) => eth * Math.pow(10, 9);
 
 const moveFile = (from, to) => {
     const read = fs.createReadStream(from);
@@ -145,5 +146,6 @@ module.exports = {
 	getEvent,
 	omit,
 	weiToEth,
+	ethToGwei,
 	moveFile
 };

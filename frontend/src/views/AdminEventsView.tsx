@@ -78,7 +78,9 @@ const AdminEventsView = () => {
 				/>
 				{
 					!eventsData.events.length &&
-					<div className="p-5 text-2xl">There are currently no events.</div>
+					<h2 className="font-medium py-5 italic uppercase">
+						No Events
+					</h2>
 				}
 				{eventsData.events.map(event => <AdminEventCard event={event} key={event.id} onCancel={() => onEventCancel()} />)}
 			</div>

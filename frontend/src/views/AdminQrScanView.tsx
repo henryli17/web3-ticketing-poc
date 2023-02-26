@@ -96,7 +96,7 @@ const AdminQrScanView = () => {
 				<ConfirmationModal
 					close={() => setShowConfirmationModal(false)}
 					action={() => markTicketAsUsed()}
-					title="Ticket Scanned"
+					title={`Event ID: ${ticket.eventId}`}
 					message="Please choose a quantity to mark as used."
 				>
 					<QuantityButton

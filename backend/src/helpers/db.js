@@ -1,20 +1,7 @@
 const knex = require('knex')({
-	client: process.env.DB_CLIENT,
+	client: "sqlite3",
 	connection: {
-		host: process.env.DB_HOST,
-		port: process.env.DB_PORT,
-		user: process.env.DB_USER,
-		password: process.env.DB_PASSWORD,
-		database: process.env.DB_NAME,
-		typeCast: (field, next) => {
-			// Treat MySQL BIT as boolean
-			if (field.type == "BIT" && field.length === 1) {
-				const bytes = field.buffer();
-				return (bytes[0] === 1);
-			}
-	
-			return next();
-		}
+		filename: 'db.sqlite'
 	}
 });
 
@@ -26,7 +13,7 @@ const getEvents = async (options, deployedOnly = true, showCancelled = false) =>
 		.table("events")
 		.leftJoin("event-genre", "events.id", "event-genre.eventId")
 		.leftJoin("genres", "event-genre.genreId", "genres.id")
-		.whereRaw("events.time > NOW()")
+		.whereRaw("events.time > time('now')")
 		.modify(query => {
 			if (deployedOnly) {
 				query.where("deployed", true);

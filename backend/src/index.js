@@ -256,7 +256,7 @@ server.post(API_BASE + "/events", async (req, res) => {
 			)
 			.send({ from: contract.OWNER, gas: contract.GAS })
 		;
-		await db.updateEvent(event.id, { deployed: true });
+		await db.updateEvent(event.id, { deployed: 1 });
 	});
 });
 
@@ -370,6 +370,6 @@ server.del(API_BASE + "/events/:id", async (req, res) => {
 		;
 
 		// Contract event update did not throw exception, update DB event
-		await db.updateEvent(id, { cancelled: true });
+		await db.updateEvent(id, { cancelled: 1 });
 	});
 });

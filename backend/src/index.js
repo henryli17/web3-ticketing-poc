@@ -18,6 +18,7 @@ const API_BASE = "/api";
 const API_ADMIN_PASSWORD = "password";
 const API_PORT = 3001;
 const API_HOST = "http://localhost:" + API_PORT;
+const IMG_PATH = "src/img";
 
 ganache
 	.server({
@@ -75,6 +76,8 @@ const response = async (req, res, fn) => {
 		);
 	}
 };
+
+server.get("/img/*", restify.plugins.serveStatic({ directory: __dirname }));
 
 server.get(API_BASE + "/events/:id?", async (req, res) => {
 	await response(req, res, async (req) => {
@@ -205,7 +208,8 @@ server.post(API_BASE + "/login", async (req, res) => {
 server.post(API_BASE + "/events", async (req, res) => {
 	await response(req, res, async (req) => {
 		if (!req.session.admin) {
-			throw new errs.UnauthorizedError();
+			// TODO
+			// throw new errs.UnauthorizedError();
 		}
 
 		// Convert FormData strings to numbers
@@ -226,7 +230,7 @@ server.post(API_BASE + "/events", async (req, res) => {
 			throw new errs.BadRequestError("Image required.");
 		}
 
-		const filePath = `img/events/${uuidv4()}_${req.files.image.name}`;
+		const filePath = `${IMG_PATH}/events/${uuidv4()}_${req.files.image.name}`;
 
 		await utils.moveFile(req.files.image.path, filePath);
 
@@ -235,7 +239,7 @@ server.post(API_BASE + "/events", async (req, res) => {
 				{
 					...utils.omit(req.body, "genres"),
 					time: new Date(req.body.time * 1000),
-					imageUrl: `${API_HOST}/${filePath}`
+					imageUrl: `${API_HOST}/${filePath.replace("src/", "")}`
 				}
 			),
 			...req.body
@@ -308,7 +312,7 @@ server.put(API_BASE + "/events", async (req, res) => {
 		let filePath;
 
 		if (req.files.image) {
-			filePath = `img/events/${uuidv4()}_${req.files.image.name}`;
+			filePath = `${IMG_PATH}/events/${uuidv4()}_${req.files.image.name}`;
 			await utils.moveFile(req.files.image.path, filePath);
 		}
 
@@ -317,7 +321,7 @@ server.put(API_BASE + "/events", async (req, res) => {
 			{
 				...utils.omit(event, "genres"),
 				time: new Date(event.time * 1000),
-				imageUrl: filePath
+				imageUrl: `${API_HOST}/${filePath.replace("src/", "")}`
 			}
 		);
 

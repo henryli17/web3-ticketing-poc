@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { CaretDownFill, CaretUpFill, XCircleFill } from 'react-bootstrap-icons';
 import { useSearchParams } from "react-router-dom";
 import { useEffectOnce } from "usehooks-ts";
 import CheckboxGroup, { CheckboxItem } from "../components/CheckboxGroup";
@@ -14,10 +15,13 @@ const EventsView = () => {
 	const [genres, setGenres] = useState<CheckboxItem[]>([]);
 	const [locations, setLocations] = useState<CheckboxItem[]>([]);
 	const [offset, setOffset] = useState(0);
-	const [showFilters, setShowFilters] = useState(true);
+	const [showFilters, setShowFilters] = useState(false);
+	const [showGenres, setShowGenres] = useState(true);
+	const [showLocations, setShowLocations] = useState(true);
+	const [showPrice, setShowPrice] = useState(true);
 	const [maxPrice, setMaxPrice] = useState(0);
 	const [search, setSearch] = useState<string>();
-	const [searchParams] = useSearchParams();
+	const [searchParams, setSearchParams] = useSearchParams();
 
 	useEffectOnce(() => {
 		getGenres()
@@ -76,7 +80,15 @@ const EventsView = () => {
 		<div className="container py-16 px-10 mx-auto">
 			{
 				search &&
-				<div className="mb-3 text-lg">Showing results for: {search}</div>
+				<div className="mb-3 text-lg flex items-center">
+					<button type="button" onClick={() => {
+						searchParams.set("search", "");
+						setSearchParams(searchParams);
+					}}>
+						<XCircleFill className="mr-2 text-red-700 hover:text-red-900" />
+					</button>
+					Showing results for: {search}
+				</div>
 			}
 			<button
 				type="button"
@@ -87,22 +99,28 @@ const EventsView = () => {
 			</button>
 			<div className="grid grid-cols-12 gap-x-3">
 				<div className={"card-static col-span-12 mb-5 md:mb-0 md:col-span-3 xl:col-span-2 h-fit md:block " + (!showFilters ? "hidden" : "")}>
-					<div className="filter-child">
-						Genre
-					</div>
-					<div className="filter-child">
-						<CheckboxGroup items={genres} dispatch={setGenres} />
-					</div>
-					<div className="filter-child">
-						Location
-					</div>
-					<div className="filter-child">
-						<CheckboxGroup items={locations} dispatch={setLocations} />
-					</div>
-					<div className="filter-child">
+					<CheckboxItemsFilter
+						title="Genre"
+						items={genres}
+						dispatch={setGenres}
+						show={showGenres}
+						setShow={setShowGenres}
+					/>
+					<CheckboxItemsFilter
+						title="Location"
+						items={locations}
+						dispatch={setLocations}
+						show={showLocations}
+						setShow={setShowLocations}
+					/>
+					<div className={"filter-child flex items-center " + (showPrice ? "" : "border-b-0")}>
 						Price
+						<button className="ml-auto" type="button" onClick={() => setShowPrice(!showPrice)}>
+							{showPrice && <CaretUpFill size={12} />}
+							{!showPrice && <CaretDownFill size={12} />}
+						</button>
 					</div>
-					<div className="filter-child">
+					<div className={"filter-child " + (showPrice ? "" : "hidden")}>
 						<div className="relative shadow-sm my-1">
 							<div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-xs text-gray-500">
 								MAX ETH
@@ -122,13 +140,16 @@ const EventsView = () => {
 				<div className="space-y-3 col-span-12 md:col-span-9 xl:col-span-10">
 					{
 						!eventsData.events.length &&
-						<h2 className="px-5 py-1 uppercase italic font-medium">No Events Found</h2>
+						<h2 className="uppercase italic font-medium py-1 md:px-5">
+							No Events Found
+						</h2>
 					}
 					{eventsData.events.map(event => <EventCard key={event.id} event={event} />)}
 					<div className="flex justify-end space-x-2">
 						<PaginationButtons
 							prev={() => setOffset(offset - eventsData.limit)}
 							next={() => (typeof eventsData.nextOffset === "number") && setOffset(eventsData.nextOffset)}
+							onChange={() => window.scrollTo(0, 0)}
 							prevDisabled={offset === 0}
 							nextDisabled={!eventsData.nextOffset}
 							className="btn btn-basic"
@@ -139,6 +160,29 @@ const EventsView = () => {
 			</div>
 		</div>
 	);
+};
+
+const CheckboxItemsFilter = (props: {
+	title: string,
+	items: CheckboxItem[],
+	dispatch: React.Dispatch<React.SetStateAction<CheckboxItem[]>>,
+	show: boolean,
+	setShow: React.Dispatch<React.SetStateAction<boolean>>
+}) => {
+	return (
+		<>
+			<div className="filter-child flex items-center">
+				{props.title}
+				<button className="ml-auto" type="button" onClick={() => props.setShow(!props.show)}>
+					{props.show && <CaretUpFill size={12} />}
+					{!props.show && <CaretDownFill size={12} />}
+				</button>
+			</div>
+			<div className={"filter-child " + (props.show ? "" : "hidden")}>
+				<CheckboxGroup items={props.items} dispatch={props.dispatch} />
+			</div>
+		</>
+	)
 };
 
 export default EventsView;

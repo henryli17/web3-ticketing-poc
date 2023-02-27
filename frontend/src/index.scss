@@ -45,7 +45,7 @@ h2 {
 	@apply py-2 px-3;
 }
 
-.filter-child:not(:last-child) {
+.filter-child:not(:last-child):not(.border-b-0) {
 	@apply border-b;
 }
 

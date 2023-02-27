@@ -6,7 +6,8 @@ const PaginationButtons = (props: {
 	prevDisabled: boolean,
 	nextDisabled: boolean,
 	hideWhenDisabled: boolean,
-	className?: string
+	className?: string,
+	onChange?: () => any
 }) => {
 	return (
 		<>
@@ -16,7 +17,13 @@ const PaginationButtons = (props: {
 					type="button"
 					className={props.className}
 					disabled={props.prevDisabled}
-					onClick={() => props.prev()}
+					onClick={() => {
+						props.prev();
+
+						if (props.onChange) {
+							props.onChange();
+						}
+					}}
 				>
 					<ArrowLeft className="mr-2" />
 					Prev
@@ -28,7 +35,13 @@ const PaginationButtons = (props: {
 					type="button"
 					className={props.className}
 					disabled={props.nextDisabled}
-					onClick={() => props.next()}
+					onClick={() => {
+						props.next();
+
+						if (props.onChange) {
+							props.onChange();
+						}
+					}}
 				>
 					Next
 					<ArrowRight className="ml-2" />

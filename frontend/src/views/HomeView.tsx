@@ -11,7 +11,7 @@ const HomeView = () => {
 					</h1>
 					<div className="flex justify-center">
 						<Link to={routes.events()}>
-							<div className="btn bg-white hover:bg-gray-200">
+							<div className="btn text-white">
 								Browse Events
 							</div>
 						</Link>

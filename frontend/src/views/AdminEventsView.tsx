@@ -88,6 +88,7 @@ const AdminEventsView = () => {
 				<PaginationButtons
 					prev={() => setOffset(offset - eventsData.limit)}
 					next={() => (typeof eventsData.nextOffset === "number") && setOffset(eventsData.nextOffset)}
+					onChange={() => window.scrollTo(0, 0)}
 					prevDisabled={offset === 0}
 					nextDisabled={!eventsData.nextOffset}
 					className="btn btn-basic"

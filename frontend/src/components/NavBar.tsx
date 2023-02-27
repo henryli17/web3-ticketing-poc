@@ -80,11 +80,27 @@ const NavBar = () => {
 				</div>
 				<div className={"sm:hidden " + (mobileMenuHidden ? "hidden" : "")}>
 					<div className="pt-2 pb-3 w-full">
-						<SearchBar className="mx-2 mb-2" onSubmit={search} />
+						<SearchBar
+							className="mx-2 mb-2"
+							onSubmit={s => {
+								setMobileMenuHidden(true);
+								search(s);
+							}}
+						/>
 						<div className="flex mx-2 mb-3">
 							<ConnectWallet className="w-full" onLocked={() => setShowAlert(true)} />
 						</div>
-						{navEntries.map((navEntry, i) => <MobileTab key={i} navEntry={navEntry} />)}
+						{
+							navEntries.map((navEntry, i) => {
+								return (
+									<MobileTab
+										key={i}
+										navEntry={navEntry}
+										onClick={() => setMobileMenuHidden(true)}
+									/>
+								);
+							})
+						}
 					</div>
 				</div>
 			</nav>
@@ -123,11 +139,15 @@ const Tab = (props: { navEntry: NavEntry, className?: string }) => {
 	);
 };
 
-const MobileTab = (props: { navEntry: NavEntry }) => {
+const MobileTab = (props: { navEntry: NavEntry, onClick: () => any }) => {
 	const className = (props.navEntry.active) ? "border-l-4 border-indigo-500 bg-indigo-100 text-indigo-800" : "text-gray-500";
 
 	return (
-		<Link to={props.navEntry.location} className={"py-2 w-full text-left flex " + className}>
+		<Link
+			to={props.navEntry.location}
+			className={"py-2 w-full text-left flex " + className}
+			onClick={() => props.onClick()}
+		>
 			<div className={(props.navEntry.active) ? "ml-3 text-indigo-800" : "ml-4 text-gray-600"}>
 				{props.navEntry.text}
 			</div>

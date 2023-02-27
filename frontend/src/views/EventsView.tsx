@@ -18,10 +18,16 @@ const EventsView = () => {
 	const [showGenres, setShowGenres] = useState(true);
 	const [showLocations, setShowLocations] = useState(true);
 	const [showPrice, setShowPrice] = useState(true);
-	const [maxPrice, setMaxPrice] = useState(0);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const search = searchParams.get("search") || undefined;
 	const offset = Number(searchParams.get("offset"));
+
+	const updateFilterSearchParam = (key: string, value: any) => {
+		searchParams.set(key, value.toString());
+		searchParams.set("offset", "0");
+		setSearchParams(searchParams);
+	};
+	
 	const setOffset = (offset: number) => {
 		searchParams.set("offset", offset.toString());
 		setSearchParams(searchParams);
@@ -43,9 +49,11 @@ const EventsView = () => {
 
 		getLocations()
 			.then(locations => {
+				const checkedLocations = searchParams.get("locations")?.split(",") || [];
+
 				setLocations(
 					locations.map(location => {
-						return { name: location, checked: false };
+						return { name: location, checked: checkedLocations.includes(location) };
 					})
 				);
 			})
@@ -54,14 +62,11 @@ const EventsView = () => {
 	});
 
 	useEffect(() => {
-		if (!genres.length || !locations.length) {
-			return;
-		}
-
+		const maxPrice = Number(searchParams.get("maxPrice"));
 		const params = {
 			offset: Number(searchParams.get("offset")) || 0,
-			genres: genres.filter(g => g.checked).map(g => g.name),
-			locations: locations.filter(l => l.checked).map(l => l.name),
+			genres: searchParams.get("genres")?.split(",") || undefined,
+			locations: searchParams.get("locations")?.split(",") || undefined,
 			maxPrice: (maxPrice > 0) ? ethToGwei(maxPrice) : undefined,
 			search: searchParams.get("search") || undefined
 		};
@@ -70,7 +75,7 @@ const EventsView = () => {
 			.then(setEventsData)
 			.catch(() => setError(true))
 		;
-	}, [genres, locations, maxPrice, searchParams]);
+	}, [searchParams]);
 
 	if (error) {
 		return <NotFound />;
@@ -106,16 +111,16 @@ const EventsView = () => {
 					<CheckboxItemsFilter
 						title="Genre"
 						items={genres}
-						dispatch={setGenres}
 						show={showGenres}
 						setShow={setShowGenres}
+						onUpdate={(items) => updateFilterSearchParam("genres", items.filter(i => i.checked).map(i => i.name).join(","))}
 					/>
 					<CheckboxItemsFilter
 						title="Location"
 						items={locations}
-						dispatch={setLocations}
 						show={showLocations}
 						setShow={setShowLocations}
+						onUpdate={(items) => updateFilterSearchParam("locations", items.filter(i => i.checked).map(i => i.name).join(","))}
 					/>
 					<div className={"filter-child flex items-center " + (showPrice ? "" : "border-b-0")}>
 						Price
@@ -134,9 +139,9 @@ const EventsView = () => {
 								className="input pl-20"
 								placeholder="0"
 								min={0}
-								step="0.01"
-								value={maxPrice}
-								onChange={e => setMaxPrice(Number(e.target.value))}
+								step="0.001"
+								value={searchParams.get("maxPrice") || 0}
+								onChange={e => updateFilterSearchParam("maxPrice", e.target.value)}
 							/>
 						</div>
 					</div>
@@ -169,10 +174,12 @@ const EventsView = () => {
 const CheckboxItemsFilter = (props: {
 	title: string,
 	items: CheckboxItem[],
-	dispatch: React.Dispatch<React.SetStateAction<CheckboxItem[]>>,
 	show: boolean,
-	setShow: React.Dispatch<React.SetStateAction<boolean>>
+	setShow: React.Dispatch<React.SetStateAction<boolean>>,
+	onUpdate: (items: CheckboxItem[]) => any
 }) => {
+	const [items, setItems] = useState(props.items);
+
 	return (
 		<>
 			<div className="filter-child flex items-center">
@@ -183,7 +190,7 @@ const CheckboxItemsFilter = (props: {
 				</button>
 			</div>
 			<div className={"filter-child " + (props.show ? "" : "hidden")}>
-				<CheckboxGroup items={props.items} dispatch={props.dispatch} />
+				<CheckboxGroup items={items} dispatch={setItems} onUpdate={(items) => props.onUpdate(items)} />
 			</div>
 		</>
 	)

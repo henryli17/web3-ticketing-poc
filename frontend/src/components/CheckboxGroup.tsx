@@ -1,12 +1,20 @@
-const CheckboxGroup = (props: { items: CheckboxItem[], dispatch: React.Dispatch<React.SetStateAction<CheckboxItem[]>> }) => {
+const CheckboxGroup = (props: {
+	items: CheckboxItem[],
+	dispatch: React.Dispatch<React.SetStateAction<CheckboxItem[]>>,
+	onUpdate: (items: CheckboxItem[]) => any
+}) => {
 	const toggle = (name: string) => {
 		props.dispatch(items => {
-			return items.map(item => {
+			const updated = items.map(item => {
 				return {
 					...item,
 					checked: (item.name === name) ? !item.checked : item.checked
 				};
 			});
+
+			props.onUpdate(updated);
+			
+			return updated;
 		});
 	};
 

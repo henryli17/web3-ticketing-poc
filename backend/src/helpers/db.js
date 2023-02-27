@@ -17,25 +17,29 @@ const getEvents = async (options, deployedOnly = true, showCancelled = false) =>
 		.leftJoin("genres", "event-genre.genreId", "genres.id")
 		.whereRaw("events.time > unixepoch('now')")
 		.modify(query => {
+			if (options?.ids && options.ids.length) {
+				query.whereIn("events.id", options.ids);
+			}
+
 			if (deployedOnly) {
-				query.where("deployed", 1);
+				query.where("events.deployed", 1);
 			}
 
 			if (!showCancelled) {
-				query.where("cancelled", 0);
-			}
-
-			if (options?.ids && options.ids.length) {
-				query.whereIn("events.id", options.ids);
+				query.where("events.cancelled", 0);
 			}
 
 			if (options?.search) {
 				const search = "%" + options.search + "%";
 
 				query
-					.whereLike("genres.name", search)
-					.orWhereLike("events.city", search)
-					.orWhereLike("events.artist", search)
+					.where(builder => {
+						builder
+							.whereLike("genres.name", search)
+							.orWhereLike("events.city", search)
+							.orWhereLike("events.artist", search)
+						;
+					})
 				;
 			}
 			

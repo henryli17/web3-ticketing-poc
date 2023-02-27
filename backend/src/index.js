@@ -15,10 +15,11 @@ const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const server = restify.createServer();
 const sessions = new Map();
+const PRODUCTION = (process.env.NODE_ENV === "production");
 const API_BASE = "/api";
 const API_ADMIN_PASSWORD = "password";
-const API_PORT = 3001;
-const API_HOST = "http://localhost:" + API_PORT;
+const API_PORT = (PRODUCTION) ? 80 : 3001;
+const API_HOST = `${(PRODUCTION) ? "https://muddy-sunset-2817.fly.dev" : "http://localhost"}:${API_PORT}`;
 const IMG_PATH = "src/static/img";
 
 ganache
@@ -48,7 +49,7 @@ server.use((req, res, next) => {
 		sessions.set(sid, {});
 	}
 	
-	res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+	res.header("Access-Control-Allow-Origin", (PRODUCTION) ? API_HOST : "http://localhost:3000");
 	res.header("Access-Control-Allow-Headers", "X-Requested-With");
 	res.header("Access-Control-Allow-Credentials", "true");
 	req.session = sessions.get(sid);

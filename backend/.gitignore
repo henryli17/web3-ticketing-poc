@@ -1,5 +1,5 @@
 /build
 /node_modules
 /src/static
-events.db
+db.sqlite3
 /ganache

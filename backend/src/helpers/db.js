@@ -1,4 +1,4 @@
-const DB_FILE = "events.db";
+const DB_FILE = "db.sqlite3";
 const knex = require('knex')({
 	client: "sqlite3",
 	connection: {

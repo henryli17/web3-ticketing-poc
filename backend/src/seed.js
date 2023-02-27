@@ -3,7 +3,7 @@ require('dotenv').config()
 const db = require("./helpers/db");
 const utils = require("./helpers/utils");
 const { faker } = require('@faker-js/faker');
-const SEED_COUNT = 50;
+const SEED_COUNT = 25;
 
 const generateEvents = (n) => {
 	const events = [];
@@ -38,7 +38,7 @@ const generateEvents = (n) => {
 };
 
 const main = async () => {
-	for (const event of generateEvents(50)) {
+	for (const event of generateEvents(SEED_COUNT)) {
 		await db.setGenresForEvent(
 			await db.createEvent(utils.omit(event, ["genres"])),
 			event.genres

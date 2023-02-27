@@ -50,8 +50,8 @@ const getPurchases = async (address) => {
 		const event = eventsById.get(eventId);
 		const expired = new Date(event.time) < new Date();
 
-		// Adjust quantity by those current listed for sale unless it is expired
-		if (!expired) {
+		// Adjust quantity by those current listed for sale unless it is expired/cancelled
+		if (!expired && !event.cancelled) {
 			const resaleTokenEntry = resaleTokenEntriesById.get(eventId);
 
 			if (resaleTokenEntry) {
@@ -77,7 +77,7 @@ const getPurchases = async (address) => {
 		const event = eventsById.get(eventId);
 		const expired = new Date(event.time) < new Date();
 
-		if (expired) {
+		if (expired || event.cancelled) {
 			continue;
 		}
 

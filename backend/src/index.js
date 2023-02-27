@@ -344,17 +344,6 @@ server.del(API_BASE + "/events/:id", async (req, res) => {
 		}
 
 		const id = Number(req.params.id);
-		const contractEvent = await contract
-			.instance
-			.methods
-			.events(id)
-			.call()
-		;
-
-		if (!contractEvent.created || contractEvent.cancelled) {
-			throw new errs.BadRequestError();
-		}
-
 		const owners = await contract.getOwners(id);
 		const totalQuantity = Array.from(owners.values()).reduce((acc, quantity) => acc + quantity, 0);
 		const contractBalance = await contract.instance.methods.getBalance().call({ from: contract.OWNER });
@@ -374,7 +363,7 @@ server.del(API_BASE + "/events/:id", async (req, res) => {
 				Array.from(owners.keys()),
 				Array.from(owners.values())
 			)
-		);
+		);	
 
 		// Contract event update did not throw exception, update DB event
 		await db.updateEvent(id, { cancelled: 1 });

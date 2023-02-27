@@ -39,7 +39,7 @@ contract Events is ERC1155, Ownable {
 	// Token Owner Address => Event IDs
 	mapping(address => uint[]) public usedTokens;
 
-	constructor() ERC1155("http://127.0.0.1:3001/api/events/{id}/metadata") {
+	constructor() ERC1155("https://muddy-sunset-2817.fly.dev/api/events/{id}/metadata") {
 		
 	}
 

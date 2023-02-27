@@ -24,7 +24,7 @@ const EventsView = () => {
 
 	const updateFilterSearchParam = (key: string, value: any) => {
 		searchParams.set(key, value.toString());
-		searchParams.set("offset", "0");
+		searchParams.delete("offset");
 		setSearchParams(searchParams);
 	};
 	

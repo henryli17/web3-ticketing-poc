@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAddress } from "../middleware/Wallet";
 import routes from "../routes";
 import AlertModal from "./AlertModal";
@@ -12,11 +12,18 @@ const NavBar = () => {
 	const [mobileMenuHidden, setMobileMenuHidden] = useState(true);
 	const [navEntries, setNavEntries] = useState<NavEntry[]>(allNavEntries);
 	const [showAlert, setShowAlert] = useState(false);
+	const [searchParams, setSearchParams] = useSearchParams();
 
 	const search = (search: string) => {
-		navigate(
-			`${routes.events()}?search=${encodeURIComponent(search)}`
-		);
+		if (window.location.pathname !== routes.events()) {
+			navigate(
+				`${routes.events()}?search=${encodeURIComponent(search)}`
+			);
+		} else {
+			searchParams.set("search", search);
+			searchParams.delete("offset");
+			setSearchParams(searchParams);
+		}
 	};
 
 	useEffect(() => {

@@ -3,3 +3,5 @@
 /src/static
 db.sqlite3
 /ganache
+ssh
+ssh-cert.pub

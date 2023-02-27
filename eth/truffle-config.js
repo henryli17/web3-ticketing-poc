@@ -54,7 +54,7 @@ module.exports = {
        );
       },
       network_id: 5,
-      from: config.address,
+      from: process.env.ETH_CONTRACT_OWNER,
       gas: 7500000
     }
     

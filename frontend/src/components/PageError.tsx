@@ -11,7 +11,7 @@ const PageError = () => {
 				Something went wrong whilst trying to process your request.
 			</div>
 			<div className="mb-3">
-				Please ensure you are connected to the {ETH_NETWORK} network in MetaMask.
+				Please ensure MetaMask is connected to the {ETH_NETWORK} network.
 			</div>
 			<div className="flex justify-center">
 				<button type="button" className="btn w-fit text-red-600 hover:text-red-800" onClick={() => navigate(0)}>

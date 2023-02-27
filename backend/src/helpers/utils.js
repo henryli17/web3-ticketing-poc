@@ -142,7 +142,6 @@ const moveFile = (from, to) => {
     });
 };
 
-
 module.exports = {
 	random,
 	getPurchases,

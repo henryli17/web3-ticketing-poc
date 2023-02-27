@@ -274,6 +274,7 @@ const Input = (props: {
 						name={props.name}
 						value={props.formik.values[props.name]}
 						onChange={e => props.formik.handleChange(e)}
+						onBlur={e => props.formik.handleBlur(e)}
 						rows={5}
 						disabled={props.disabled}
 					/>
@@ -287,6 +288,7 @@ const Input = (props: {
 						name={props.name}
 						value={props.formik.values[props.name]}
 						onChange={e => props.formik.handleChange(e)}
+						onBlur={e => props.formik.handleBlur(e)}
 						min={props.min}
 						max={props.max}
 						step={props.step}

@@ -19,6 +19,7 @@
     "nodemon": "^2.0.20"
   },
   "dependencies": {
+    "@truffle/hdwallet-provider": "^2.1.7",
     "dotenv": "^16.0.3",
     "ganache": "^7.7.5",
     "jsonschema": "^1.4.1",

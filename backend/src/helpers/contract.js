@@ -1,13 +1,19 @@
 const Web3 = require("web3");
+const HDWalletProvider = require('@truffle/hdwallet-provider');
 
 const web3 = new Web3(
-	new Web3.providers.HttpProvider("http://127.0.0.1:8888")
+	(process.env.ETH_MNEUMONIC && process.env.INFURA_PROJECT_ID)
+	? new HDWalletProvider(
+		process.env.ETH_MNEUMONIC,
+		"https://goerli.infura.io/v3/" + process.env.INFURA_PROJECT_ID
+	)
+	: new Web3.providers.HttpProvider("http://127.0.0.1:8888")
 );
 
 const ABI = require("./contractABI.json");
-const GAS = 999999;
+const GAS = 7500000;
 const SIGNATURE_MESSAGE = Web3.utils.toHex("Please sign this transaction to authenticate via your Ethereum wallet.");
-const OWNER = "0x3b26935917de7f5fac60f6d15ff02b1cf468dfb0";
+const OWNER = process.env.ETH_CONTRACT_OWNER || "0x3b26935917de7f5fac60f6d15ff02b1cf468dfb0";
 const ADDRESS = process.env.ETH_CONTRACT_ADDRESS;
 const instance = new web3.eth.Contract(ABI, ADDRESS, { handleRevert: true });
 

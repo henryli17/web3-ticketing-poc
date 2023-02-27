@@ -58,7 +58,6 @@ const AdminCreateEditEventView = () => {
 		}),
 		onSubmit: async values => {
 			setDisabled(true);
-			setSuccess(undefined);
 
 			try {
 				const event: any = {
@@ -125,11 +124,32 @@ const AdminCreateEditEventView = () => {
 		;
 	}, [id, action, navigate, refreshEvent]);
 
+	const scrollToFirstFormikError = () => {
+		const errors = Object.keys(formik.errors);
+
+		if (errors.length > 0) {
+			const element = document.getElementsByName(errors[0])[0];
+
+			element.focus();
+			element.scrollIntoView({
+				block: 'center',
+				inline: 'center'
+			});
+		}
+	};
+
 	return (
 		<div className="container mx-auto py-16 px-10">
 			<BackCaret to={routes.admin.events()} />
 			<AdminHeader className="mb-8" subtitle={action + " Event"} />
-			<form onSubmit={e => formik.handleSubmit(e)} className="space-y-3">
+			<form
+				onSubmit={e => {
+					setSuccess(undefined);
+					scrollToFirstFormikError();
+					formik.handleSubmit(e);
+				}}
+				className="space-y-3"
+			>
 				<Input
 					name="name"
 					label="Name"

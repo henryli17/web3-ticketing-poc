@@ -25,7 +25,7 @@ const generateEvents = (n) => {
 			venue: faker.lorem.words(2),
 			city: faker.address.cityName(),
 			time: time,
-			price: parseInt(utils.ethToGwei(utils.random(0.01, 0.5))),
+			price: parseInt(utils.ethToGwei(utils.random(0.001, 0.01))),
 			imageUrl: faker.image.abstract(707, 976, true),
 			description: faker.lorem.lines(5),
 			genres: genres,

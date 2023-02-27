@@ -26,7 +26,7 @@ const generateEvents = (n) => {
 			city: faker.address.cityName(),
 			time: time,
 			price: parseInt(utils.ethToGwei(utils.random(0.01, 0.5))),
-			imageUrl: faker.image.fashion(707, 976, true),
+			imageUrl: faker.image.abstract(707, 976, true),
 			description: faker.lorem.lines(5),
 			genres: genres,
 			cancelled: 0,

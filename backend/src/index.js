@@ -123,9 +123,13 @@ server.get(API_BASE + "/events", async (req, res) => {
 
 server.get(API_BASE + "/events/:id", async (req, res) => {
 	await response(req, res, async (req) => {
-		return (
-			await utils.getEvent(req.params.id)
-		);
+		const res = await utils.getEvent(req.params.id, false, false);
+
+		if (!res) {
+			throw new errs.NotFoundError();
+		}
+
+		return res;
 	});
 });
 

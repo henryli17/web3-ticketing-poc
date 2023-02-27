@@ -70,7 +70,7 @@ const getEvents = async (options, deployedOnly = true, showCancelled = false) =>
 	return Object.values(events);
 };
 
-const getEvent = async (id) => {
+const getEvent = async (id, showCancelled = true, showExpired = true) => {
 	let event;
 	const rows = await knex
 		.select("events.*")
@@ -79,7 +79,15 @@ const getEvent = async (id) => {
 		.leftJoin("event-genre", "events.id", "event-genre.eventId")
 		.leftJoin("genres", "event-genre.genreId", "genres.id")
 		.where("events.id", id)
-		.whereRaw("events.time > unixepoch('now')")
+		.modify(query => {
+			if (!showCancelled) {
+				query.where("events.cancelled", 0);
+			}
+
+			if (!showExpired) {
+				query.whereRaw("events.time > unixepoch('now')");
+			}
+		})
 	;
 
 	if (!rows.length) {

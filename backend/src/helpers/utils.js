@@ -95,8 +95,8 @@ const getPurchases = async (address) => {
 	return purchases.filter(p => p.event.deployed);
 };
 
-const getEvent = async (id) => {
-	const event = await db.getEvent(id);
+const getEvent = async (id, showCancelled = true, showExpired = true) => {
+	const event = await db.getEvent(id, showCancelled, showExpired);
 
 	if (!event) {
 		return false;

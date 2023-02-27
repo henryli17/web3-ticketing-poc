@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Alert from "../components/Alert";
 import BackCaret from "../components/BackCaret";
-import NotFound from "../components/NotFound";
+import PageError from "../components/PageError";
 import Spinner from "../components/Spinner";
 import { Event, getEvent } from "../helpers/api";
 import { getInstance, getResaleTokens, ResaleToken } from "../helpers/contract";
@@ -47,7 +47,7 @@ const SingleEventResaleView = () => {
 	}, [id]);
 
 	if (error) {
-		return <NotFound />;
+		return <PageError />;
 	}
 
 	if (!event || !address) {

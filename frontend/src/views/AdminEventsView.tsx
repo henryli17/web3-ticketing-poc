@@ -5,7 +5,7 @@ import Web3 from "web3";
 import AdminEventCard from "../components/AdminEventCard";
 import AdminHeader from "../components/AdminHeader";
 import Alert from "../components/Alert";
-import NotFound from "../components/NotFound";
+import PageError from "../components/PageError";
 import PaginationButtons from "../components/PaginationButtons";
 import SearchBar from "../components/SearchBar";
 import { getEvents, GetEventsResponse } from "../helpers/api";
@@ -51,7 +51,7 @@ const AdminEventsView = () => {
 	}, [searchParams, updateEvents]);
 
 	if (error) {
-		return <NotFound />;
+		return <PageError />;
 	}
 
 	if (!eventsData) {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import LoadingCard from "../components/LoadingCard";
-import NotFound from "../components/NotFound";
+import PageError from "../components/PageError";
 import PurchaseCard from "../components/PurchaseCard";
 import { getPurchases, Purchase } from "../helpers/api";
 import { useAddress } from "../middleware/Wallet";
@@ -75,7 +75,7 @@ const PurchasesView = () => {
 	}, [purchaseData, purchaseType])
 
 	if (error) {
-		return <NotFound />;
+		return <PageError />;
 	}
 	
 	return (

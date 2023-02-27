@@ -4,7 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import { useEffectOnce } from "usehooks-ts";
 import CheckboxGroup, { CheckboxItem } from "../components/CheckboxGroup";
 import EventCard from "../components/EventCard";
-import NotFound from "../components/NotFound";
+import PageError from "../components/PageError";
 import PaginationButtons from "../components/PaginationButtons";
 import { getEvents, GetEventsResponse, getGenres, getLocations } from "../helpers/api";
 import { ethToGwei } from "../helpers/utils";
@@ -78,7 +78,7 @@ const EventsView = () => {
 	}, [searchParams]);
 
 	if (error) {
-		return <NotFound />;
+		return <PageError />;
 	}
 
 	if (!eventsData) {

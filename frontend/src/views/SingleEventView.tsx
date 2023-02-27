@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import Alert from "../components/Alert";
 import ConnectWallet from "../components/ConnectWallet";
 import GenrePill from "../components/GenrePill";
-import NotFound from "../components/NotFound";
+import PageError from "../components/PageError";
 import QuantityButton from "../components/QuantityButton";
 import Spinner from "../components/Spinner";
 import { Event, getEvent } from "../helpers/api";
@@ -46,7 +46,7 @@ const SingleEventView = () => {
 	}, [id, address, refreshEvent]);
 
 	if (error) {
-		return <NotFound />;
+		return <PageError />;
 	}
 
 	if (!event) {

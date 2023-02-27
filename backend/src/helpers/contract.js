@@ -9,7 +9,7 @@ const web3 = new Web3(
 		process.env.ETH_MNEUMONIC,
 		"https://goerli.infura.io/v3/" + process.env.INFURA_PROJECT_ID
 	)
-	: new Web3.providers.HttpProvider("http://127.0.0.1:8888")
+	: new Web3.providers.HttpProvider("http://127.0.0.1:8545")
 );
 
 const ABI = require("./contractABI.json");

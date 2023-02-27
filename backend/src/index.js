@@ -173,7 +173,7 @@ server.post(API_BASE + "/events/:id/token", async (req, res) => {
 
 		const address = await contract.signatureToAddress(req.body.signature);
 
-		contract.callContractMethod(
+		contract.sendContractTx(
 			contract.instance.methods.markTokenAsUsed(
 				address,
 				parseInt(req.params.id),
@@ -259,7 +259,7 @@ server.post(API_BASE + "/events", async (req, res) => {
 			...req.body
 		};
 		
-		contract.callContractMethod(
+		contract.sendContractTx(
 			contract.instance.methods.createEvent(
 				event.id,
 				event.time,
@@ -305,7 +305,7 @@ server.put(API_BASE + "/events", async (req, res) => {
 		// Only update contract event if time difference is more than 60 seconds or quantity is different
 		if ((event.time - contractEvent.time >= 60) || event.quantity !== Number(contractEvent.quantity)) {
 			// Attempt to update contract event first
-			await contract.callContractMethod(
+			await contract.sendContractTx(
 				contract.instance.methods.updateEvent(
 					event.id,
 					event.time,
@@ -369,7 +369,7 @@ server.del(API_BASE + "/events/:id", async (req, res) => {
 			}
 	
 			// Attempt to update contract event first
-			await contract.callContractMethod(
+			await contract.sendContractTx(
 				contract.instance.methods.cancelEvent(
 					id,
 					Array.from(owners.keys()),

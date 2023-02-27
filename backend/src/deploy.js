@@ -8,7 +8,7 @@ const main = async () => {
 	const events = await db.getEvents({}, false);
 
 	for (const event of events) {
-		await contract.callContractMethod(
+		await contract.sendContractTx(
 			contract.instance.methods.createEvent(
 				parseInt(event.id),
 				parseInt(event.time / 1000),

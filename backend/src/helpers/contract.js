@@ -85,7 +85,7 @@ const getOwners = async (eventId) => {
 
 const signatureToAddress = signature => web3.eth.accounts.recover(SIGNATURE_MESSAGE, signature);
 
-const callContractMethod = async (method) => {
+const sendContractTx = async (method) => {
 	await method.send({
 		from: OWNER,
 		gas: await method.estimateGas({ from: OWNER })
@@ -100,6 +100,6 @@ module.exports = {
 	getTokens,
 	getOwners,
 	signatureToAddress,
-	callContractMethod,
+	sendContractTx,
 	SIGNATURE_MESSAGE
 };

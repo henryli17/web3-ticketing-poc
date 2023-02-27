@@ -33,9 +33,9 @@ const getEvents = async (options, deployedOnly = true, showCancelled = false) =>
 				const search = "%" + options.search + "%";
 
 				query
-					.whereILike("genres.name", search)
-					.orWhereILike("events.city", search)
-					.orWhereILike("events.artist", search)
+					.whereLike("genres.name", search)
+					.orWhereLike("events.city", search)
+					.orWhereLike("events.artist", search)
 				;
 			}
 			

@@ -13,7 +13,6 @@ const web3 = new Web3(
 );
 
 const ABI = require("./contractABI.json");
-const GAS = 7500000;
 const SIGNATURE_MESSAGE = Web3.utils.toHex("Please sign this transaction to authenticate via your Ethereum wallet.");
 const OWNER = process.env.ETH_CONTRACT_OWNER || "0x3b26935917de7f5fac60f6d15ff02b1cf468dfb0";
 const ADDRESS = process.env.ETH_CONTRACT_ADDRESS;
@@ -86,6 +85,13 @@ const getOwners = async (eventId) => {
 
 const signatureToAddress = signature => web3.eth.accounts.recover(SIGNATURE_MESSAGE, signature);
 
+const callContractMethod = async (method) => {
+	await method.send({
+		from: OWNER,
+		gas: await method.estimateGas({ from: OWNER })
+	});
+};
+
 module.exports = {
 	ABI,
 	ADDRESS,
@@ -94,6 +100,6 @@ module.exports = {
 	getTokens,
 	getOwners,
 	signatureToAddress,
- 	GAS,
+	callContractMethod,
 	SIGNATURE_MESSAGE
 };

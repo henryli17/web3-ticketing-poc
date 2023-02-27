@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { AbiItem } from 'web3-utils';
 
+axios.defaults.withCredentials = true;
+
 enum HttpMethod {
 	GET = "get",
 	POST = "post",
@@ -65,8 +67,7 @@ const request = <T>(method: HttpMethod, endpoint: string, options?: { data?: obj
 				method: method,
 				url: `${API_BASE}/${endpoint}`,
 				data: options?.data,
-				params: options?.params,
-				withCredentials: true
+				params: options?.params
 			});
 
 			resolve(res.data);

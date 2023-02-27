@@ -45,9 +45,7 @@ server.use(cookies.parse);
 server.use((req, res, next) => {
 	const sid = req.cookies.sid || crypto.randomBytes(32).toString('base64');
 
-	if (!req.cookies.sid) {
-		res.setCookie("sid", sid);
-	}
+	res.setCookie("sid", sid);
 	
 	if (!sessions.has(sid)) {
 		sessions.set(sid, {});
@@ -78,7 +76,7 @@ const response = async (req, res, fn) => {
 	} catch (e) {
 		console.error(e);
 		res.send(
-			(e instanceof errs.HttpError) ? e : new errs.InternalServerError(e.reason)
+			(e instanceof errs.HttpError) ? e : new errs.InternalServerError(e.reason || e.message)
 		);
 	}
 };
@@ -111,7 +109,7 @@ server.get(API_BASE + "/events", async (req, res) => {
 			search: req.query?.search
 		});
 
-		const limit = 10;
+		const limit = 7;
 		const offset = Math.max(parseInt(req.query?.offset) || 0, 0);
 		const slice = events.slice(offset, offset + limit);
 
@@ -171,16 +169,13 @@ server.post(API_BASE + "/events/:id/token", async (req, res) => {
 
 		const address = await contract.signatureToAddress(req.body.signature);
 
-		await contract
-			.instance
-			.methods
-			.markTokenAsUsed(
+		contract.callContractMethod(
+			contract.instance.methods.markTokenAsUsed(
 				address,
 				parseInt(req.params.id),
 				parseInt(req.body.quantity)
 			)
-			.send({ from: contract.OWNER, gas: contract.GAS })
-		;
+		);
 	});
 });
 
@@ -259,19 +254,17 @@ server.post(API_BASE + "/events", async (req, res) => {
 			),
 			...req.body
 		};
-
-		await db.setGenresForEvent(event.id, event.genres);
-		await contract
-			.instance
-			.methods
-			.createEvent(
+		
+		contract.callContractMethod(
+			contract.instance.methods.createEvent(
 				event.id,
 				event.time,
 				event.price,
 				event.quantity
 			)
-			.send({ from: contract.OWNER, gas: contract.GAS })
-		;
+		);
+
+		await db.setGenresForEvent(event.id, event.genres);
 		await db.updateEvent(event.id, { deployed: 1 });
 	});
 });
@@ -309,16 +302,13 @@ server.put(API_BASE + "/events", async (req, res) => {
 		}
 
 		// Attempt to update contract event first
-		await contract
-			.instance
-			.methods
-			.updateEvent(
+		await contract.callContractMethod(
+			contract.instance.methods.updateEvent(
 				event.id,
 				event.time,
 				event.quantity
 			)
-			.send({ from: contract.OWNER, gas: contract.GAS })
-		;
+		);
 
 		// Contract event update did not throw exception, update DB event
 		await db.setGenresForEvent(event.id, event.genres);
@@ -374,16 +364,13 @@ server.del(API_BASE + "/events/:id", async (req, res) => {
 		}
 
 		// Attempt to update contract event first
-		await contract
-			.instance
-			.methods
-			.cancelEvent(
+		await contract.callContractMethod(
+			contract.instance.methods.cancelEvent(
 				id,
 				Array.from(owners.keys()),
 				Array.from(owners.values())
 			)
-			.send({ from: contract.OWNER, gas: contract.GAS })
-		;
+		);
 
 		// Contract event update did not throw exception, update DB event
 		await db.updateEvent(id, { cancelled: 1 });

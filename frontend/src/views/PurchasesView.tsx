@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import LoadingCard from "../components/LoadingCard";
 import NotFound from "../components/NotFound";
 import PurchaseCard from "../components/PurchaseCard";
 import { getPurchases, Purchase } from "../helpers/api";
@@ -76,15 +77,12 @@ const PurchasesView = () => {
 	if (error) {
 		return <NotFound />;
 	}
-
-	if (!purchaseData) {
-		return <></>;
-	}
-
+	
 	return (
 		<div className="container mx-auto py-16 px-10 space-y-3">
 			<div className="flex space-x-5 mb-5">
 				{
+					purchaseData &&
 					Object.values(PurchaseType)
 						.filter(purchaseType => purchaseData[purchaseType].length) // Do not show tabs with no items
 						.map((type, i) => {
@@ -104,10 +102,15 @@ const PurchasesView = () => {
 				}
 			</div>
 			{
-				!hasPurchases &&
+				purchaseData !== undefined && !hasPurchases &&
 				<h2 className="italic uppercase text-center font-medium">No Purchases Found</h2>
 			}
 			{
+				purchaseData === undefined &&
+				<LoadingCard />
+			}
+			{
+				purchaseData &&
 				purchaseData[purchaseType].map((purchase, i) => {
 					return (
 						<PurchaseCard

@@ -6,6 +6,7 @@ import * as Yup from "yup";
 import AdminHeader from "../components/AdminHeader";
 import Alert from "../components/Alert";
 import BackCaret from "../components/BackCaret";
+import Spinner from "../components/Spinner";
 import { createEvent, Event, getEvent, updateEvent } from "../helpers/api";
 import { ethToGwei, gweiToEth } from "../helpers/utils";
 import { useAdmin } from "../middleware/Admin";
@@ -18,11 +19,12 @@ enum Action {
 
 const AdminCreateEditEventView = () => {
 	const { id } = useParams();
-	const [error, setError] = useState(false);
-	const [success, setSuccess] = useState(false);
+	const [success, setSuccess] = useState<boolean>();
+	const [disabled, setDisabled] = useState(false);
 	const [refreshEvent, setRefreshEvent] = useState(false);
 	const [event, setEvent] = useState<Event>();
 	const [image, setImage] = useState<File>();
+	const [errorMessage, setErrorMessage] = useState("");
 	const [, setAdmin]= useAdmin();
 	const navigate = useNavigate();
 	const dateToString = (date: Date) => {
@@ -55,6 +57,8 @@ const AdminCreateEditEventView = () => {
 			genres: Yup.string().required("Required")
 		}),
 		onSubmit: async values => {
+			setDisabled(true);
+
 			try {
 				const event: any = {
 					...values,
@@ -88,12 +92,18 @@ const AdminCreateEditEventView = () => {
 				console.error(e);
 
 				// 401 Unauthorised
-				if (e?.response?.status === 401) {
+				if (e?.response.status === 401) {
 					setAdmin(false);
 				} else {
-					setError(true);
+					setSuccess(false);
+				}
+
+				if (e?.response?.data.message) {
+					setErrorMessage(e.response.data.message + ".");
 				}
 			}
+
+			setDisabled(false);
 		},
 		enableReinitialize: true
 	});
@@ -112,7 +122,7 @@ const AdminCreateEditEventView = () => {
 			.then(setEvent)
 			.catch(() => navigate(routes.admin.events()))
 		;
-	}, [id, action, navigate, success, refreshEvent]);
+	}, [id, action, navigate, refreshEvent]);
 
 	return (
 		<div className="container mx-auto py-16 px-10">
@@ -199,10 +209,10 @@ const AdminCreateEditEventView = () => {
 					}
 				</div>
 				{
-					error &&
+					success !== undefined && !success &&
 					<Alert
 						title="Error!"
-						message={`Failed to ${action.toLowerCase()} event.`}
+						message={`Failed to ${action.toLowerCase()} event. ${errorMessage ? "Reason: " + errorMessage : ""}`}
 						className="bg-red-50 text-red-700"
 					/>
 				}
@@ -215,10 +225,13 @@ const AdminCreateEditEventView = () => {
 				}
 				<div className="flex">
 					<div className="ml-auto flex space-x-2">
-						<Link to={routes.admin.events()} className="btn text-red-600 hover:text-red-800">
-							Cancel
+						<Link to={routes.admin.events()}>
+							<button type="button" className="btn text-red-600 hover:text-red-800 disabled:text-gray-400" disabled={disabled}>
+								Cancel
+							</button>
 						</Link>
-						<button type="submit" className="btn btn-basic">
+						<button type="submit" className="btn btn-basic" disabled={disabled}>
+							{disabled && <Spinner />}
 							Save
 						</button>
 					</div>

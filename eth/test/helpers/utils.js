@@ -37,7 +37,7 @@ const createEvent = async (contract, caller, event) => {
 		event.quantity,
 		{ from: caller }
 	);
-}
+};
 
 module.exports = {
 	createEvent,

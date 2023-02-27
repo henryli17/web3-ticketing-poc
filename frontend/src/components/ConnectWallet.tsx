@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useLocalStorage } from 'usehooks-ts';
 import Web3 from 'web3';
+import { isCorrectNetwork, switchNetwork } from '../helpers/contract';
 import { useAddress } from '../middleware/Wallet';
 
 const ConnectWallet = (props: { className?: string, onLocked?: () => any }) => {
@@ -25,6 +26,12 @@ const ConnectWallet = (props: { className?: string, onLocked?: () => any }) => {
 		const web3 = new Web3(Web3.givenProvider);
 
 		try {
+			const chainId = await web3.eth.getChainId();
+			
+			if (!isCorrectNetwork(chainId)) {
+				await switchNetwork();
+			}
+
 			const accounts = await web3.eth.requestAccounts();
 			setAddress(accounts[0]);
 			setLoggedOut(false);

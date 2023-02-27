@@ -25,25 +25,36 @@ const Wallet = () => {
 	}
 
 	const setupWallet = async () => {
+		const disconnect = () => {
+			setAddress("");
+			setLoggedOut(true);
+		};
+
 		w.ethereum.on('accountsChanged', (accounts: Array<string>) => {
 			setAddress(accounts.length ? accounts[0] : "");
 		});
 
 		w.ethereum.on('chainChanged', async (chainId: string) => {
 			if (!isCorrectNetwork(web3.utils.toNumber(chainId))) {
-				setAddress("");
-				setLoggedOut(true);
+				disconnect();
 			}
 		});
 
 		if (Web3.givenProvider) {
 			try {
+				const chainId = await web3.eth.getChainId();
+
+				if (!isCorrectNetwork(chainId)) {
+					disconnect();
+					return;
+				}
+
+				// Automatically login if correct network
 				const accounts = await web3.eth.requestAccounts();
 				setAddress(accounts[0]);
 				setLoggedOut(false);
 			} catch (e) {
-				setAddress("");
-				setLoggedOut(true);
+				disconnect();
 			}
 		}
 	};

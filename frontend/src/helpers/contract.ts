@@ -28,12 +28,7 @@ export const switchNetwork = () => {
 };
 
 export const getInstance = async () => {
-	if (!isCorrectNetwork(w.ethereum.networkVersion)) {
-		await switchNetwork();
-	}
-
 	const contract = await getContract();
-	
 	return new web3.eth.Contract(contract.ABI, contract.address);
 };
 

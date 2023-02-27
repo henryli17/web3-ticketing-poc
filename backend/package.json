@@ -7,8 +7,8 @@
     "start": "npx nodemon",
     "migrate": "npx knex migrate:latest",
     "seed": "npx node src/seed.js",
-    "deploy": "npx node src/deploy.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "unseed": "npx node src/unseed.js",
+    "deploy": "npx node src/deploy.js"
   },
   "keywords": [],
   "author": "",

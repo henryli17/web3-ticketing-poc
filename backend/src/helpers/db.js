@@ -175,6 +175,11 @@ const setGenresForEvent = async (eventId, eventGenres) => {
 	}
 };
 
+const reset = async () => {
+	await knex("events").del();
+	await knex("genres").del();
+};
+
 module.exports = {
 	DB_FILE,
 	getEvents,
@@ -183,5 +188,6 @@ module.exports = {
 	getLocations,
 	createEvent,
 	updateEvent,
-	setGenresForEvent
+	setGenresForEvent,
+	reset
 };

@@ -4,13 +4,14 @@
     "@truffle/contract": "^4.6.12",
     "@truffle/hdwallet-provider": "^2.1.5",
     "@truffle/interface-adapter": "^0.5.27",
+    "dotenv": "^16.0.3",
     "solc": "^0.8.17",
     "truffle-assertions": "^0.9.2",
     "truffle-export-abi": "^1.0.1"
   },
   "devDependencies": {
-    "solidity-coverage": "^0.7.22",
-    "ganache-cli": "^6.12.2"
+    "ganache-cli": "^6.12.2",
+    "solidity-coverage": "^0.7.22"
   },
   "scripts": {
     "deploy": "truffle migrate",

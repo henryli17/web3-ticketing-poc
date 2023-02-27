@@ -1,5 +1,5 @@
-require('dotenv').config()
-console.clear()
+require('dotenv').config();
+console.clear();
 
 const ganache = require("ganache");
 const restify = require("restify");

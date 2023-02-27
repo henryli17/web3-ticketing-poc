@@ -18,7 +18,10 @@
  *
  */
 
+require('dotenv').config()
+
 const Web3 = require("web3");
+const HDWalletProvider = require('@truffle/hdwallet-provider');
 
 module.exports = {
   /**
@@ -47,6 +50,18 @@ module.exports = {
       provider: new Web3.providers.HttpProvider('https://muddy-sunset-2817.fly.dev:8888'),
       network_id: "*"
     },
+    goerli: {
+      provider: function() { 
+       return new HDWalletProvider(
+        process.env.ETH_MNEUMONIC,
+        "https://goerli.infura.io/v3/" + process.env.INFURA_PROJECT_ID
+       );
+      },
+      network_id: 5,
+      from: config.address,
+      gas: 7500000
+    }
+    
     //
     // An additional network, but with some advanced options…
     // advanced: {

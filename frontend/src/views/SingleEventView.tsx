@@ -18,7 +18,7 @@ const SingleEventView = () => {
 	const [event, setEvent] = useState<Event>();
 	const [resaleTokens, setResaleTokens] = useState<ResaleToken[]>([]);
 	const [refreshEvent, setRefreshEvent] = useState(false);
-	const [success, setSuccess] = useState(false);
+	const [success, setSuccess] = useState<boolean>();
 	const [locked, setLocked] = useState(false);
 	const [address] = useAddress();
 
@@ -101,6 +101,7 @@ const SingleEventView = () => {
 								address={address}
 								event={event}
 								className="btn-basic"
+								onBeforePurchase={() => setSuccess(undefined)}
 								onSuccess={() => {
 									setSuccess(true);
 									setRefreshEvent(!refreshEvent);
@@ -132,6 +133,7 @@ const PurchaseButton = (props: {
 	className?: string,
 	address: string | null,
 	event: Event,
+	onBeforePurchase: () => any,
 	onSuccess: () => any,
 	onLocked: () => any,
 	quantityRemaining: number
@@ -155,6 +157,7 @@ const PurchaseButton = (props: {
 	}
 
 	const purchase = async () => {
+		props.onBeforePurchase();
 		setDisabled(true);
 
 		try {

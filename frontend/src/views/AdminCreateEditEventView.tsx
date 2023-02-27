@@ -58,6 +58,7 @@ const AdminCreateEditEventView = () => {
 		}),
 		onSubmit: async values => {
 			setDisabled(true);
+			setSuccess(undefined);
 
 			try {
 				const event: any = {

@@ -16,7 +16,7 @@ const SingleEventResaleView = () => {
 	const [resaleTokens, setResaleTokens] = useState<ResaleToken[]>([]);
 	const [address] = useAddress();
 	const [error, setError] = useState(false);
-	const [success, setSuccess] = useState(false);
+	const [success, setSuccess] = useState<boolean>();
 	const [updateResaleTokens, setUpdateResaleTokens] = useState(false);
 	const navigate = useNavigate();
 
@@ -88,6 +88,7 @@ const SingleEventResaleView = () => {
 								event={event}
 								resaleToken={resaleToken}
 								address={address}
+								onBeforePurchase={() => setSuccess(undefined)}
 								onPurchaseSuccess={() => {
 									setSuccess(true);
 									setUpdateResaleTokens(!updateResaleTokens);
@@ -105,11 +106,13 @@ const ResaleListing = (props: {
 	event: Event,
 	resaleToken: ResaleToken,
 	address: string,
+	onBeforePurchase: () => any,
 	onPurchaseSuccess: () => any
 }) => {
 	const [disabled, setDisabled] = useState(false);
 
 	const purchase = async () => {
+		props.onBeforePurchase();
 		setDisabled(true);
 
 		try {

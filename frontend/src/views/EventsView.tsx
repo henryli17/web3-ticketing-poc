@@ -14,14 +14,18 @@ const EventsView = () => {
 	const [eventsData, setEventsData] = useState<GetEventsResponse>();
 	const [genres, setGenres] = useState<CheckboxItem[]>([]);
 	const [locations, setLocations] = useState<CheckboxItem[]>([]);
-	const [offset, setOffset] = useState(0);
 	const [showFilters, setShowFilters] = useState(false);
 	const [showGenres, setShowGenres] = useState(true);
 	const [showLocations, setShowLocations] = useState(true);
 	const [showPrice, setShowPrice] = useState(true);
 	const [maxPrice, setMaxPrice] = useState(0);
-	const [search, setSearch] = useState<string>();
 	const [searchParams, setSearchParams] = useSearchParams();
+	const search = searchParams.get("search") || undefined;
+	const offset = Number(searchParams.get("offset"));
+	const setOffset = (offset: number) => {
+		searchParams.set("offset", offset.toString());
+		setSearchParams(searchParams);
+	};
 
 	useEffectOnce(() => {
 		getGenres()
@@ -39,11 +43,9 @@ const EventsView = () => {
 
 		getLocations()
 			.then(locations => {
-				const checkedLocations = searchParams.get("locations")?.split(",") || [];
-
 				setLocations(
 					locations.map(location => {
-						return { name: location, checked: checkedLocations.includes(location) };
+						return { name: location, checked: false };
 					})
 				);
 			})
@@ -52,8 +54,12 @@ const EventsView = () => {
 	});
 
 	useEffect(() => {
+		if (!genres.length || !locations.length) {
+			return;
+		}
+
 		const params = {
-			offset: offset,
+			offset: Number(searchParams.get("offset")) || 0,
 			genres: genres.filter(g => g.checked).map(g => g.name),
 			locations: locations.filter(l => l.checked).map(l => l.name),
 			maxPrice: (maxPrice > 0) ? ethToGwei(maxPrice) : undefined,
@@ -64,9 +70,7 @@ const EventsView = () => {
 			.then(setEventsData)
 			.catch(() => setError(true))
 		;
-
-		setSearch(params.search);
-	}, [offset, genres, locations, maxPrice, searchParams]);
+	}, [genres, locations, maxPrice, searchParams]);
 
 	if (error) {
 		return <NotFound />;
@@ -148,7 +152,7 @@ const EventsView = () => {
 					<div className="flex justify-end space-x-2">
 						<PaginationButtons
 							prev={() => setOffset(offset - eventsData.limit)}
-							next={() => (typeof eventsData.nextOffset === "number") && setOffset(eventsData.nextOffset)}
+							next={() => (typeof eventsData.nextOffset === "number") ? setOffset(eventsData.nextOffset) : setOffset(0)}
 							onChange={() => window.scrollTo(0, 0)}
 							prevDisabled={offset === 0}
 							nextDisabled={!eventsData.nextOffset}

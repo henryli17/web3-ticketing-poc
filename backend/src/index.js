@@ -7,6 +7,7 @@ const cookies = require('restify-cookies');
 const crypto = require('crypto');
 const errs = require('restify-errors');
 const db = require("./helpers/db");
+const fs = require("fs");
 const contract = require("./helpers/contract");
 const utils = require("./helpers/utils");
 const validators = require("./helpers/validators");
@@ -18,7 +19,7 @@ const API_BASE = "/api";
 const API_ADMIN_PASSWORD = "password";
 const API_PORT = 3001;
 const API_HOST = "http://localhost:" + API_PORT;
-const IMG_PATH = "src/img";
+const IMG_PATH = "src/static/img";
 
 ganache
 	.server({
@@ -77,7 +78,24 @@ const response = async (req, res, fn) => {
 	}
 };
 
-server.get("/img/*", restify.plugins.serveStatic({ directory: __dirname }));
+server.get("*", (req, res, next) => {
+	const options = {
+		directory: __dirname + "/static/frontend"
+	};
+
+	// Serve static file if exists otherwise serve frontend home page
+	try {
+		fs.readFileSync(options.directory + req.path());
+	} catch (e) {
+		options.file = "index.html";
+	}
+
+	const handler = restify.plugins.serveStatic(options);
+
+	handler(req, res, next);
+});
+
+server.get("/static/img/*", restify.plugins.serveStatic({ directory: __dirname }));
 
 server.get(API_BASE + "/events", async (req, res) => {
 	await response(req, res, async (req) => {

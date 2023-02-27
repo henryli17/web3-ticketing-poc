@@ -46,7 +46,7 @@ const ConnectWallet = (props: { className?: string, onLocked?: () => any }) => {
 			onMouseEnter={() => setHovering(true)}
 			onMouseLeave={() => setHovering(false)}
 		>
-			<img src="../../assets/metamask.svg" className="mr-2" alt="MetaMask icon" height={20} width={20}/>
+			<img src={process.env.PUBLIC_URL + "/static/metamask.svg"} className="mr-2" alt="MetaMask icon" height={20} width={20}/>
 			{address ? (hovering ? "Disconnect" : "Connected") : "Connect Wallet"}
 		</a>
 	);

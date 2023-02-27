@@ -1,5 +1,5 @@
 /build
 /node_modules
-/src/img/events
+/src/static
 events.db
 /ganache

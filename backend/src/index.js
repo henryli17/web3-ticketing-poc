@@ -27,7 +27,7 @@ ganache
 		database: { dbPath: path.resolve('./ganache') },
 		wallet: { seed: "seed" }
 	})
-	.listen(8545, err => {
+	.listen(8888, err => {
 		if (err) {
 			throw err;
 		}

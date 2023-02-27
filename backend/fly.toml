@@ -39,7 +39,7 @@ processes = []
 
 [[services]]
   http_checks = []
-  internal_port = 8545
+  internal_port = 8888
   processes = ["app"]
   protocol = "tcp"
   script_checks = []
@@ -50,7 +50,7 @@ processes = []
 
   [[services.ports]]
     handlers = ["http", "tls"]
-    port = 8545
+    port = 8888
 
   [[services.tcp_checks]]
     grace_period = "1s"

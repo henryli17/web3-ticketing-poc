@@ -1,7 +1,7 @@
 require('dotenv').config()
 
-const db = require("./helpers/db.js");
-const utils = require("./helpers/utils.js");
+const db = require("./helpers/db");
+const utils = require("./helpers/utils");
 const contract = require("./helpers/contract");
 
 const main = async () => {

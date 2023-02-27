@@ -1,7 +1,7 @@
 require('dotenv').config()
 
-const db = require("./helpers/db.js");
-const utils = require("./helpers/utils.js");
+const db = require("./helpers/db");
+const utils = require("./helpers/utils");
 const { faker } = require('@faker-js/faker');
 const SEED_COUNT = 50;
 

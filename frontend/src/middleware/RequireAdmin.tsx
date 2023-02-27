@@ -9,7 +9,7 @@ const RequireAdmin = ({ redirect: Redirect }: { redirect: React.FC }) => {
 		return (
 			<Navigate
 				to={routes.admin.login()}
-				state={{ next: window.location.pathname }}
+				state={{ next: window.location.href.replace(window.location.origin, "") }}
 				replace
 			/>
 		);

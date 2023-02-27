@@ -8,11 +8,12 @@ const SearchBar = (props: {
 	const [search, setSearch] = useState("");
 
 	const submit = (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+
 		if (!props.onSubmit) {
 			return;
 		}
 
-		e.preventDefault();
 		props.onSubmit(search);
 	};
 

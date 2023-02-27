@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { MusicNote, QrCodeScan } from "react-bootstrap-icons";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import Web3 from "web3";
 import AdminEventCard from "../components/AdminEventCard";
 import AdminHeader from "../components/AdminHeader";
@@ -14,10 +14,20 @@ import routes from "../routes";
 const AdminEventsView = () => {
 	const [eventsData, setEventsData] = useState<GetEventsResponse>();
 	const [error, setError] = useState(false);
-	const [offset, setOffset] = useState(0);
-	const [search, setSearch] = useState("");
 	const [updateEvents, setUpdateEvents] = useState(false);
+	const [searchParams, setSearchParams] = useSearchParams();
+	const offset = Number(searchParams.get("offset"));
 	let timeout: NodeJS.Timeout;
+
+	const setSearch = (value: string) => {
+		searchParams.set("search", value);
+		setSearchParams(searchParams);
+	};
+
+	const setOffset = (offset: number) => {
+		searchParams.set("offset", offset.toString());
+		setSearchParams(searchParams);
+	};
 
 	const onEventCancel = () => {
 		// Trigger events update either by resetting offset to 0 or updating `updateEvents`
@@ -29,11 +39,16 @@ const AdminEventsView = () => {
 	};
 
 	useEffect(() => {
-		getEvents({ offset: offset, search: search })
+		const params = {
+			offset: Number(searchParams.get("offset")) || 0,
+			search: searchParams.get("search") || undefined
+		};
+
+		getEvents(params)
 			.then(setEventsData)
 			.catch(() => setError(true))
 		;
-	}, [offset, search, updateEvents]);
+	}, [searchParams, updateEvents]);
 
 	if (error) {
 		return <NotFound />;

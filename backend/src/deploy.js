@@ -24,9 +24,8 @@ const main = async () => {
 		;
 
 		await db.updateEvent(event.id, { deployed: 1 });
+		console.log(`Deployed event ${event.id} to contract ${contract.ADDRESS}`);
 	}
-
-	console.log(`\nSuccessfully deployed ${events.length} events to contract ${contract.ADDRESS}!`);
 };
 
 main()

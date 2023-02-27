@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Outlet, useOutletContext } from "react-router-dom";
 import { useLocalStorage } from "usehooks-ts";
 import Web3 from "web3";
+import { isCorrectNetwork } from "../helpers/contract";
 
 const Wallet = () => {
 	const [loggedOut, setLoggedOut] = useLocalStorage("loggedOut", false);
@@ -23,13 +24,16 @@ const Wallet = () => {
 		return (accounts.length > 0);
 	}
 
-	const connectWallet = async () => {
-		if (!w.ethereum) {
-			return;
-		}
-
+	const setupWallet = async () => {
 		w.ethereum.on('accountsChanged', (accounts: Array<string>) => {
 			setAddress(accounts.length ? accounts[0] : "");
+		});
+
+		w.ethereum.on('chainChanged', async (chainId: string) => {
+			if (!isCorrectNetwork(web3.utils.toNumber(chainId))) {
+				setAddress("");
+				setLoggedOut(true);
+			}
 		});
 
 		if (Web3.givenProvider) {
@@ -47,7 +51,7 @@ const Wallet = () => {
 	useEffect(() => {		
 		checkMetaMaskPermission().then((hasPermission) => {
 			if (hasPermission && !loggedOut) {
-				connectWallet();
+				setupWallet();
 			} else {
 				setAddress("");
 			}

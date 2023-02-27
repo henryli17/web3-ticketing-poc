@@ -111,6 +111,7 @@ const EventsView = () => {
 					<CheckboxItemsFilter
 						title="Genre"
 						items={genres}
+						setItems={setGenres}
 						show={showGenres}
 						setShow={setShowGenres}
 						onUpdate={(items) => updateFilterSearchParam("genres", items.filter(i => i.checked).map(i => i.name).join(","))}
@@ -118,6 +119,7 @@ const EventsView = () => {
 					<CheckboxItemsFilter
 						title="Location"
 						items={locations}
+						setItems={setLocations}
 						show={showLocations}
 						setShow={setShowLocations}
 						onUpdate={(items) => updateFilterSearchParam("locations", items.filter(i => i.checked).map(i => i.name).join(","))}
@@ -174,12 +176,11 @@ const EventsView = () => {
 const CheckboxItemsFilter = (props: {
 	title: string,
 	items: CheckboxItem[],
+	setItems: React.Dispatch<React.SetStateAction<CheckboxItem[]>>,
 	show: boolean,
 	setShow: React.Dispatch<React.SetStateAction<boolean>>,
 	onUpdate: (items: CheckboxItem[]) => any
 }) => {
-	const [items, setItems] = useState(props.items);
-
 	return (
 		<>
 			<div className="filter-child flex items-center">
@@ -190,7 +191,7 @@ const CheckboxItemsFilter = (props: {
 				</button>
 			</div>
 			<div className={"filter-child " + (props.show ? "" : "hidden")}>
-				<CheckboxGroup items={items} dispatch={setItems} onUpdate={(items) => props.onUpdate(items)} />
+				<CheckboxGroup items={props.items} dispatch={props.setItems} onUpdate={(items) => props.onUpdate(items)} />
 			</div>
 		</>
 	)

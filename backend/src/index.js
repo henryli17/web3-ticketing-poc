@@ -22,17 +22,21 @@ const API_PORT = (PRODUCTION) ? 80 : 3001;
 const API_HOST = `${(PRODUCTION) ? "https://muddy-sunset-2817.fly.dev" : "http://localhost"}:${API_PORT}`;
 const IMG_PATH = "src/static/img";
 
-ganache
-	.server({
-		database: { dbPath: path.resolve('./ganache') },
-		wallet: { seed: "seed" }
-	})
-	.listen(8545, err => {
-		if (err) {
-			throw err;
-		}
-	})
-;
+if (!process.env.ETH_MNEUMONIC || !process.env.INFURA_PROJECT_ID) {
+	ganache
+		.server({
+			database: { dbPath: path.resolve('./ganache') },
+			wallet: { seed: "seed" }
+		})
+		.listen(8545, err => {
+			if (err) {
+				throw err;
+			} else {
+				console.log("Ganache Started");
+			}
+		})
+	;
+}
 
 server.listen(API_PORT);
 server.use(restify.plugins.queryParser());

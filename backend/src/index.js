@@ -294,15 +294,25 @@ server.put(API_BASE + "/events", async (req, res) => {
 		}
 
 		const event = { ...req.body };
+		const contractEvent = await contract
+			.instance
+			.methods
+			.events(event.id)
+			.call()
+		;
 
-		// Attempt to update contract event first
-		await contract.callContractMethod(
-			contract.instance.methods.updateEvent(
-				event.id,
-				event.time,
-				event.quantity
-			)
-		);
+
+		// Only update contract event if time difference is more than 60 seconds or quantity is different
+		if ((event.time - contractEvent.time >= 60) || event.quantity !== Number(contractEvent.quantity)) {
+			// Attempt to update contract event first
+			await contract.callContractMethod(
+				contract.instance.methods.updateEvent(
+					event.id,
+					event.time,
+					event.quantity
+				)
+			);
+		}
 
 		// Contract event update did not throw exception, update DB event
 		await db.setGenresForEvent(event.id, event.genres);
@@ -319,7 +329,7 @@ server.put(API_BASE + "/events", async (req, res) => {
 			{
 				...utils.omit(event, ["genres", "quantity"]),
 				time: new Date(event.time * 1000),
-				imageUrl: filePath ? `${API_HOST}/${filePath.replace("src/", "")}` : undefined
+				imageUrl: filePath
 			}
 		);
 

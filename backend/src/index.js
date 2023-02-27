@@ -294,16 +294,6 @@ server.put(API_BASE + "/events", async (req, res) => {
 		}
 
 		const event = { ...req.body };
-		const contractEvent = await contract
-			.instance
-			.methods
-			.events(event.id)
-			.call()
-		;
-
-		if (!contractEvent.created) {
-			throw new errs.BadRequestError();
-		}
 
 		// Attempt to update contract event first
 		await contract.callContractMethod(
@@ -344,26 +334,39 @@ server.del(API_BASE + "/events/:id", async (req, res) => {
 		}
 
 		const id = Number(req.params.id);
-		const owners = await contract.getOwners(id);
-		const totalQuantity = Array.from(owners.values()).reduce((acc, quantity) => acc + quantity, 0);
-		const contractBalance = await contract.instance.methods.getBalance().call({ from: contract.OWNER });
-		const refundAmount = totalQuantity * contractEvent.price;
+		const contractEvent = await contract
+			.instance
+			.methods
+			.events(id)
+			.call()
+		;
 
-		if (contractBalance < refundAmount) {
-			throw new errs.InternalServerError(
-				`Contract requires ${utils.weiToEth(refundAmount)} ETH to refund` +
-				`owners but currently only has ${utils.weiToEth(contractBalance)}.`
-			);
+		if (!contractEvent.created) {
+			throw new errs.BadRequestError();
 		}
 
-		// Attempt to update contract event first
-		await contract.callContractMethod(
-			contract.instance.methods.cancelEvent(
-				id,
-				Array.from(owners.keys()),
-				Array.from(owners.values())
-			)
-		);	
+		if (!contractEvent.cancelled) {
+			const owners = await contract.getOwners(id);
+			const totalQuantity = Array.from(owners.values()).reduce((acc, quantity) => acc + quantity, 0);
+			const contractBalance = await contract.instance.methods.getBalance().call({ from: contract.OWNER });
+			const refundAmount = totalQuantity * contractEvent.price;
+	
+			if (contractBalance < refundAmount) {
+				throw new errs.InternalServerError(
+					`Contract requires ${utils.weiToEth(refundAmount)} ETH to refund` +
+					`owners but currently only has ${utils.weiToEth(contractBalance)}.`
+				);
+			}
+	
+			// Attempt to update contract event first
+			await contract.callContractMethod(
+				contract.instance.methods.cancelEvent(
+					id,
+					Array.from(owners.keys()),
+					Array.from(owners.values())
+				)
+			);	
+		}
 
 		// Contract event update did not throw exception, update DB event
 		await db.updateEvent(id, { cancelled: 1 });

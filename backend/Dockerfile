@@ -8,6 +8,4 @@ RUN npm install
 
 COPY . .
 
-RUN chmod +x /start.sh
-
-CMD ["/start.sh"]
+CMD ["npx", "node", "src/index.js"]

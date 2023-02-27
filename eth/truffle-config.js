@@ -18,6 +18,8 @@
  *
  */
 
+const Web3 = require("web3");
+
 module.exports = {
   /**
    * Networks define how you connect to your ethereum client and let you set the
@@ -40,6 +42,10 @@ module.exports = {
      host: "127.0.0.1",     // Localhost (default: none)
      port: 8545,            // Standard Ethereum port (default: none)
      network_id: "*",       // Any network (default: none)
+    },
+    flyio: {
+      provider: new Web3.providers.HttpProvider('https://muddy-sunset-2817.fly.dev:8545'),
+      network_id: "*"
     },
     //
     // An additional network, but with some advanced options…

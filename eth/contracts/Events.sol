@@ -69,8 +69,11 @@ contract Events is ERC1155, Ownable {
 		_mint(msg.sender, _eventId, _quantity, "");
 	}
 
-	function markTokenAsUsed(address _owner, uint _eventId, uint _quantity) external onlyOwner {	
-		require(events[_eventId].created, "An event with this ID does not exist.");
+	function markTokenAsUsed(address _owner, uint _eventId, uint _quantity) external onlyOwner {
+		Event storage e = events[_eventId];
+
+		require(e.created, "An event with this ID does not exist.");
+		require(!e.cancelled, "This event has been cancelled.");
 
 		uint listedCount = getListedCount(_owner, _eventId);
 		uint usedCount = getUsedCount(_owner, _eventId);
@@ -111,7 +114,10 @@ contract Events is ERC1155, Ownable {
 	}
 
 	function listTokenForResale(uint _eventId, uint _quantity) external {
-		require(events[_eventId].created, "An event with this ID does not exist.");
+		Event storage e = events[_eventId];
+
+		require(e.created, "An event with this ID does not exist.");
+		require(!e.cancelled, "This event has been cancelled.");
 
 		uint listedCount = getListedCount(msg.sender, _eventId);
 		uint usedCount = getUsedCount(msg.sender, _eventId);
@@ -139,6 +145,11 @@ contract Events is ERC1155, Ownable {
 	}
 
 	function unlistTokenForResale(uint _eventId, uint _quantity) external {
+		Event storage e = events[_eventId];
+
+		require(e.created, "An event with this ID does not exist.");
+		require(!e.cancelled, "This event has been cancelled.");
+
 		ResaleTokenEntry[] storage senderResaleTokenEntries = resaleTokenEntries[msg.sender];
 		uint[] memory idxs = new uint[](_quantity);
 		uint count = 0;

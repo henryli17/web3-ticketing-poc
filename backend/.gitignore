@@ -2,7 +2,6 @@
 /node_modules
 /src/static
 db.sqlite3
-db-goerli.sqlite3
 /ganache
 ssh
 ssh-cert.pub

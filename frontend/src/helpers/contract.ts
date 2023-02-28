@@ -9,7 +9,7 @@ enum EthNetwork {
 	GANACHE = "Ganache"
 };
 
-export const ETH_NETWORK = (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') ? EthNetwork.GANACHE : EthNetwork.GOERLI;
+export const ETH_NETWORK = (process.env.NODE_ENV === 'production') ? EthNetwork.GOERLI : EthNetwork.GANACHE;
 
 export const CHAIN_ID = (ETH_NETWORK === EthNetwork.GANACHE) ? 1337 : 5;
 

@@ -56,9 +56,9 @@ export type GetSignatureResponse = {
 };
 
 const request = <T>(method: HttpMethod, endpoint: string, options?: { data?: object, params?: object }) => {
-	const API_BASE = (!process.env.NODE_ENV || process.env.NODE_ENV === 'development')
-		? "http://localhost:3001/api" // Development
-		: "https://muddy-sunset-2817.fly.dev/api" // Production
+	const API_BASE = (process.env.NODE_ENV === 'production')
+		? "https://muddy-sunset-2817.fly.dev/api" // Production
+		: "http://localhost:3001/api" // Development
 	;
 
 	return new Promise<T>(async (resolve, reject) => {

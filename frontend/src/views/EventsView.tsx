@@ -124,13 +124,17 @@ const EventsView = () => {
 						setShow={setShowLocations}
 						onUpdate={(items) => updateFilterSearchParam("locations", items.filter(i => i.checked).map(i => i.name).join(","))}
 					/>
-					<div className={"filter-child flex items-center " + (showPrice ? "" : "border-b-0")}>
+					<button
+						type="button"
+						className={"filter-child flex items-center w-full " + (showPrice ? "" : "border-b-0")}
+						onClick={() => setShowPrice(!showPrice)}
+					>
 						Price
-						<button className="ml-auto" type="button" onClick={() => setShowPrice(!showPrice)}>
+						<div className="ml-auto">
 							{showPrice && <CaretUpFill size={12} />}
 							{!showPrice && <CaretDownFill size={12} />}
-						</button>
-					</div>
+						</div>
+					</button>
 					<div className={"filter-child " + (showPrice ? "" : "hidden")}>
 						<div className="relative shadow-sm my-1">
 							<div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-xs text-gray-500">
@@ -183,13 +187,13 @@ const CheckboxItemsFilter = (props: {
 }) => {
 	return (
 		<>
-			<div className="filter-child flex items-center">
+			<button type="button" className="filter-child flex items-center w-full" onClick={() => props.setShow(!props.show)}>
 				{props.title}
-				<button className="ml-auto" type="button" onClick={() => props.setShow(!props.show)}>
+				<div className="ml-auto">
 					{props.show && <CaretUpFill size={12} />}
 					{!props.show && <CaretDownFill size={12} />}
-				</button>
-			</div>
+				</div>
+			</button>
 			<div className={"filter-child " + (props.show ? "" : "hidden")}>
 				<CheckboxGroup items={props.items} dispatch={props.setItems} onUpdate={(items) => props.onUpdate(items)} />
 			</div>

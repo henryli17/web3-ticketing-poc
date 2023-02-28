@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { CaretDownFill, CaretUpFill, XCircleFill } from 'react-bootstrap-icons';
 import { useSearchParams } from "react-router-dom";
-import { useEffectOnce } from "usehooks-ts";
 import CheckboxGroup, { CheckboxItem } from "../components/CheckboxGroup";
 import EventCard from "../components/EventCard";
 import PageError from "../components/PageError";
@@ -12,8 +11,10 @@ import { ethToGwei } from "../helpers/utils";
 const EventsView = () => {
 	const [error, setError] = useState(false);
 	const [eventsData, setEventsData] = useState<GetEventsResponse>();
-	const [genres, setGenres] = useState<CheckboxItem[]>([]);
-	const [locations, setLocations] = useState<CheckboxItem[]>([]);
+	const [genres, setGenres] = useState<string[]>([]);
+	const [locations, setLocations] = useState<string[]>([]);
+	const [genreCheckboxItems, setGenreCheckboxItems] = useState<CheckboxItem[]>([]);
+	const [locationCheckboxItems, setLocationCheckboxItems] = useState<CheckboxItem[]>([]);
 	const [showFilters, setShowFilters] = useState(false);
 	const [showGenres, setShowGenres] = useState(true);
 	const [showLocations, setShowLocations] = useState(true);
@@ -33,49 +34,49 @@ const EventsView = () => {
 		setSearchParams(searchParams);
 	};
 
-	useEffectOnce(() => {
+	useEffect(() => {
 		getGenres()
-			.then(genres => {
-				const checkedGenres = searchParams.get("genres")?.split(",") || [];
-
-				setGenres(
-					genres.map(genre => {
-						return { name: genre, checked: checkedGenres.includes(genre) };
-					})
-				);
-			})
+			.then(setGenres)
 			.catch(() => setError(true))
 		;
 
 		getLocations()
-			.then(locations => {
-				const checkedLocations = searchParams.get("locations")?.split(",") || [];
-
-				setLocations(
-					locations.map(location => {
-						return { name: location, checked: checkedLocations.includes(location) };
-					})
-				);
-			})
+			.then(setLocations)
 			.catch(() => setError(true))
 		;
-	});
+	}, []);
 
 	useEffect(() => {
+		if (!genres.length || !locations.length) {
+			return;
+		}
+
 		const maxPrice = Number(searchParams.get("maxPrice"));
 		const params = {
 			offset: Number(searchParams.get("offset")) || 0,
-			genres: searchParams.get("genres")?.split(",") || undefined,
-			locations: searchParams.get("locations")?.split(",") || undefined,
+			genres: searchParams.get("genres")?.split(",") || [],
+			locations: searchParams.get("locations")?.split(",") || [],
 			maxPrice: (maxPrice > 0) ? ethToGwei(maxPrice) : undefined,
 			search: searchParams.get("search") || undefined
 		};
+
+		setGenreCheckboxItems(
+			genres.map(genre => {
+				return { name: genre, checked: params.genres.includes(genre) };
+			})
+		);
+
+		setLocationCheckboxItems(
+			locations.map(location => {
+				return { name: location, checked: params.locations.includes(location) };
+			})
+		);
 
 		getEvents(params)
 			.then(setEventsData)
 			.catch(() => setError(true))
 		;
-	}, [searchParams]);
+	}, [searchParams, genres, locations]);
 
 	if (error) {
 		return <PageError />;
@@ -110,16 +111,16 @@ const EventsView = () => {
 				<div className={"card-static col-span-12 mb-5 md:mb-0 md:col-span-3 xl:col-span-2 h-fit md:block " + (!showFilters ? "hidden" : "")}>
 					<CheckboxItemsFilter
 						title="Genre"
-						items={genres}
-						setItems={setGenres}
+						items={genreCheckboxItems}
+						setItems={setGenreCheckboxItems}
 						show={showGenres}
 						setShow={setShowGenres}
 						onUpdate={(items) => updateFilterSearchParam("genres", items.filter(i => i.checked).map(i => i.name).join(","))}
 					/>
 					<CheckboxItemsFilter
 						title="Location"
-						items={locations}
-						setItems={setLocations}
+						items={locationCheckboxItems}
+						setItems={setLocationCheckboxItems}
 						show={showLocations}
 						setShow={setShowLocations}
 						onUpdate={(items) => updateFilterSearchParam("locations", items.filter(i => i.checked).map(i => i.name).join(","))}

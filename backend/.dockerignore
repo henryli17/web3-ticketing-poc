@@ -4,3 +4,4 @@ ganache
 migrations
 ssh
 ssh-cert.pub
+db.sqlite3

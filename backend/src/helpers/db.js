@@ -1,4 +1,4 @@
-const DB_FILE = "db.sqlite3";
+const DB_FILE = (process.env.NODE_ENV === "production") ? "db-goerli.sqlite3" : "db.sqlite3";
 const knex = require('knex')({
 	client: "sqlite3",
 	connection: {

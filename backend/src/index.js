@@ -173,7 +173,7 @@ server.post(API_BASE + "/events/:id/token", async (req, res) => {
 
 		const address = await contract.signatureToAddress(req.body.signature);
 
-		contract.sendContractTx(
+		await contract.sendContractTx(
 			contract.instance.methods.markTokenAsUsed(
 				address,
 				parseInt(req.params.id),
@@ -259,7 +259,7 @@ server.post(API_BASE + "/events", async (req, res) => {
 			...req.body
 		};
 		
-		contract.sendContractTx(
+		await contract.sendContractTx(
 			contract.instance.methods.createEvent(
 				event.id,
 				event.time,

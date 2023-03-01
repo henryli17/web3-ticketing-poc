@@ -12,6 +12,7 @@ const contract = require("./helpers/contract");
 const utils = require("./helpers/utils");
 const validators = require("./helpers/validators");
 const path = require('path');
+const { faker } = require('@faker-js/faker');
 const { v4: uuidv4 } = require('uuid');
 const server = restify.createServer();
 const sessions = new Map();
@@ -251,10 +252,10 @@ server.post(API_BASE + "/events", async (req, res) => {
 					time: new Date(req.body.time * 1000),
 					deployed: 0,
 					cancelled: 0,
-					imageUrl: HOST + "/" + await utils.moveFile(
+					imageUrl: (!PRODUCTION) ? HOST + "/" + await utils.moveFile(
 						req.files.image.path,
 						`${IMG_PATH}/${uuidv4()}_${req.files.image.name}`
-					)
+					) : faker.image.abstract(707, 976, true)
 				}
 			),
 			...req.body
@@ -319,7 +320,7 @@ server.put(API_BASE + "/events", async (req, res) => {
 
 		let imageUrl;
 
-		if (req.files.image) {
+		if (!PRODUCTION && req.files.image) {
 			imageUrl = HOST + "/" + await utils.moveFile(
 				req.files.image.path,
 				`${IMG_PATH}/${uuidv4()}_${req.files.image.name}`

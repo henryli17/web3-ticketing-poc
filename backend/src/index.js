@@ -21,7 +21,7 @@ const API_BASE = "/api";
 const API_ADMIN_PASSWORD = "kcladmin";
 const PORT = (PRODUCTION) ? 80 : 3001;
 const HOST = `${(PRODUCTION) ? "https://muddy-sunset-2817.fly.dev" : "http://localhost"}:${PORT}`;
-const IMG_PATH = "static";
+const IMG_PATH = "images";
 
 if (!PRODUCTION) {
 	ganache
@@ -99,7 +99,7 @@ server.get("*", (req, res, next) => {
 	handler(req, res, next);
 });
 
-server.get("/static/*", restify.plugins.serveStatic({ directory: __dirname + "/.." }));
+server.get("/images/*", restify.plugins.serveStatic({ directory: __dirname + "/.." }));
 
 server.get(API_BASE + "/events", async (req, res) => {
 	await response(req, res, async (req) => {

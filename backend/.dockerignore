@@ -1,8 +1,8 @@
-build
-node_modules
+/build
+/node_modules
 db.sqlite3
-ganache
+/ganache
 ssh
 ssh-cert.pub
-static
+/images
 .env

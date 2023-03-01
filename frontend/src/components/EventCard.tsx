@@ -27,19 +27,21 @@ const EventCard = (props: {
 									{props.event.name}
 								</div>
 							</div>
-							<div className="text-xl font-bold text-indigo-500 flex items-center">
-								{
-									props.quantity &&
-									<>
-										{props.quantity} <X />
-									</>
-								}
-								{gweiToEth(props.event.price)} ETH
+							<div className="text-xl font-bold text-indigo-500 flex flex-wrap items-center mb-0.5">
+								<div className="flex items-center mr-2">
+									{
+										props.quantity &&
+										<>
+											{props.quantity} <X />
+										</>
+									}
+									{gweiToEth(props.event.price)} ETH
+								</div>
 								{
 									!!props.used && props.used > 0 &&
-									<span className="text-indigo-500 font-medium text-xs uppercase mx-2">
+									<div className="text-indigo-500 font-medium text-xs uppercase">
 										[{props.used} Used]
-									</span>
+									</div>
 								}
 							</div>
 							<div className="text-md block capitalize">

@@ -17,7 +17,7 @@ const server = restify.createServer();
 const sessions = new Map();
 const PRODUCTION = (process.env.NODE_ENV === "production");
 const API_BASE = "/api";
-const API_ADMIN_PASSWORD = "password";
+const API_ADMIN_PASSWORD = "kcladmin";
 const API_PORT = (PRODUCTION) ? 80 : 3001;
 const API_HOST = `${(PRODUCTION) ? "https://muddy-sunset-2817.fly.dev" : "http://localhost"}:${API_PORT}`;
 const IMG_PATH = "src/static/img";

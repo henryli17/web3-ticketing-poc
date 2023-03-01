@@ -92,8 +92,10 @@ const getPurchases = async (address) => {
 		}
 	}
 
-	// We only care about deployed events
-	return purchases.filter(p => p.event.deployed);
+	return purchases
+		.filter(p => p.event.deployed) // We only care about deployed events
+		.sort((a, b) => a.event.time - b.event.time) // Sort by event time ascending
+	;
 };
 
 const getEvent = async (id, showCancelled = true, showExpired = true) => {

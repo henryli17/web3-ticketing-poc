@@ -186,7 +186,7 @@ const AdminCreateEditEventView = () => {
 					label="ETH Price"
 					type="number"
 					formik={formik}
-					step={0.01}
+					step={0.001}
 					min={0}
 					disabled={action === Action.EDIT}
 				/>

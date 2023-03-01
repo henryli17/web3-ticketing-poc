@@ -1,6 +1,5 @@
 build
 node_modules
-src/frontend
 db.sqlite3
 ganache
 ssh

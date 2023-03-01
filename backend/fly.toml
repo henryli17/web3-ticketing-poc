@@ -10,6 +10,7 @@ processes = []
 
 [experimental]
   auto_rollback = true
+  enable_consul = true
 
 [[services]]
   http_checks = []

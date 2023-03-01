@@ -7,6 +7,9 @@ processes = []
 
 [env]
   NODE_ENV = "production"
+  ETH_CONTRACT_ADDRESS  ="0x07511d92c4a4EbDa057FCE93affcAb9B8e8b5A48"
+  ETH_CONTRACT_OWNER = "0xADa95D02B0DAb0d52CCDDa4b9fDFa1a6d068EcF1"
+  INFURA_PROJECT_ID = "d054222c82ce4f2995f8e3ee2c514f90"
 
 [experimental]
   auto_rollback = true

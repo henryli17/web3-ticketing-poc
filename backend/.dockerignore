@@ -1,6 +1,7 @@
 node_modules
 src/static/img/events
 ganache
-migrations
 ssh
 ssh-cert.pub
+db.sqlite3
+.env

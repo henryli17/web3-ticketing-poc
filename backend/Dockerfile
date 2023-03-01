@@ -1,6 +1,10 @@
-# syntax=docker/dockerfile:1
+FROM node:alpine
 
-FROM node:16.16.0-alpine
+COPY --from=flyio/litefs:0.3 /usr/local/bin/litefs /usr/local/bin/litefs
+
+ADD etc/litefs.yml /etc/litefs.yml
+
+RUN apk add bash fuse sqlite ca-certificates curl g++ make py3-pip
 
 COPY ["package.json", "package-lock.json*", "./"]
 
@@ -8,4 +12,4 @@ RUN npm install
 
 COPY . .
 
-CMD ["npx", "node", "src/index.js"]
+ENTRYPOINT litefs mount -- npx node src/index.js

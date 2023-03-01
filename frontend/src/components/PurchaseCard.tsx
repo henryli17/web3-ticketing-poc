@@ -107,14 +107,13 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange:
 					<div className="col-span-12 lg:col-span-4 xl:col-span-3 lg:pt-0 pt-5 flex">
 						<div className="lg:ml-auto flex h-fit space-x-2">
 							{
-								!props.purchase.forSale && remainingQuantity > 0 &&
+								!props.purchase.forSale &&
 								<button className="btn btn-basic" onClick={e => generateQr(e)}>
 									<QrCode className="mr-1" />
 									QR
 								</button>
 							}
 							{
-								remainingQuantity > 0 &&
 								<QuantityButton
 									quantity={remainingQuantity}
 									className={props.purchase.forSale ? "outline-red-700 text-red-700 hover:outline-red-900 hover:text-red-900" : "outline-green-700 text-green-700 hover:outline-green-900 hover:text-green-900"}

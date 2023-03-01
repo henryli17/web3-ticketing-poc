@@ -163,7 +163,7 @@ const EventsView = () => {
 					{eventsData.events.map(event => <EventCard key={event.id} event={event} />)}
 					<div className="flex justify-end space-x-2">
 						<PaginationButtons
-							prev={() => setOffset(offset - eventsData.limit)}
+							prev={() => setOffset(eventsData.prevOffset)}
 							next={() => (typeof eventsData.nextOffset === "number") ? setOffset(eventsData.nextOffset) : setOffset(0)}
 							onChange={() => window.scrollTo(0, 0)}
 							prevDisabled={offset <= 0}

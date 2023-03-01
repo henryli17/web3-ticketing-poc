@@ -1,7 +1,8 @@
 /build
 /node_modules
-/src/static
+/src/frontend
 db.sqlite3
 /ganache
 ssh
 ssh-cert.pub
+static

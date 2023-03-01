@@ -4,7 +4,7 @@ const Web3 = require("web3");
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 
 const web3 = new Web3(
-	(process.env.ETH_MNEUMONIC && process.env.INFURA_PROJECT_ID)
+	(process.env.NODE_ENV === "production")
 	? new HDWalletProvider(
 		process.env.ETH_MNEUMONIC,
 		"https://goerli.infura.io/v3/" + process.env.INFURA_PROJECT_ID

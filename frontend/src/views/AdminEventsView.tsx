@@ -101,7 +101,7 @@ const AdminEventsView = () => {
 			</div>
 			<div className="flex justify-end space-x-2">
 				<PaginationButtons
-					prev={() => setOffset(offset - eventsData.limit)}
+					prev={() => setOffset(eventsData.prevOffset)}
 					next={() => (typeof eventsData.nextOffset === "number") && setOffset(eventsData.nextOffset)}
 					onChange={() => window.scrollTo(0, 0)}
 					prevDisabled={offset <= 0}

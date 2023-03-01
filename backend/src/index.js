@@ -8,7 +8,6 @@ const crypto = require('crypto');
 const errs = require('restify-errors');
 const db = require("./helpers/db");
 const fs = require("fs");
-const { faker } = require('@faker-js/faker');
 const contract = require("./helpers/contract");
 const utils = require("./helpers/utils");
 const validators = require("./helpers/validators");
@@ -19,11 +18,11 @@ const sessions = new Map();
 const PRODUCTION = (process.env.NODE_ENV === "production");
 const API_BASE = "/api";
 const API_ADMIN_PASSWORD = "kcladmin";
-const API_PORT = (PRODUCTION) ? 80 : 3001;
-const API_HOST = `${(PRODUCTION) ? "https://muddy-sunset-2817.fly.dev" : "http://localhost"}:${API_PORT}`;
-const IMG_PATH = "src/static/img";
+const PORT = (PRODUCTION) ? 80 : 3001;
+const HOST = `${(PRODUCTION) ? "https://muddy-sunset-2817.fly.dev" : "http://localhost"}:${PORT}`;
+const IMG_PATH = "static";
 
-if (!process.env.ETH_MNEUMONIC || !process.env.INFURA_PROJECT_ID) {
+if (!PRODUCTION) {
 	ganache
 		.server({
 			database: { dbPath: path.resolve('./ganache') },
@@ -39,7 +38,7 @@ if (!process.env.ETH_MNEUMONIC || !process.env.INFURA_PROJECT_ID) {
 	;
 }
 
-server.listen(API_PORT);
+server.listen(PORT);
 server.use(restify.plugins.queryParser());
 server.use(restify.plugins.bodyParser());
 server.use(cookies.parse);
@@ -52,7 +51,7 @@ server.use((req, res, next) => {
 		sessions.set(sid, {});
 	}
 	
-	res.header("Access-Control-Allow-Origin", (PRODUCTION) ? API_HOST : "http://localhost:3000");
+	res.header("Access-Control-Allow-Origin", (PRODUCTION) ? HOST : "http://localhost:3000");
 	res.header("Access-Control-Allow-Headers", "X-Requested-With");
 	res.header("Access-Control-Allow-Credentials", "true");
 	req.session = sessions.get(sid);
@@ -84,7 +83,7 @@ const response = async (req, res, fn) => {
 
 server.get("*", (req, res, next) => {
 	const options = {
-		directory: __dirname + "/static/frontend"
+		directory: __dirname + "/frontend"
 	};
 
 	// Serve static file if exists otherwise serve frontend home page
@@ -99,7 +98,7 @@ server.get("*", (req, res, next) => {
 	handler(req, res, next);
 });
 
-server.get("/static/img/*", restify.plugins.serveStatic({ directory: __dirname }));
+server.get("/static/*", restify.plugins.serveStatic({ directory: __dirname + "/.." }));
 
 server.get(API_BASE + "/events", async (req, res) => {
 	await response(req, res, async (req) => {
@@ -116,7 +115,7 @@ server.get(API_BASE + "/events", async (req, res) => {
 
 		return {
 			events: slice,
-			limit: limit,
+			prevOffset: slice.length ? Math.max(offset - limit, 0) : 0,
 			nextOffset: (offset + limit >= events.length) ? false : offset + limit
 		};
 	});
@@ -245,17 +244,17 @@ server.post(API_BASE + "/events", async (req, res) => {
 			throw new errs.BadRequestError("Image required.");
 		}
 
-		if (!PRODUCTION) {
-			const filePath = `${IMG_PATH}/events/${uuidv4()}_${req.files.image.name}`;
-			await utils.moveFile(req.files.image.path, filePath);
-		}
-
 		const event = {
 			id: await db.createEvent(
 				{
 					...utils.omit(req.body, ["genres", "quantity"]),
 					time: new Date(req.body.time * 1000),
-					imageUrl: (!PRODUCTION) ? `${API_HOST}/${filePath.replace("src/", "")}` : faker.image.abstract(707, 976, true)
+					deployed: 0,
+					cancelled: 0,
+					imageUrl: HOST + "/" + await utils.moveFile(
+						req.files.image.path,
+						`${IMG_PATH}/${uuidv4()}_${req.files.image.name}`
+					)
 				}
 			),
 			...req.body
@@ -303,7 +302,6 @@ server.put(API_BASE + "/events", async (req, res) => {
 			.call()
 		;
 
-
 		// Only update contract event if time difference is more than 60 seconds or quantity is different
 		if ((event.time - contractEvent.time >= 60) || event.quantity !== Number(contractEvent.quantity)) {
 			// Attempt to update contract event first
@@ -319,11 +317,13 @@ server.put(API_BASE + "/events", async (req, res) => {
 		// Contract event update did not throw exception, update DB event
 		await db.setGenresForEvent(event.id, event.genres);
 
-		let filePath;
+		let imageUrl;
 
-		if (!PRODUCTION && req.files.image) {
-			filePath = `${IMG_PATH}/events/${uuidv4()}_${req.files.image.name}`;
-			await utils.moveFile(req.files.image.path, filePath);
+		if (req.files.image) {
+			imageUrl = HOST + "/" + await utils.moveFile(
+				req.files.image.path,
+				`${IMG_PATH}/${uuidv4()}_${req.files.image.name}`
+			);
 		}
 
 		const updatedEvent = await db.updateEvent(
@@ -331,7 +331,7 @@ server.put(API_BASE + "/events", async (req, res) => {
 			{
 				...utils.omit(event, ["genres", "quantity"]),
 				time: new Date(event.time * 1000),
-				imageUrl: filePath
+				imageUrl: imageUrl
 			}
 		);
 

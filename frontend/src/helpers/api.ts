@@ -12,6 +12,7 @@ enum HttpMethod {
 
 export type GetEventsResponse = {
 	events: Event[],
+	prevOffset: number,
 	nextOffset: number | boolean,
 	limit: number
 };

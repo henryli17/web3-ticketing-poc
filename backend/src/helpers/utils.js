@@ -1,6 +1,7 @@
 const contract = require("./contract");
 const db = require("./db");
 const fs = require("fs");
+const path = require("path");
 const Web3 = require("web3");
 
 const getPurchases = async (address) => {
@@ -132,11 +133,17 @@ const ethToGwei = (eth) => eth * Math.pow(10, 9);
 const random = (min, max) => Math.random() * (max - min) + min;
 
 const moveFile = (from, to) => {
+	const dirname = path.dirname(to);
+
+	if (!fs.existsSync(dirname)) {
+		fs.mkdirSync(dirname);
+	}
+
     const read = fs.createReadStream(from);
     const write = fs.createWriteStream(to);
 
     return new Promise((resolve, reject) => {
-        read.on('end', resolve);
+        read.on('end', () => resolve(to));
         read.on('error', reject);
         read.pipe(write);
     });

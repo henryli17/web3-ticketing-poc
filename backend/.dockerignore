@@ -5,3 +5,4 @@ ssh
 ssh-cert.pub
 db.sqlite3
 .env
+static

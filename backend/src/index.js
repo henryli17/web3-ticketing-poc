@@ -8,6 +8,7 @@ const crypto = require('crypto');
 const errs = require('restify-errors');
 const db = require("./helpers/db");
 const fs = require("fs");
+const { faker } = require('@faker-js/faker');
 const contract = require("./helpers/contract");
 const utils = require("./helpers/utils");
 const validators = require("./helpers/validators");
@@ -244,16 +245,17 @@ server.post(API_BASE + "/events", async (req, res) => {
 			throw new errs.BadRequestError("Image required.");
 		}
 
-		const filePath = `${IMG_PATH}/events/${uuidv4()}_${req.files.image.name}`;
-
-		await utils.moveFile(req.files.image.path, filePath);
+		if (!PRODUCTION) {
+			const filePath = `${IMG_PATH}/events/${uuidv4()}_${req.files.image.name}`;
+			await utils.moveFile(req.files.image.path, filePath);
+		}
 
 		const event = {
 			id: await db.createEvent(
 				{
 					...utils.omit(req.body, ["genres", "quantity"]),
 					time: new Date(req.body.time * 1000),
-					imageUrl: `${API_HOST}/${filePath.replace("src/", "")}`
+					imageUrl: (!PRODUCTION) ? `${API_HOST}/${filePath.replace("src/", "")}` : faker.image.abstract(707, 976, true)
 				}
 			),
 			...req.body
@@ -319,7 +321,7 @@ server.put(API_BASE + "/events", async (req, res) => {
 
 		let filePath;
 
-		if (req.files.image) {
+		if (!PRODUCTION && req.files.image) {
 			filePath = `${IMG_PATH}/events/${uuidv4()}_${req.files.image.name}`;
 			await utils.moveFile(req.files.image.path, filePath);
 		}

@@ -13,11 +13,11 @@ const EventCard = (props: {
 	used?: number
 }) => {
 	return (
-		<Link to={props.to || routes.event(props.event.id)} className={"card flex w-full " + props.className}>
+		<Link to={props.to || routes.event(props.event.id)} className={"card flex w-full py-5 px-5 " + props.className}>
 			<div className="my-auto grid grid-cols-12 w-full">
 				<div className="col-span-12 lg:col-span-8 xl:col-span-9 flex items-center">
-					<img className="rounded shadow-lg m-5 hidden sm:block thumbnail" src={props.event.imageUrl} alt={props.event.artist} />
-					<div className="my-5 mx-5 sm:mr-5 sm:ml-0 text-left w-full flex">
+					<img className="rounded shadow-lg hidden sm:block thumbnail mr-5" src={props.event.imageUrl} alt={props.event.artist} />
+					<div className="text-left w-full flex">
 						<div className="my-auto w-full">
 							<div className="italic mb-2">
 								<h2 className="font-bold uppercase mr-2">

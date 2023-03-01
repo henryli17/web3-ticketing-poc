@@ -103,7 +103,8 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange:
 				{
 					!props.purchase.expired &&
 					!props.purchase.event.cancelled &&
-					<div className="col-span-12 lg:col-span-4 xl:col-span-3 mb-5 lg:mt-5 mx-5 mr-5 flex">
+					remainingQuantity > 0 &&
+					<div className="col-span-12 lg:col-span-4 xl:col-span-3 lg:pt-0 pt-5 flex">
 						<div className="lg:ml-auto flex h-fit space-x-2">
 							{
 								!props.purchase.forSale && remainingQuantity > 0 &&

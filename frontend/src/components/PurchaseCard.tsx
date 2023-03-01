@@ -148,7 +148,7 @@ const PurchaseCard = (props: { purchase: Purchase, className?: string, onChange:
 					message={
 						props.purchase.forSale
 							? `Are you sure you want to unlist ${selectedQuantity} tickets?`
-							: `Are you sure you want to list ${selectedQuantity} tickets for ${price} ETH each?`
+							: `Are you sure you want to list ${selectedQuantity} tickets for sale at ${price} ETH each?`
 					}
 					close={() => setShowConfirmationModal(false)}
 					action={() => toggleTokenListing()}

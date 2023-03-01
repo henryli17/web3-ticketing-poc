@@ -1,4 +1,5 @@
-const Validator = require('jsonschema').Validator;
+const Validator = require("jsonschema").Validator;
+const structuredClone = require("@ungap/structured-clone");
 
 const genresSchema = {
 	"id": "/genres",
@@ -38,7 +39,7 @@ const eventSchema = {
 
 const createEvent = (event) => {
 	const v = new Validator();
-	const schema = { ...eventSchema };
+	const schema = structuredClone.default(eventSchema);
 
 	delete schema.properties.id;
 	schema.required = schema.required.filter(r => r !== "id")
@@ -50,7 +51,7 @@ const createEvent = (event) => {
 
 const updateEvent = (event) => {
 	const v = new Validator();
-	const schema = { ...eventSchema };
+	const schema = structuredClone.default(eventSchema);
 
 	delete schema.properties.price;
 	schema.required = schema.required.filter(r => r !== "price")

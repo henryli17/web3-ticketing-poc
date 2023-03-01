@@ -30,7 +30,7 @@
   },
   "scripts": {
     "start": "craco start",
-    "build": "BUILD_PATH='../backend/src/static/frontend' craco build",
+    "build": "BUILD_PATH='../backend/src/frontend' craco build",
     "test": "craco test",
     "eject": "react-scripts eject"
   },

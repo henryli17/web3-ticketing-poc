@@ -1,8 +1,6 @@
 /build
 /node_modules
 /src/frontend
-db.sqlite3
 /ganache
-ssh
-ssh-cert.pub
-images
+/images
+db.sqlite3

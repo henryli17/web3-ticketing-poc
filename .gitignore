@@ -1,3 +1,5 @@
 .DS_Store
 *.ignore.*
 .env
+ssh
+ssh-cert.pub

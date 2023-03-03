@@ -1,0 +1,12 @@
+build
+node_modules
+db.sqlite3
+/backend/ganache
+/backend/src/frontend
+ssh
+ssh-cert.pub
+/backend/images
+.env
+.DS_Store
+*.ignore.*
+

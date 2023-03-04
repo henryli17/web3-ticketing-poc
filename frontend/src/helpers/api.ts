@@ -56,27 +56,21 @@ export type GetSignatureResponse = {
 	message: string
 };
 
-const request = <T>(method: HttpMethod, endpoint: string, options?: { data?: object, params?: object }) => {
+const request = async <T>(method: HttpMethod, endpoint: string, options?: { data?: object, params?: object }) => {
 	const API_BASE = (process.env.NODE_ENV === 'production')
 		? "https://muddy-sunset-2817.fly.dev/api" // Production
 		: "http://localhost:3001/api" // Development
 	;
 
-	return new Promise<T>(async (resolve, reject) => {
-		try {
-			const res = await axios({
-				method: method,
-				url: `${API_BASE}/${endpoint}`,
-				data: options?.data,
-				params: options?.params
-			});
-
-			resolve(res.data);
-		} catch (e) {
-			reject(e);
-		}
+	const res = await axios({
+		method: method,
+		url: `${API_BASE}/${endpoint}`,
+		data: options?.data,
+		params: options?.params
 	});
-}
+
+	return res.data
+};
 
 export const getEvents = (params?: {
 	offset?: number,

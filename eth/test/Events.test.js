@@ -1,43 +1,22 @@
-const Web3 = require('web3');
-const web3 = new Web3(Web3.givenProvider);
 const utils = require("./helpers/utils");
 const Events = artifacts.require("Events");
+const timeMachine = require('ganache-time-traveler');
 
 contract("Events", (accounts) => {
 	const [alice, bob, charlie] = accounts;
 	const defaultEvent = utils.defaultEvent();
 	let contract;
+	let snapshotId;
 
 	beforeEach(async () => {
+		const snapshot = await timeMachine.takeSnapshot();
+		snapshotId = snapshot['result'];
 		contract = await Events.new();
 	});
 
-	it.only("resale scenario", async () => {
-		await utils.createEvent(contract, alice, defaultEvent);
-		await contract.buyToken.sendTransaction(
-			defaultEvent.id,
-			2,
-			{ from: bob, value: utils.gweiToWei(defaultEvent.price * 2) }
-		);
-		await contract.listTokenForResale.sendTransaction(
-			defaultEvent.id,
-			2,
-			{ from: bob }
-		);
-		await contract.unlistTokenForResale.sendTransaction(
-			defaultEvent.id,
-			1,
-			{ from: bob }
-		);
-		await contract.buyResaleToken.sendTransaction(
-			bob,
-			defaultEvent.id,
-			{ from: charlie, value: utils.gweiToWei(defaultEvent.price) }
-		);
-
-		// const res = await contract.getResaleTokenEntries.call(bob);
-		// console.log(res);
-	});
+	afterEach(async() => {
+		await timeMachine.revertToSnapshot(snapshotId);
+	}); 
 
 	it("deploys a contract", () => {
 		assert.ok(contract.address);
@@ -49,7 +28,6 @@ contract("Events", (accounts) => {
 
 			const event = await contract.events.call(defaultEvent.id);
 
-			assert.equal(event.name.toString(), defaultEvent.name);
 			assert.equal(event.time.toNumber(), defaultEvent.time);
 			assert.equal(BigInt(event.price), BigInt(utils.gweiToWei(defaultEvent.price)));
 			assert.equal(event.quantity.toNumber(), defaultEvent.quantity);
@@ -59,13 +37,7 @@ contract("Events", (accounts) => {
 			await utils.shouldThrow(
 				utils.createEvent(contract, bob)
 			);
-		});	
-
-		it("reverts when price is 0", async () => {
-			await utils.shouldThrow(
-				utils.createEvent(contract, alice, { price: 0 })
-			);
-		});	
+		});
 
 		it("reverts when quantity is 0", async () => {
 			await utils.shouldThrow(
@@ -93,23 +65,18 @@ contract("Events", (accounts) => {
 				id: defaultEvent.id,
 				name: defaultEvent.name + "Updated",
 				time: defaultEvent.time + 1,
-				price: defaultEvent.price + 1,
 				quantity: defaultEvent.quantity + 1
 			};
 
 			await contract.updateEvent.sendTransaction(
 				updatedEvent.id,
-				updatedEvent.name,
 				updatedEvent.time,
-				updatedEvent.price,
 				updatedEvent.quantity
 			);
 
 			const event = await contract.events.call(defaultEvent.id);
 
-			assert.equal(event.name.toString(), updatedEvent.name);
 			assert.equal(event.time.toNumber(), updatedEvent.time);
-			assert.equal(BigInt(event.price), BigInt(utils.gweiToWei(updatedEvent.price)));
 			assert.equal(event.quantity.toNumber(), updatedEvent.quantity);
 		});
 	});
@@ -126,7 +93,7 @@ contract("Events", (accounts) => {
 			);
 
 			assert.equal(tokenCount.toNumber(), count);
-		}
+		};
 
 		it("buys a token", async () => {
 			await contract.buyToken.sendTransaction(
@@ -168,12 +135,14 @@ contract("Events", (accounts) => {
 		});
 
 		it("reverts when event is in the past", async () => {
+			const seconds = 100;
 			const event = {
 				id: defaultEvent.id + 1,
-				time: Math.floor(Date.now() / 1000)
+				time: Math.floor(Date.now() / 1000) + seconds
 			};
 
 			await utils.createEvent(contract, alice, event);
+			await timeMachine.advanceTimeAndBlock(seconds + 1);
 			await utils.shouldThrow(
 				contract.buyToken.sendTransaction(
 					event.id,

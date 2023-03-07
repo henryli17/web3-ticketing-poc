@@ -1,5 +1,3 @@
-const Web3 = require('web3');
-
 const shouldThrow = async (promise) => {
     try {
         await promise;
@@ -24,14 +22,13 @@ const defaultEvent = () => {
 	};
 }
 
-const gweiToWei = (gwei) => Web3.utils.toWei(gwei.toString(), "gwei");
+const gweiToWei = (gwei) => web3.utils.toWei(gwei.toString(), "gwei");
 
 const createEvent = async (contract, caller, event) => {
 	event = { ...defaultEvent(), ...event };
 
 	await contract.createEvent.sendTransaction(
 		event.id,
-		event.name,
 		event.time,
 		event.price,
 		event.quantity,

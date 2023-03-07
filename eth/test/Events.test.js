@@ -29,7 +29,7 @@ contract("Events", (accounts) => {
 			const event = await contract.events.call(defaultEvent.id);
 
 			assert.equal(event.time.toNumber(), defaultEvent.time);
-			assert.equal(BigInt(event.price), utils.gweiToWei(defaultEvent.price));
+			assert.equal(BigInt(event.price), defaultEvent.priceInWei());
 			assert.equal(event.quantity.toNumber(), defaultEvent.quantity);
 			assert.equal(event.supplied.toNumber(), 0);
 			assert.equal(!!event.created, true);
@@ -129,7 +129,7 @@ contract("Events", (accounts) => {
 			await contract.buyToken.sendTransaction(
 				updatedEvent.id,
 				quantity,
-				{ from: charlie, value: utils.gweiToWei(defaultEvent.price) * quantity }
+				{ from: charlie, value: defaultEvent.priceInWei() * quantity }
 			);
 			await utils.shouldThrow(
 				contract.updateEvent.sendTransaction(
@@ -179,7 +179,7 @@ contract("Events", (accounts) => {
 			await contract.buyToken.sendTransaction(
 				defaultEvent.id,
 				1,
-				{ from: charlie, value: utils.gweiToWei(defaultEvent.price) }
+				{ from: charlie, value: defaultEvent.priceInWei() }
 			);
 
 			assertTokenCount(charlie, defaultEvent.id, 1);
@@ -190,7 +190,7 @@ contract("Events", (accounts) => {
 				contract.buyToken.sendTransaction(
 					defaultEvent.id + 1,
 					defaultEvent.quantity,
-					{ from: charlie, value: utils.gweiToWei(defaultEvent.price) }
+					{ from: charlie, value: defaultEvent.priceInWei() }
 				)
 			);
 
@@ -203,7 +203,7 @@ contract("Events", (accounts) => {
 				contract.buyToken.sendTransaction(
 					defaultEvent.id,
 					defaultEvent.quantity,
-					{ from: charlie, value: utils.gweiToWei(defaultEvent.price) }
+					{ from: charlie, value: defaultEvent.priceInWei() }
 				)
 			);
 
@@ -215,7 +215,7 @@ contract("Events", (accounts) => {
 				contract.buyToken.sendTransaction(
 					defaultEvent.id,
 					2,
-					{ from: charlie, value: utils.gweiToWei(defaultEvent.price) }
+					{ from: charlie, value: defaultEvent.priceInWei() }
 				)
 			);
 
@@ -226,13 +226,13 @@ contract("Events", (accounts) => {
 			await contract.buyToken.sendTransaction(
 				defaultEvent.id,
 				defaultEvent.quantity,
-				{ from: alice, value: utils.gweiToWei(defaultEvent.price) * defaultEvent.quantity }
+				{ from: alice, value: defaultEvent.priceInWei() * defaultEvent.quantity }
 			)
 			await utils.shouldThrow(
 				contract.buyToken.sendTransaction(
 					defaultEvent.id,
 					1,
-					{ from: charlie, value: utils.gweiToWei(defaultEvent.price) }
+					{ from: charlie, value: defaultEvent.priceInWei() }
 				)
 			);
 
@@ -252,7 +252,7 @@ contract("Events", (accounts) => {
 				contract.buyToken.sendTransaction(
 					event.id,
 					1,
-					{ from: charlie, value: utils.gweiToWei(defaultEvent.price) }
+					{ from: charlie, value: defaultEvent.priceInWei() }
 				)
 			);
 
@@ -262,7 +262,7 @@ contract("Events", (accounts) => {
 
 	describe("getBalance", () => {
 		it("returns correct balance", async () => {
-			const gwei = utils.gweiToWei(defaultEvent.price);
+			const gwei = defaultEvent.priceInWei();
 
 			await utils.createEvent(contract, alice, defaultEvent);
 			await contract.buyToken.sendTransaction(
@@ -285,7 +285,7 @@ contract("Events", (accounts) => {
 
 	describe("transferBalance", () => {
 		it("transfers contract balance", async () => {
-			const gwei = utils.gweiToWei(defaultEvent.price);
+			const gwei = defaultEvent.priceInWei();
 
 			await utils.createEvent(contract, alice, defaultEvent);
 			await contract.buyToken.sendTransaction(
@@ -332,7 +332,7 @@ contract("Events", (accounts) => {
 
 		it("cancels an event, refunding token owners", async () => {
 			const quantity = 2;
-			const price = utils.gweiToWei(defaultEvent.price) * quantity;
+			const price = defaultEvent.priceInWei() * quantity;
 
 			await contract.buyToken.sendTransaction(
 				defaultEvent.id,
@@ -356,7 +356,7 @@ contract("Events", (accounts) => {
 			await contract.buyToken.sendTransaction(
 				defaultEvent.id,
 				quantity,
-				{ from: charlie, value: utils.gweiToWei(defaultEvent.price) * quantity }
+				{ from: charlie, value: defaultEvent.priceInWei() * quantity }
 			)
 			await contract.transferBalance(charlie);
 			await utils.shouldThrow(
@@ -399,7 +399,7 @@ contract("Events", (accounts) => {
 		});
 	});
 
-	describe.only("markTokenAsUsed", () => {
+	describe("markTokenAsUsed", () => {
 		const quantity = 2;
 		const buyer = charlie;
 
@@ -408,7 +408,7 @@ contract("Events", (accounts) => {
 			await contract.buyToken.sendTransaction(
 				defaultEvent.id,
 				quantity,
-				{ from: buyer, value: utils.gweiToWei(defaultEvent.price) * quantity }
+				{ from: buyer, value: defaultEvent.priceInWei() * quantity }
 			)
 		});
 
@@ -471,6 +471,28 @@ contract("Events", (accounts) => {
 					1
 				)
 			);
+		});
+	});
+
+	describe("getUsedCount", () => {
+		it("gets the correct used count for an address", async () => {
+			const buyer = charlie;
+			const quantity = 2;
+			const usedCountBefore = await contract.getUsedCount.call(buyer, defaultEvent.id);
+
+			assert.equal(usedCountBefore.toNumber(), 0);
+
+			await utils.createEvent(contract, alice);
+			await contract.buyToken.sendTransaction(
+				defaultEvent.id,
+				quantity,
+				{ from: charlie, value: defaultEvent.priceInWei() * quantity }
+			);
+			await contract.markTokenAsUsed.sendTransaction(charlie, defaultEvent.id, quantity);
+
+			const usedCountAfter = await contract.getUsedCount.call(buyer, defaultEvent.id);
+
+			assert.equal(usedCountAfter.toNumber(), quantity);
 		});
 	});
 });

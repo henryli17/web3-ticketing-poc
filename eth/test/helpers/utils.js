@@ -17,12 +17,10 @@ const defaultEvent = () => {
 		price: 10000000, // 10000000 gwei / 0.01 ETH
 		quantity: 2,
 		priceInWei: function() {
-			return this.price * Math.pow(10, 9);
+			return web3.utils.toWei(this.price.toString(), "gwei");
 		} 
 	};
 }
-
-const gweiToWei = (gwei) => web3.utils.toWei(gwei.toString(), "gwei");
 
 const createEvent = async (contract, caller, event) => {
 	event = { ...defaultEvent(), ...event };
@@ -39,6 +37,5 @@ const createEvent = async (contract, caller, event) => {
 module.exports = {
 	createEvent,
 	defaultEvent,
-	gweiToWei,
 	shouldThrow
 }

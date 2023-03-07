@@ -44,7 +44,9 @@ contract("Events", (accounts) => {
 		});
 
 		it("reverts if time is in the past", async () => {
-			await utils.createEvent(contract, alice, { time: defaultEvent.time - 1000 });
+			await utils.shouldThrow(
+				utils.createEvent(contract, alice, { time: Math.floor(Date.now() / 1000) - 1 })
+			);
 		});
 	
 		it("reverts when not owner", async () => {
@@ -133,7 +135,7 @@ contract("Events", (accounts) => {
 			);
 			await utils.shouldThrow(
 				contract.updateEvent.sendTransaction(
-					updatedEvent.id + 1,
+					updatedEvent.id,
 					updatedEvent.time,
 					quantity - 1
 				)	
@@ -143,7 +145,7 @@ contract("Events", (accounts) => {
 		it("reverts if quantity is 0", async () => {
 			await utils.shouldThrow(
 				contract.updateEvent.sendTransaction(
-					updatedEvent.id + 1,
+					updatedEvent.id,
 					updatedEvent.time,
 					0
 				)	
@@ -153,9 +155,9 @@ contract("Events", (accounts) => {
 		it("reverts if time is in the past", async () => {
 			await utils.shouldThrow(
 				contract.updateEvent.sendTransaction(
-					updatedEvent.id + 1,
-					updatedEvent.time - 99999,
-					0
+					updatedEvent.id,
+					Math.floor(Date.now() / 1000) - 1,
+					updatedEvent.quantity
 				)	
 			);
 		});
@@ -475,6 +477,10 @@ contract("Events", (accounts) => {
 	});
 
 	describe("getUsedCount", () => {
+		beforeEach(async () => {
+			await utils.createEvent(contract, alice);
+		});
+
 		it("gets the correct used count for an address", async () => {
 			const buyer = charlie;
 			const quantity = 2;
@@ -482,7 +488,6 @@ contract("Events", (accounts) => {
 
 			assert.equal(usedCountBefore.toNumber(), 0);
 
-			await utils.createEvent(contract, alice);
 			await contract.buyToken.sendTransaction(
 				defaultEvent.id,
 				quantity,
@@ -493,6 +498,30 @@ contract("Events", (accounts) => {
 			const usedCountAfter = await contract.getUsedCount.call(buyer, defaultEvent.id);
 
 			assert.equal(usedCountAfter.toNumber(), quantity);
+		});
+
+		it("gets the correct used count for an address, for a specific event", async () => {
+			const buyer = charlie;
+			const quantity = 2;
+			const secondEventId = defaultEvent.id + 1;
+
+			await utils.createEvent(contract, alice, { id: secondEventId });
+			await contract.buyToken.sendTransaction(
+				defaultEvent.id,
+				quantity,
+				{ from: charlie, value: defaultEvent.priceInWei() * quantity }
+			);
+			await contract.buyToken.sendTransaction(
+				secondEventId,
+				quantity,
+				{ from: charlie, value: defaultEvent.priceInWei() * quantity }
+			);
+			await contract.markTokenAsUsed.sendTransaction(charlie, defaultEvent.id, quantity);
+			await contract.markTokenAsUsed.sendTransaction(charlie, secondEventId, quantity);
+
+			const usedCount = await contract.getUsedCount.call(buyer, defaultEvent.id);
+
+			assert.equal(usedCount.toNumber(), quantity);
 		});
 	});
 });

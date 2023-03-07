@@ -1,12 +1,12 @@
 const shouldThrow = async (promise) => {
-    try {
-        await promise;
-    } catch (err) {
-        assert(true);
-        return;
-    }
+	try {
+		await promise;
+	} catch (err) {
+		assert(true);
+		return;
+	}
 
-    assert(false, "The contract was expected to throw an exception here.");
+	assert(false, "The contract was expected to throw an exception here.");
 }
 
 const defaultEvent = () => {

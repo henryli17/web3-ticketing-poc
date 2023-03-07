@@ -7,7 +7,7 @@ const shouldThrow = async (promise) => {
 	}
 
 	assert(false, "The contract was expected to throw an exception here.");
-}
+};
 
 const defaultEvent = () => {
 	return {
@@ -20,7 +20,7 @@ const defaultEvent = () => {
 			return web3.utils.toWei(this.price.toString(), "gwei");
 		} 
 	};
-}
+};
 
 const createEvent = async (contract, caller, event) => {
 	event = { ...defaultEvent(), ...event };
@@ -38,4 +38,4 @@ module.exports = {
 	createEvent,
 	defaultEvent,
 	shouldThrow
-}
+};

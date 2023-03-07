@@ -399,11 +399,78 @@ contract("Events", (accounts) => {
 		});
 	});
 
-	describe("markTokenAsUsed", () => {
+	describe.only("markTokenAsUsed", () => {
+		const quantity = 2;
+		const buyer = charlie;
+
 		beforeEach(async () => {
 			await utils.createEvent(contract, alice);
+			await contract.buyToken.sendTransaction(
+				defaultEvent.id,
+				quantity,
+				{ from: buyer, value: utils.gweiToWei(defaultEvent.price) * quantity }
+			)
 		});
 
-		// it("")
+		it("marks tokens as used", async () => {
+			await contract.markTokenAsUsed.sendTransaction(
+				charlie,
+				defaultEvent.id,
+				quantity
+			);
+
+			const usedTokens = await contract.getUsedTokens.call(charlie);
+
+			for (const usedToken of usedTokens) {
+				assert.equal(usedToken.words[0], defaultEvent.id);
+			}
+		});
+
+		it("reverts if not owner", async () => {
+			await utils.shouldThrow(
+				contract.markTokenAsUsed.sendTransaction(
+					charlie,
+					defaultEvent.id,
+					quantity,
+					{ from: bob }
+				)
+			);
+		});
+
+		it("reverts if event does not exist", async () => {
+			await utils.shouldThrow(
+				contract.markTokenAsUsed.sendTransaction(
+					charlie,
+					defaultEvent.id + 1,
+					0
+				)
+			);
+		});
+
+		it("reverts if event has been cancelled", async () => {
+			await contract.cancelEvent.sendTransaction(defaultEvent.id, [charlie], [quantity]);
+			await utils.shouldThrow(
+				contract.markTokenAsUsed.sendTransaction(
+					charlie,
+					defaultEvent.id,
+					quantity
+				)
+			);
+		});
+
+		it("reverts if there are not enough tokens to mark as used", async () => {
+			await contract.markTokenAsUsed.sendTransaction(
+				charlie,
+				defaultEvent.id,
+				quantity
+			);
+			await utils.shouldThrow(
+				contract.markTokenAsUsed.sendTransaction(
+					charlie,
+					defaultEvent.id,
+					1
+				)
+			);
+		});
 	});
 });

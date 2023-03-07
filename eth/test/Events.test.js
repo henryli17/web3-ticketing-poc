@@ -288,4 +288,85 @@ contract("Events", (accounts) => {
 			assert.equal(BigInt(balanceAfter), 0);
 		});
 	});
+
+	describe("cancelEvent", () => {
+		beforeEach(async () => {
+			await utils.createEvent(contract, alice);
+		});
+
+		const assertEventCancelled = async (id, cancelled) => {
+			const event = await contract.events(id);
+
+			assert.equal(!!event.cancelled, cancelled);
+		};
+		
+
+		it("cancels an event with no token owners", async () => {
+			await contract.cancelEvent.sendTransaction(defaultEvent.id, [], []);
+
+			await assertEventCancelled(defaultEvent.id, true);
+		});
+
+		it("cancels an event, refunding token owners", async () => {
+			const quantity = 2;
+			const price = utils.gweiToWei(defaultEvent.price) * quantity;
+
+			await contract.buyToken.sendTransaction(
+				defaultEvent.id,
+				quantity,
+				{ from: charlie, value: price }
+			)
+			const charlieBalanceBefore = await web3.eth.getBalance(charlie);
+
+			await contract.cancelEvent.sendTransaction(defaultEvent.id, [charlie], [quantity]);
+
+			await assertEventCancelled(defaultEvent.id, true);
+
+			const charlieBalanceAfter = await web3.eth.getBalance(charlie);
+
+			assert.equal(BigInt(charlieBalanceBefore) + BigInt(price), BigInt(charlieBalanceAfter));
+		});
+
+		it("reverts when there is insufficient ETH to refund token owners", async () => {
+			const quantity = 2;
+
+			await contract.buyToken.sendTransaction(
+				defaultEvent.id,
+				quantity,
+				{ from: charlie, value: utils.gweiToWei(defaultEvent.price) * quantity }
+			)
+			await contract.transferBalance(charlie);
+			await utils.shouldThrow(
+				contract.cancelEvent.sendTransaction(defaultEvent.id, [charlie], [quantity])
+			);
+
+			await assertEventCancelled(defaultEvent.id, false);
+		});
+
+		it("reverts if the event does not exist", async () => {
+			await utils.shouldThrow(
+				contract.cancelEvent.sendTransaction(defaultEvent.id + 1, [], [])
+			);
+
+			await assertEventCancelled(defaultEvent.id, false);
+		});
+
+		it("reverts if the event has already been cancelled", async () => {
+			await contract.cancelEvent.sendTransaction(defaultEvent.id, [], []);
+			await utils.shouldThrow(
+				contract.cancelEvent.sendTransaction(defaultEvent.id, [], [])
+			);
+		});
+
+		it("reverts if `owners` and `quantity` parameters are of different length", async () => {
+			await utils.shouldThrow(
+				contract.cancelEvent.sendTransaction(defaultEvent.id, [charlie, bob], [1])
+			);
+			await utils.shouldThrow(
+				contract.cancelEvent.sendTransaction(defaultEvent.id, [charlie, bob], [1, 2, 3])
+			);
+
+			await assertEventCancelled(defaultEvent.id, false);
+		});
+	});
 });

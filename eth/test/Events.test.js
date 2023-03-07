@@ -29,7 +29,7 @@ contract("Events", (accounts) => {
 			const event = await contract.events.call(defaultEvent.id);
 
 			assert.equal(event.time.toNumber(), defaultEvent.time);
-			assert.equal(BigInt(event.price), BigInt(utils.gweiToWei(defaultEvent.price)));
+			assert.equal(BigInt(event.price), utils.gweiToWei(defaultEvent.price));
 			assert.equal(event.quantity.toNumber(), defaultEvent.quantity);
 			assert.equal(event.supplied.toNumber(), 0);
 			assert.equal(!!event.created, true);
@@ -249,9 +249,43 @@ contract("Events", (accounts) => {
 		});
 	});
 
-	describe("listTokenForResale", () => {
-		it("lists a token for resale", async () => {
+	describe("getBalance", () => {
+		it("returns correct balance", async () => {
+			const gwei = utils.gweiToWei(defaultEvent.price);
 
+			await utils.createEvent(contract, alice, defaultEvent);
+			await contract.buyToken.sendTransaction(
+				defaultEvent.id,
+				1,
+				{ from: charlie, value: gwei }
+			);
+			
+			const balance = await contract.getBalance.call();
+
+			assert.equal(BigInt(balance), gwei);
+		});
+	});
+
+	describe("transferBalance", () => {
+		it("transfers contract balance", async () => {
+			const gwei = utils.gweiToWei(defaultEvent.price);
+
+			await utils.createEvent(contract, alice, defaultEvent);
+			await contract.buyToken.sendTransaction(
+				defaultEvent.id,
+				1,
+				{ from: charlie, value: gwei }
+			);
+			
+			const balanceBefore = await contract.getBalance.call();
+
+			assert.equal(BigInt(balanceBefore), gwei);
+
+			await contract.transferBalance(charlie);
+
+			const balanceAfter = await contract.getBalance.call();
+
+			assert.equal(BigInt(balanceAfter), 0);
 		});
 	});
 });

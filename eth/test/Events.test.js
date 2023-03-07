@@ -174,11 +174,36 @@ contract("Events", (accounts) => {
 			assertTokenCount(charlie, defaultEvent.id, 1);
 		});
 
-		it("reverts with insufficient payment", async () => {
+		it("reverts if event does not exist", async () => {
+			await utils.shouldThrow(
+				contract.buyToken.sendTransaction(
+					defaultEvent.id + 1,
+					defaultEvent.quantity,
+					{ from: charlie, value: utils.gweiToWei(defaultEvent.price) }
+				)
+			);
+
+			assertTokenCount(charlie, defaultEvent.id, 0);
+		});
+
+		it("reverts if event has been cancelled", async () => {
+			await contract.cancelEvent.sendTransaction(defaultEvent.id, [], []);
 			await utils.shouldThrow(
 				contract.buyToken.sendTransaction(
 					defaultEvent.id,
 					defaultEvent.quantity,
+					{ from: charlie, value: utils.gweiToWei(defaultEvent.price) }
+				)
+			);
+
+			assertTokenCount(charlie, defaultEvent.id, 0);
+		});
+
+		it("reverts with insufficient payment", async () => {
+			await utils.shouldThrow(
+				contract.buyToken.sendTransaction(
+					defaultEvent.id,
+					2,
 					{ from: charlie, value: utils.gweiToWei(defaultEvent.price) }
 				)
 			);

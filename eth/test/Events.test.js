@@ -31,6 +31,20 @@ contract("Events", (accounts) => {
 			assert.equal(event.time.toNumber(), defaultEvent.time);
 			assert.equal(BigInt(event.price), BigInt(utils.gweiToWei(defaultEvent.price)));
 			assert.equal(event.quantity.toNumber(), defaultEvent.quantity);
+			assert.equal(event.supplied.toNumber(), 0);
+			assert.equal(!!event.created, true);
+			assert.equal(!!event.cancelled, false);
+		});
+
+		it("reverts if event already created", async () => {
+			await utils.createEvent(contract, alice, defaultEvent);
+			await utils.shouldThrow(
+				utils.createEvent(contract, alice, defaultEvent)
+			);
+		});
+
+		it("reverts if time is in the past", async () => {
+			await utils.createEvent(contract, alice, { time: defaultEvent.time - 1000 });
 		});
 	
 		it("reverts when not owner", async () => {
@@ -55,19 +69,17 @@ contract("Events", (accounts) => {
 
 	describe("updateEvent", () => {
 		const defaultEvent = utils.defaultEvent();
+		const updatedEvent = {
+			id: defaultEvent.id,
+			time: defaultEvent.time + 1,
+			quantity: defaultEvent.quantity + 1
+		};
 
 		beforeEach(async () => {
 			await utils.createEvent(contract, alice);
 		});
 
 		it("updates an event", async () => {
-			const updatedEvent = {
-				id: defaultEvent.id,
-				name: defaultEvent.name + "Updated",
-				time: defaultEvent.time + 1,
-				quantity: defaultEvent.quantity + 1
-			};
-
 			await contract.updateEvent.sendTransaction(
 				updatedEvent.id,
 				updatedEvent.time,
@@ -78,6 +90,63 @@ contract("Events", (accounts) => {
 
 			assert.equal(event.time.toNumber(), updatedEvent.time);
 			assert.equal(event.quantity.toNumber(), updatedEvent.quantity);
+		});
+
+		it("reverts if event not created", async () => {
+			await utils.shouldThrow(
+				contract.updateEvent.sendTransaction(
+					updatedEvent.id + 1,
+					updatedEvent.time,
+					updatedEvent.quantity
+				)	
+			);
+		});
+
+		it("reverts if event is cancelled", async () => {
+			await contract.cancelEvent.sendTransaction(updatedEvent.id, [], []);
+			await utils.shouldThrow(
+				contract.updateEvent.sendTransaction(
+					updatedEvent.id,
+					updatedEvent.time,
+					updatedEvent.quantity
+				)	
+			);
+		});
+
+		it("reverts if quantity is less than what has already been supplied", async () => {
+			const quantity = 2;
+			await contract.buyToken.sendTransaction(
+				updatedEvent.id,
+				quantity,
+				{ from: charlie, value: utils.gweiToWei(defaultEvent.price) * quantity }
+			);
+			await utils.shouldThrow(
+				contract.updateEvent.sendTransaction(
+					updatedEvent.id + 1,
+					updatedEvent.time,
+					quantity - 1
+				)	
+			);
+		});
+
+		it("reverts if quantity is 0", async () => {
+			await utils.shouldThrow(
+				contract.updateEvent.sendTransaction(
+					updatedEvent.id + 1,
+					updatedEvent.time,
+					0
+				)	
+			);
+		});
+
+		it("reverts if time is in the past", async () => {
+			await utils.shouldThrow(
+				contract.updateEvent.sendTransaction(
+					updatedEvent.id + 1,
+					updatedEvent.time - 99999,
+					0
+				)	
+			);
 		});
 	});
 

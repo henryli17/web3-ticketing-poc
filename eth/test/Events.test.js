@@ -92,6 +92,17 @@ contract("Events", (accounts) => {
 			assert.equal(event.quantity.toNumber(), updatedEvent.quantity);
 		});
 
+		it("reverts when not owner", async () => {
+			await utils.shouldThrow(
+				contract.updateEvent.sendTransaction(
+					updatedEvent.id,
+					updatedEvent.time,
+					updatedEvent.quantity,
+					{ from: bob }
+				)	
+			);
+		});
+
 		it("reverts if event not created", async () => {
 			await utils.shouldThrow(
 				contract.updateEvent.sendTransaction(
@@ -264,6 +275,12 @@ contract("Events", (accounts) => {
 
 			assert.equal(BigInt(balance), gwei);
 		});
+
+		it("reverts when not owner", async () => {
+			await utils.shouldThrow(
+				contract.getBalance.call({ from: bob })
+			);
+		});
 	});
 
 	describe("transferBalance", () => {
@@ -281,11 +298,17 @@ contract("Events", (accounts) => {
 
 			assert.equal(BigInt(balanceBefore), gwei);
 
-			await contract.transferBalance(charlie);
+			await contract.transferBalance.sendTransaction(charlie);
 
 			const balanceAfter = await contract.getBalance.call();
 
 			assert.equal(BigInt(balanceAfter), 0);
+		});
+
+		it("reverts when not owner", async () => {
+			await utils.shouldThrow(
+				contract.transferBalance.sendTransaction(charlie, { from: bob })
+			);
 		});
 	});
 
@@ -368,5 +391,19 @@ contract("Events", (accounts) => {
 
 			await assertEventCancelled(defaultEvent.id, false);
 		});
+
+		it("reverts when not owner", async () => {
+			await utils.shouldThrow(
+				contract.cancelEvent.sendTransaction(defaultEvent.id, [], [], { from: bob })
+			);
+		});
+	});
+
+	describe("markTokenAsUsed", () => {
+		beforeEach(async () => {
+			await utils.createEvent(contract, alice);
+		});
+
+		// it("")
 	});
 });

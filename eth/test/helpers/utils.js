@@ -34,8 +34,19 @@ const createEvent = async (contract, caller, event) => {
 	);
 };
 
+const assertTokenListedForResale = async (contract, eventId, owner, quantity) => {
+	const resaleTokens = await contract.getResaleTokens.call(eventId);
+	const resaleTokenEntries = await contract.getResaleTokenEntries.call(owner);
+	const activeResaleTokenEntries = resaleTokenEntries.filter(rte => !rte.sold && parseInt(rte.eventId) === eventId);
+	const activeResaleTokensForOwner = resaleTokens.filter(rt => !rt.sold && rt.owner === owner);
+
+	assert.equal(activeResaleTokenEntries.length, quantity);
+	assert.equal(activeResaleTokensForOwner.length, quantity);
+};
+
 module.exports = {
 	createEvent,
 	defaultEvent,
-	shouldThrow
+	shouldThrow,
+	assertTokenListedForResale
 };

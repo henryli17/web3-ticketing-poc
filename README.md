@@ -99,13 +99,18 @@ cd backend && echo "ETH_CONTRACT_ADDRESS=$ETH_CONTRACT_ADDRESS" > .env
 ```
 - The backend server instance you started previously should have automatically reloaded with the new environment variables.
 
-### 6. Start the frontend
+### 6. Deploy database events to smart contract
+```bash
+cd backend && npm run deploy
+```
+
+### 7. Start the frontend
 - This should automatically launch the web application in your browser. If not, you can manually navigate to http://localhost:3000/.
 ```bash
 cd frontend && npm start
 ```
 
-### 7. Importing test accounts into MetaMask
+### 8. Importing test accounts into MetaMask
 When running the web application locally, a locally run blockchain is used. This is automatically run from the backend server. There are 10 accounts preloaded with 1000 ETH that can be used for testing.
 
 - Follow the instructions on the [MetaMask website](https://support.metamask.io/hc/en-us/articles/360015489331-How-to-import-an-account#h_01G01W07NV7Q94M7P1EBD5BYM4) to import accounts using any of the following private keys:

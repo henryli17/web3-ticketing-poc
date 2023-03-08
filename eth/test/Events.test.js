@@ -550,4 +550,93 @@ contract("Events", (accounts) => {
 			}
 		});
 	});
+
+	describe("listTokenForResale", async () => {
+		const buyer = charlie;
+		const quantity = 2;
+
+		beforeEach(async () => {
+			await utils.createEvent(contract, alice);
+			await contract.buyToken.sendTransaction(
+				defaultEvent.id,
+				quantity,
+				{ from: buyer, value: defaultEvent.priceInWei() * quantity }
+			); 
+		});
+
+		const assertTokenListedForResale = async (eventId, owner, quantity) => {
+			const resaleTokens = await contract.getResaleTokens.call(eventId);
+			const resaleTokenEntries = await contract.getResaleTokenEntries.call(owner);
+			const resaleTokensForOwner = resaleTokens.filter(rt => rt.owner === owner);
+
+			assert.equal(resaleTokenEntries.length, quantity);
+			assert.equal(resaleTokensForOwner.length, quantity);
+		};
+
+		it("lists a token for resale", async () => {
+			await contract.listTokenForResale.sendTransaction(
+				defaultEvent.id,
+				quantity,
+				{ from: buyer }
+			);
+			await assertTokenListedForResale(defaultEvent.id, buyer, quantity);
+		});
+
+		it("succeeds with quantity 0", async () => {
+			const quantity = 0;
+
+			await contract.listTokenForResale.sendTransaction(
+				defaultEvent.id,
+				quantity,
+				{ from: buyer }
+			);
+			await assertTokenListedForResale(defaultEvent.id, buyer, quantity);
+		});
+
+		it("reverts if the event does not exist", async () => {
+			const falseEventId = defaultEvent.id + 1;
+			const quantity = 0;
+
+			await utils.shouldThrow(
+				contract.listTokenForResale.sendTransaction(
+					falseEventId,
+					quantity,
+					{ from: buyer }
+				)
+			);
+			await assertTokenListedForResale(falseEventId, buyer, quantity);
+		});
+
+		it("reverts if the event has been cancelled", async () => {
+			await contract.cancelEvent.sendTransaction(defaultEvent.id, [], []);
+			await utils.shouldThrow(
+				contract.listTokenForResale.sendTransaction(
+					defaultEvent.id,
+					quantity,
+					{ from: buyer }
+				)
+			);
+			await assertTokenListedForResale(defaultEvent.id, buyer, 0);
+		});
+
+		it("reverts if trying to list more than available", async () => {
+			await utils.shouldThrow(
+				contract.listTokenForResale.sendTransaction(
+					defaultEvent.id,
+					quantity + 1,
+					{ from: buyer }
+				)
+			);
+			await contract.markTokenAsUsed.sendTransaction(buyer, defaultEvent.id, quantity);
+			await utils.shouldThrow(
+				contract.listTokenForResale.sendTransaction(
+					defaultEvent.id,
+					quantity,
+					{ from: buyer }
+				)
+			);
+
+			await assertTokenListedForResale(defaultEvent.id, buyer, 0);
+		});
+	});
 });

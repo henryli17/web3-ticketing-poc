@@ -809,4 +809,48 @@ contract("Events", (accounts) => {
 			await utils.assertTokenCount(contract, buyer, eventId, 0);
 		});
 	});
+
+	describe("getListedCount", async () => {
+		const buyer = charlie;
+		const secondEventId = defaultEvent.id + 1;
+
+		beforeEach(async () => {
+			await utils.createEvent(contract, alice);
+			await utils.createEvent(contract, alice, { id: secondEventId });
+
+			for (const eventId of [defaultEvent.id, secondEventId]) {
+				await contract.buyToken.sendTransaction(
+					eventId,
+					defaultEvent.quantity,
+					{ from: buyer, value: defaultEvent.priceInWei() * defaultEvent.quantity }
+				);
+			}
+		});
+
+		it("gets number of tokens listed for address", async () => {
+			const listedCountBefore = await contract.getListedCount.call(buyer, defaultEvent.id);
+
+			assert.equal(listedCountBefore.toNumber(), 0);
+
+			await contract.listTokenForResale.sendTransaction(
+				secondEventId,
+				defaultEvent.quantity,
+				{ from: buyer }
+			); 
+			await contract.listTokenForResale.sendTransaction(
+				defaultEvent.id,
+				defaultEvent.quantity,
+				{ from: buyer }
+			); 
+			await contract.unlistTokenForResale.sendTransaction(
+				defaultEvent.id,
+				defaultEvent.quantity - 1,
+				{ from: buyer }
+			); 
+
+			const listedCountAfter = await contract.getListedCount.call(buyer, defaultEvent.id);
+
+			assert.equal(listedCountAfter.toNumber(), 1);
+		});
+	});
 });

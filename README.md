@@ -1,12 +1,10 @@
 # 6CCS3PRJ
----
+
 ## Live Deployment
 This project has been deployed to https://muddy-sunset-2817.fly.dev/ for easy testing. The Ethereum network used on the live deployment is the [Goerli testnet](https://goerli.net/), you should be automatically prompted in MetaMask to switch to this network when connecting your wallet on the web application. Test ETH for payments can be requested from the [Goerli faucet](https://goerlifaucet.com/).
 
 ##### Caveats:
 - Due to persistent storage limitations with deployment, image upload for creating or editing events has been disabled. To mitigate this, newly created events are given random generic image and editing images of existing events will have no effect.
-
----
 
 ## Local Deployment
 
@@ -125,8 +123,6 @@ When running the web application locally, a locally run blockchain is used. This
 
 
 - Connect your MetaMask wallet at http://localhost:3000/, this should automatically prompt you to switch to the `Localhost 8545` Ethereum network.
-
----
 
 ## Testing
 - Run smart contract unit tests.

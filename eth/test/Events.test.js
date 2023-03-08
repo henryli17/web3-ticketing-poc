@@ -169,15 +169,6 @@ contract("Events", (accounts) => {
 			await utils.createEvent(contract, alice);
 		});
 
-		const assertTokenCount = async (account, id, count) => {
-			const tokenCount = await contract.balanceOf.call(
-				account,
-				id
-			);
-
-			assert.equal(tokenCount.toNumber(), count);
-		};
-
 		it("buys a token", async () => {
 			await contract.buyToken.sendTransaction(
 				defaultEvent.id,
@@ -185,7 +176,7 @@ contract("Events", (accounts) => {
 				{ from: charlie, value: defaultEvent.priceInWei() }
 			);
 
-			assertTokenCount(charlie, defaultEvent.id, 1);
+			utils.assertTokenCount(contract, charlie, defaultEvent.id, 1);
 		});
 
 		it("reverts if event does not exist", async () => {
@@ -197,7 +188,7 @@ contract("Events", (accounts) => {
 				)
 			);
 
-			assertTokenCount(charlie, defaultEvent.id, 0);
+			utils.assertTokenCount(contract, charlie, defaultEvent.id, 0);
 		});
 
 		it("reverts if event has been cancelled", async () => {
@@ -210,7 +201,7 @@ contract("Events", (accounts) => {
 				)
 			);
 
-			assertTokenCount(charlie, defaultEvent.id, 0);
+			utils.assertTokenCount(contract, charlie, defaultEvent.id, 0);
 		});
 
 		it("reverts with insufficient payment", async () => {
@@ -222,7 +213,7 @@ contract("Events", (accounts) => {
 				)
 			);
 
-			assertTokenCount(charlie, defaultEvent.id, 0);
+			utils.assertTokenCount(contract, charlie, defaultEvent.id, 0);
 		});
 
 		it("reverts with too much quantity", async () => {
@@ -239,7 +230,7 @@ contract("Events", (accounts) => {
 				)
 			);
 
-			assertTokenCount(charlie, defaultEvent.id, 0);
+			utils.assertTokenCount(contract, charlie, defaultEvent.id, 0);
 		});
 
 		it("reverts when event is in the past", async () => {
@@ -259,7 +250,7 @@ contract("Events", (accounts) => {
 				)
 			);
 
-			assertTokenCount(charlie, event.id, 0);
+			utils.assertTokenCount(contract, charlie, event.id, 0);
 		});
 	});
 
@@ -721,6 +712,101 @@ contract("Events", (accounts) => {
 			);
 
 			await utils.assertTokenListedForResale(contract, defaultEvent.id, buyer, listedQuantity);
+		});
+	});
+
+	describe("buyResaleToken", async () => {
+		const buyer = bob;
+		const reseller = charlie;
+		const secondEventId = 999;
+		const listedQuantity = defaultEvent.quantity;
+
+		beforeEach(async () => {
+			await utils.createEvent(contract, alice);
+			await utils.createEvent(contract, alice, { id: secondEventId });
+
+			for (const eventId of [defaultEvent.id, secondEventId]) {
+				await contract.buyToken.sendTransaction(
+					eventId,
+					listedQuantity,
+					{ from: reseller, value: defaultEvent.priceInWei() * listedQuantity }
+				); 
+
+				await contract.listTokenForResale.sendTransaction(
+					eventId,
+					listedQuantity,
+					{ from: reseller }
+				); 
+			}
+		});
+
+		it("buys a token listed for resale", async () => {
+			await contract.unlistTokenForResale.sendTransaction(
+				defaultEvent.id,
+				1,
+				{ from: reseller }
+			); 
+			await contract.buyResaleToken.sendTransaction(
+				reseller,
+				defaultEvent.id,
+				{ from: buyer, value: defaultEvent.priceInWei() }
+			);
+
+			await utils.assertTokenCount(contract, bob, defaultEvent.id, 1);
+		});
+
+		it("reverts if event does not exist", async () => {
+			const falseEventId = defaultEvent.id + 1;
+
+			await utils.shouldThrow(
+				contract.buyResaleToken.sendTransaction(
+					reseller,
+					falseEventId,
+					{ from: buyer, value: defaultEvent.priceInWei() }
+				)
+			);
+
+			await utils.assertTokenCount(contract, buyer, falseEventId, 0);
+		});
+
+		it("reverts if event is cancelled", async () => {
+			await contract.cancelEvent.sendTransaction(defaultEvent.id, [], []);
+			await utils.shouldThrow(
+				contract.buyResaleToken.sendTransaction(
+					reseller,
+					defaultEvent.id,
+					{ from: buyer, value: defaultEvent.priceInWei() }
+				)
+			);
+
+			await utils.assertTokenCount(contract, buyer, defaultEvent.id, 0);
+		});
+
+		it("reverts if insufficient payment", async () => {
+			await utils.shouldThrow(
+				contract.buyResaleToken.sendTransaction(
+					reseller,
+					defaultEvent.id,
+					{ from: buyer, value: 1 }
+				)
+			);
+
+			await utils.assertTokenCount(contract, buyer, defaultEvent.id, 0);
+		});
+
+		it("reverts if there are no tokens for resale", async () => {
+			const eventId = defaultEvent.id + 1;
+
+			await utils.createEvent(contract, alice, { id: eventId });
+			await utils.shouldThrow(
+				contract.buyResaleToken.sendTransaction(
+					reseller,
+					eventId,
+					{ from: buyer, value: defaultEvent.priceInWei() }
+				)
+			);
+
+			await utils.assertTokenCount(contract, buyer, eventId, 0);
 		});
 	});
 });

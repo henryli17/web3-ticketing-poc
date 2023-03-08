@@ -44,9 +44,19 @@ const assertTokenListedForResale = async (contract, eventId, owner, quantity) =>
 	assert.equal(activeResaleTokensForOwner.length, quantity);
 };
 
+const assertTokenCount = async (contract, account, id, count) => {
+	const tokenCount = await contract.balanceOf.call(
+		account,
+		id
+	);
+
+	assert.equal(tokenCount.toNumber(), count);
+};
+
 module.exports = {
 	createEvent,
 	defaultEvent,
 	shouldThrow,
-	assertTokenListedForResale
+	assertTokenListedForResale,
+	assertTokenCount
 };

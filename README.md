@@ -11,7 +11,7 @@ All instructions below assume you are in the **root directory** of the project a
 ### Prerequisites
 - [Node.js](https://nodejs.org/en/)
 - [Truffle Suite](https://trufflesuite.com/docs/truffle/how-to/install/)
-- [MetaMask](https://metamask.io/) (preferable running on [Google Chrome](https://www.google.com/intl/en_uk/chrome/))
+- [MetaMask](https://metamask.io/) (preferably running on [Google Chrome](https://www.google.com/intl/en_uk/chrome/))
 
 ### Required Ports
 Please ensure none of the following ports are being used by any other applications: 

@@ -23,12 +23,9 @@ Please ensure none of the following ports are being used by any other applicatio
 ### 1. Installing dependencies
 
 ```bash
-cd frontend &&
-npm install --legacy-peer-deps &&
-cd ../backend &&
-npm install &&
-cd ../eth &&
-npm install
+cd frontend && npm install --legacy-peer-deps &&
+cd ../backend && npm install &&
+cd ../eth && npm install
 ```
 
 ### 2. Run migrations and seed database

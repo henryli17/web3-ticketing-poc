@@ -33,7 +33,7 @@ npm install
 
 ### 2. Run migrations and seed database
 ```bash
-cd backend && npx knex migrate:up && npm run seed
+cd backend && npx knex migrate:latest && npm run seed
 ```
 
 ### 3. Start backend server

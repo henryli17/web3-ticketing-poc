@@ -853,4 +853,56 @@ contract("Events", (accounts) => {
 			assert.equal(listedCountAfter.toNumber(), 1);
 		});
 	});
+
+	describe("getResaleTokenEntries", async () => {
+		it("gets resale token entries for an address", async () => {
+			const reseller = charlie;
+
+			await utils.createEvent(contract, alice);
+			await contract.buyToken.sendTransaction(
+				defaultEvent.id,
+				defaultEvent.quantity,
+				{ from: charlie, value: defaultEvent.priceInWei() * defaultEvent.quantity }
+			);
+			await contract.listTokenForResale.sendTransaction(
+				defaultEvent.id,
+				defaultEvent.quantity,
+				{ from: charlie }
+			);
+
+			const resaleTokenEntries = await contract.getResaleTokenEntries.call(reseller);
+
+			assert.equal(resaleTokenEntries.length, defaultEvent.quantity);
+
+			for (const resaleTokenEntry of resaleTokenEntries) {
+				assert.equal(parseInt(resaleTokenEntry.eventId), defaultEvent.id);
+			}
+		});
+	});
+
+	describe("getResaleTokens", async () => {
+		it("gets resale token entries for an event", async () => {
+			const reseller = charlie;
+
+			await utils.createEvent(contract, alice);
+			await contract.buyToken.sendTransaction(
+				defaultEvent.id,
+				defaultEvent.quantity,
+				{ from: charlie, value: defaultEvent.priceInWei() * defaultEvent.quantity }
+			);
+			await contract.listTokenForResale.sendTransaction(
+				defaultEvent.id,
+				defaultEvent.quantity,
+				{ from: charlie }
+			);
+
+			const resaleTokens = await contract.getResaleTokens.call(defaultEvent.id);
+
+			assert.equal(resaleTokens.length, defaultEvent.quantity);
+
+			for (const resaleToken of resaleTokens) {
+				assert.equal(resaleToken.owner, reseller);
+			}
+		});
+	});
 });

@@ -20,8 +20,7 @@ Please ensure none of the following ports are being used by any other applicatio
 - `8545`
 - `8555`
 
-
-### 1. Installing Dependencies
+### 1. Installing dependencies
 
 ```bash
 cd frontend &&
@@ -32,13 +31,18 @@ cd ../eth &&
 npm install
 ```
 
-### 2. Start backend server
+### 2. Run migrations and seed database
+```bash
+cd backend && npx knex migrate:up && npm run seed
+```
+
+### 3. Start backend server
 - Leave this server running and execute the proceeding commands in new terminal instances.
 ```bash
 cd backend && npm start
 ```
 
-### 3. Smart Contract Deployment
+### 4. Smart Contract Deployment
 - Deploy the contract using Truffle.
 ```bash
 cd eth && truffle migrate
@@ -84,7 +88,7 @@ Summary
 > Final cost:          0.012436520039796864 ETH
 ```
 
-### 4. Create `.env` for the backend server
+### 5. Create `.env` for the backend server
 - Set a terminal variable for the contract address copied from the previous step. In the example below I have set it to `0x532438C5D16EE7AA809d0fC6CE14bcC7134d9d89`.
 ```bash
 export ETH_CONTRACT_ADDRESS=0x532438C5D16EE7AA809d0fC6CE14bcC7134d9d89
@@ -95,13 +99,13 @@ cd backend && echo "ETH_CONTRACT_ADDRESS=$ETH_CONTRACT_ADDRESS" > .env
 ```
 - The backend server instance you started previously should have automatically reloaded with the new environment variables.
 
-### 5. Start the frontend
+### 6. Start the frontend
 - This should automatically launch the web application in your browser. If not, you can manually navigate to http://localhost:3000/.
 ```bash
 cd frontend && npm start
 ```
 
-### 6. Importing test accounts into MetaMask
+### 7. Importing test accounts into MetaMask
 When running the web application locally, a locally run blockchain is used. This is automatically run from the backend server. There are 10 accounts preloaded with 1000 ETH that can be used for testing.
 
 - Follow the instructions on the [MetaMask website](https://support.metamask.io/hc/en-us/articles/360015489331-How-to-import-an-account#h_01G01W07NV7Q94M7P1EBD5BYM4) to import accounts using any of the following private keys:

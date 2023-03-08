@@ -69,7 +69,7 @@ const request = async <T>(method: HttpMethod, endpoint: string, options?: { data
 		params: options?.params
 	});
 
-	return res.data
+	return res.data as T;
 };
 
 export const getEvents = (params?: {

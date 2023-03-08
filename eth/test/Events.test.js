@@ -14,7 +14,7 @@ contract("Events", (accounts) => {
 		contract = await Events.new();
 	});
 
-	afterEach(async() => {
+	afterEach(async () => {
 		await timeMachine.revertToSnapshot(snapshotId);
 	}); 
 
@@ -522,6 +522,32 @@ contract("Events", (accounts) => {
 			const usedCount = await contract.getUsedCount.call(buyer, defaultEvent.id);
 
 			assert.equal(usedCount.toNumber(), quantity);
+		});
+	});
+
+	describe("getUsedTokens", async () => {
+		it("gets the used tokens for an address", async () => {
+			const buyer = charlie;
+			const quantity = 2;
+			const usedTokensBefore = await contract.getUsedTokens.call(buyer);
+
+			assert.equal(usedTokensBefore.length, 0);
+
+			await utils.createEvent(contract, alice);
+			await contract.buyToken.sendTransaction(
+				defaultEvent.id,
+				quantity,
+				{ from: charlie, value: defaultEvent.priceInWei() * quantity }
+			);
+			await contract.markTokenAsUsed.sendTransaction(charlie, defaultEvent.id, quantity);
+
+			const usedTokensAfter = await contract.getUsedTokens.call(buyer);
+
+			assert.equal(usedTokensAfter.length, quantity);
+
+			for (const usedTokenAfter of usedTokensAfter) {
+				assert.equal(usedTokenAfter.words[0], defaultEvent.id);
+			}
 		});
 	});
 });

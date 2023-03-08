@@ -6,7 +6,7 @@ This project has been deployed to https://muddy-sunset-2817.fly.dev/ for easy te
 
 # Local Deployment
 
-All instructions below assume you are in the **root directory** of the project and using a **Unix-like OS**.
+All instructions below assume you are in the **root directory** of the project unless explicitly stated and that you are using a **Unix-like OS**.
 
 ### Prerequisites
 - [Node.js](https://nodejs.org/en/)
@@ -42,7 +42,7 @@ cd backend && npx knex migrate:latest && npm run seed
 cd backend && npm start
 ```
 
-### 4. Smart Contract Deployment
+### 4. Deploy smart contract
 - Deploy the contract using Truffle.
 ```bash
 cd eth && truffle migrate
@@ -97,20 +97,24 @@ export ETH_CONTRACT_ADDRESS=0x532438C5D16EE7AA809d0fC6CE14bcC7134d9d89
 ```bash
 cd backend && echo "ETH_CONTRACT_ADDRESS=$ETH_CONTRACT_ADDRESS" > .env
 ```
-- The backend server instance you started previously should have automatically reloaded with the new environment variables.
 
-### 6. Deploy database events to smart contract
+### 6. Restart backend server
+To load the new environment variables we need to restart the backend server.
+- Terminate the currently running instance of the backend server using `Ctrl + C`.
+- Your terminal instance should already be in the `backend` directory at this point so you can just run `npm start` to start the backend server again.
+
+### 7. Deploy database events to smart contract
 ```bash
 cd backend && npm run deploy
 ```
 
-### 7. Start the frontend
+### 8. Start the frontend
 - This should automatically launch the web application in your browser. If not, you can manually navigate to http://localhost:3000/.
 ```bash
 cd frontend && npm start
 ```
 
-### 8. Importing test accounts into MetaMask
+### 9. Importing test accounts into MetaMask
 When running the web application locally, a locally run blockchain is used. This is automatically run from the backend server. There are 10 accounts preloaded with 1000 ETH that can be used for testing.
 
 - Follow the instructions on the [MetaMask website](https://support.metamask.io/hc/en-us/articles/360015489331-How-to-import-an-account#h_01G01W07NV7Q94M7P1EBD5BYM4) to import accounts using any of the following private keys:

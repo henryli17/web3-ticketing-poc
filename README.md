@@ -87,13 +87,14 @@ Summary
 ```
 
 ### 5. Create `.env` for the backend server
-- Set a terminal variable for the contract address copied from the previous step. In the example below I have set it to `0x532438C5D16EE7AA809d0fC6CE14bcC7134d9d89`.
+- Set a temporary environment variable for the contract address copied from the previous step.
 ```bash
-export ETH_CONTRACT_ADDRESS=0x532438C5D16EE7AA809d0fC6CE14bcC7134d9d89
+export TEMP=<your contract address>
 ```
+For example: `export TEMP=0x532438C5D16EE7AA809d0fC6CE14bcC7134d9d89`
 - Create the `.env` file.
 ```bash
-cd backend && echo "ETH_CONTRACT_ADDRESS=$ETH_CONTRACT_ADDRESS" > .env
+cd backend && echo "ETH_CONTRACT_ADDRESS=$TEMP" > .env
 ```
 
 ### 6. Restart backend server

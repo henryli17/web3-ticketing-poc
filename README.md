@@ -30,7 +30,7 @@ cd ../eth && npm install
 
 ### 2. Run migrations and seed database
 ```bash
-cd backend && npx knex migrate:latest && npm run seed
+cd backend && npm run migrate && npm run seed
 ```
 
 ### 3. Start backend server
@@ -97,8 +97,7 @@ cd backend && echo "ETH_CONTRACT_ADDRESS=$ETH_CONTRACT_ADDRESS" > .env
 
 ### 6. Restart backend server
 To load the new environment variables we need to restart the backend server.
-- Terminate the currently running instance of the backend server using `Ctrl + C`.
-- Your terminal instance should already be in the `backend` directory at this point so you can just run `npm start` to start the backend server again.
+- This can be achieved by typing `rs` followed by the `Return ↩`  key in the terminal instance running the backend server.
 
 ### 7. Deploy database events to smart contract
 ```bash

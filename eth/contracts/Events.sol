@@ -24,7 +24,7 @@ contract Events is ERC1155, Ownable {
 	struct ResaleTokenEntry {
 		uint eventId;
 		bool sold;
-		uint idx;
+		uint idx; // Index referencing the relevant `ResaleToken` in the `resaleTokens` mapping
 	}
 
 	// Resale Token Owner Address => ResaleTokenEntry[]

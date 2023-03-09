@@ -131,6 +131,9 @@ When running the web application locally, a locally run blockchain is used. This
 
 - Connect your MetaMask wallet at http://localhost:3000/, this should automatically prompt you to switch to the `Localhost 8545` Ethereum network.
 
+### Troubleshooting
+- In my personal testing, I have found that the MetaMask extension can have trouble switching between Ethereum networks causing transactions to hang indefinitely. This can usually be fixed by reinstalling the MetaMask extension on your browser.
+
 # Testing
 - Run smart contract unit tests.
 ```bash

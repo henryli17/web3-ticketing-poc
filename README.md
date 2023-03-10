@@ -119,23 +119,25 @@ When running the web application locally, a locally run blockchain is used. This
 
 - Follow the instructions on the [MetaMask website](https://support.metamask.io/hc/en-us/articles/360015489331-How-to-import-an-account#h_01G01W07NV7Q94M7P1EBD5BYM4) to import accounts using any of the following private keys:
 
-| Wallet Address                             | Private Key |
-| ------------------------------------------ | ------------------------------------------------------------------ |
-| 0x3b26935917De7f5faC60F6d15FF02b1CF468DFb0 | 0x4397dbd437030df7c8ed3cb213f34aeea9786debd4bbd62767021eb19ae7d345 |
-| 0xC430e396B63d40FEE619C8E3828f68cf00756ECE | 0x59025abe73ea743b663276546cfdefe7e6ceab2618d3d851c0053228d21b3e89 |
-| 0xCf8393B82491510f48CAe6e9fb2E7bDF7390f801 | 0x98545d87cbdb20fb4198b407d45c19a6ae476e7b327ec2511b11df34d9e0e36d |
-| 0x5Eea7f35E0cA9B643E0a1b15B8e018a6F219743D | 0x97b543ccd0b333450872f010287211f54b7442c261a956181cc5d7599825bc0d |
-| 0xbA972481084EA3851FbDC9b315E31B421B2ee0F4 | 0xae8e040c53e069b017b7582db2e4ea368a07a90806488b1c7d0f0d3bf23b79df |
-| 0xfe9bbb8152C357eDEbC0d63039A586C99d423d68 | 0x39bc36a89c1b732127bca39030874f30222dfad8415f102af6feaf5b60d6a6af |
-| 0x8c73F83574Be8bf2c619B5F1eC3321757b840165 | 0xf927e60ffbb8a1965362ee4a97ccdea87cf9bb3a703620e37cf61f13cfbfdcd7 |
-| 0x03E765BB1a1c3702b9512F67B45034d71C6263B1 | 0x206a85417e715f3b8e99b69c990ecc97db264cc36cb901e8beddb4aeb08d1b9e |
-| 0x2cf744c20863A2523fE610014Cb3DeD5A19BB463 | 0xefeb100ca1c3763ccf962d09f4fe863f4c6c80238987f87d57fe9dbd0c012bb4 |
-| 0x5B79F1452F94872E8bC57536BE61947F897e5cA2 | 0xdba880a5c0554e06487b38b0105702fe2b2d387dded8066a68b8885869e70ab2 |
+| Private Key                                                          |
+| -------------------------------------------------------------------- |
+| `0x4397dbd437030df7c8ed3cb213f34aeea9786debd4bbd62767021eb19ae7d345` |
+| `0x59025abe73ea743b663276546cfdefe7e6ceab2618d3d851c0053228d21b3e89` |
+| `0x98545d87cbdb20fb4198b407d45c19a6ae476e7b327ec2511b11df34d9e0e36d` |
+| `0x97b543ccd0b333450872f010287211f54b7442c261a956181cc5d7599825bc0d` |
+| `0xae8e040c53e069b017b7582db2e4ea368a07a90806488b1c7d0f0d3bf23b79df` |
+| `0x39bc36a89c1b732127bca39030874f30222dfad8415f102af6feaf5b60d6a6af` |
+| `0xf927e60ffbb8a1965362ee4a97ccdea87cf9bb3a703620e37cf61f13cfbfdcd7` |
+| `0x206a85417e715f3b8e99b69c990ecc97db264cc36cb901e8beddb4aeb08d1b9e` |
+| `0xefeb100ca1c3763ccf962d09f4fe863f4c6c80238987f87d57fe9dbd0c012bb4` |
+| `0xdba880a5c0554e06487b38b0105702fe2b2d387dded8066a68b8885869e70ab2` |
 
 - Connect your MetaMask wallet at http://localhost:3000/, this should automatically prompt you to switch to the `Localhost 8545` Ethereum network.
 
+- Confirm the account you have just imported has been connected by viewing the status in the MetaMask extension. 
+
 ### Troubleshooting
-- In my personal testing, I have found that the MetaMask extension can have trouble switching between Ethereum networks causing transactions to hang indefinitely. This can usually be fixed by reinstalling the MetaMask extension on your browser.
+- If you have deployed locally more than once, the nonce MetaMask uses for the local blockchain can become out of sync with nonce of the local blockchain you are currently running. This will cause transactions to hang indefinitely. This can be fixed by reinstalling the MetaMask extension.
 
 # Testing
 - Run smart contract unit tests.

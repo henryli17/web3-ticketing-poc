@@ -90,7 +90,7 @@ Summary
 ### 5. Create `.env` for the backend server
 - Set a temporary environment variable for the contract address copied from the previous step.
 ```bash
-export TEMP=<your contract address>
+TEMP=<your contract address>
 ```
 For example: `export TEMP=0x532438C5D16EE7AA809d0fC6CE14bcC7134d9d89`
 

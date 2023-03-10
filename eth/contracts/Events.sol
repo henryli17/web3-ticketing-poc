@@ -156,7 +156,7 @@ contract Events is ERC1155, Ownable {
 	
 		for (uint i = 0; i < senderResaleTokenEntries.length; i++) {
 			if (senderResaleTokenEntries[i].eventId == _eventId) {
-				if (count == _quantity){
+				if (count == _quantity) {
 					break;
 				} else if (!senderResaleTokenEntries[i].sold) {
 					idxs[count++] = i;

@@ -45,6 +45,7 @@ cd backend && npm start
 ```bash
 cd eth && truffle migrate
 ```
+
 - Copy the contract address from the terminal output. In the output example below it would be `0x532438C5D16EE7AA809d0fC6CE14bcC7134d9d89`.
 ```
 Compiling your contracts...
@@ -92,6 +93,7 @@ Summary
 export TEMP=<your contract address>
 ```
 For example: `export TEMP=0x532438C5D16EE7AA809d0fC6CE14bcC7134d9d89`
+
 - Create the `.env` file.
 ```bash
 cd backend && echo "ETH_CONTRACT_ADDRESS=$TEMP" > .env
@@ -129,7 +131,6 @@ When running the web application locally, a locally run blockchain is used. This
 | 0x03E765BB1a1c3702b9512F67B45034d71C6263B1 | 0x206a85417e715f3b8e99b69c990ecc97db264cc36cb901e8beddb4aeb08d1b9e |
 | 0x2cf744c20863A2523fE610014Cb3DeD5A19BB463 | 0xefeb100ca1c3763ccf962d09f4fe863f4c6c80238987f87d57fe9dbd0c012bb4 |
 | 0x5B79F1452F94872E8bC57536BE61947F897e5cA2 | 0xdba880a5c0554e06487b38b0105702fe2b2d387dded8066a68b8885869e70ab2 |
-
 
 - Connect your MetaMask wallet at http://localhost:3000/, this should automatically prompt you to switch to the `Localhost 8545` Ethereum network.
 

@@ -18,6 +18,8 @@ const OWNER = process.env.ETH_CONTRACT_OWNER || "0x3b26935917de7f5fac60f6d15ff02
 const ADDRESS = process.env.ETH_CONTRACT_ADDRESS;
 const instance = new web3.eth.Contract(ABI, ADDRESS, { handleRevert: true });
 
+const caseInsensitiveMatch = (a, b) => a.toLowerCase() === b.toLowerCase();
+
 const getTokens = async (address) => {
 	const tokens = new Map();
 	const events = await instance.getPastEvents(
@@ -30,9 +32,9 @@ const getTokens = async (address) => {
 		const quantity = Number(event.returnValues.value);
 		let diff;
 
-		if (event.returnValues.to === address) {
+		if (caseInsensitiveMatch(event.returnValues.to, address)) {
 			diff = quantity;
-		} else if (event.returnValues.from === address) {
+		} else if (caseInsensitiveMatch(event.returnValues.from, address)) {
 			diff = -quantity;
 		} else {
 			continue;
@@ -60,8 +62,8 @@ const getOwners = async (eventId) => {
 		}
 	
 		const quantity = Number(event.returnValues.value);
-		const to = event.returnValues.to;
-		const from = event.returnValues.from;
+		const to = event.returnValues.to.toLowerCase();
+		const from = event.returnValues.from.toLowerCase();
 
 		owners.set(
 			to,

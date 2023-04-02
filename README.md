@@ -2,12 +2,12 @@
 This project has been deployed to https://muddy-sunset-2817.fly.dev/ for easy testing. The Ethereum network used on the live deployment is the [Goerli testnet](https://goerli.net/), you should be automatically prompted in MetaMask to switch to this network when connecting your wallet on the web application. Test ETH for payments can be requested from the [Goerli faucet](https://goerlifaucet.com/).
 
 ##### Caveats:
-- Due to persistent storage limitations with deployment, image upload for creating or editing events has been disabled. To mitigate this, newly created events are given random generic image and editing images of existing events will have no effect.
+- Due to persistent storage limitations with deployment, image upload for creating or editing events has been disabled. To mitigate this, newly created events are given a random generic image and editing images of existing events will have no effect.
 - The smart contract has been deployed using my personal Ethereum wallet, so please be conservative when performing administrative actions (creating/cancelling/editing events) as these operations will use ETH from my wallet. In the case my wallet does run out of ETH, you can use the Goerli faucet to send ETH to `0xADa95D02B0DAb0d52CCDDa4b9fDFa1a6d068EcF1`.
 
 # Local Deployment
 
-All instructions below assume you are in the **root directory** of the project unless explicitly stated and that you are using a **Unix-like OS**.
+All instructions below assume that you are in the **root directory** of the project unless explicitly stated and that you are using a **Unix-like OS**.
 
 ### Prerequisites
 - [Node.js](https://nodejs.org/en/)
@@ -107,7 +107,7 @@ cd backend && echo "ETH_CONTRACT_ADDRESS=$TEMP" > .env
 ### 6. Restart backend server
 To load the new environment variables we need to restart the backend server.
 
-- This can be achieved by typing `rs` followed by the `Return ↩`  key in the terminal instance running the backend server.
+- This can be achieved by typing `rs` followed by the `Return ↩` key in the terminal instance running the backend server.
 
 ### 7. Deploy database events to smart contract
 ```bash

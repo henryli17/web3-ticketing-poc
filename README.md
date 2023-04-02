@@ -22,7 +22,6 @@ Please ensure none of the following ports are being used by any other applicatio
 - `8555`
 
 ### 1. Installing dependencies
-
 ```bash
 cd frontend && npm install --legacy-peer-deps &&
 cd ../backend && npm install &&
@@ -36,17 +35,20 @@ cd backend && npm run migrate && npm run seed
 
 ### 3. Start backend server
 - Leave this server running and execute the proceeding commands in new terminal instances.
+
 ```bash
 cd backend && npm start
 ```
 
 ### 4. Deploy smart contract
 - Deploy the contract using Truffle.
+
 ```bash
 cd eth && truffle migrate
 ```
 
 - Copy the contract address from the terminal output. In the output example below it would be `0x532438C5D16EE7AA809d0fC6CE14bcC7134d9d89`.
+
 ```
 Compiling your contracts...
 ===========================
@@ -89,18 +91,22 @@ Summary
 
 ### 5. Create `.env` for the backend server
 - Set a temporary environment variable for the contract address copied from the previous step.
+
 ```bash
 TEMP=<your contract address>
 ```
+
 For example: `export TEMP=0x532438C5D16EE7AA809d0fC6CE14bcC7134d9d89`
 
 - Create the `.env` file.
+
 ```bash
 cd backend && echo "ETH_CONTRACT_ADDRESS=$TEMP" > .env
 ```
 
 ### 6. Restart backend server
 To load the new environment variables we need to restart the backend server.
+
 - This can be achieved by typing `rs` followed by the `Return ↩`  key in the terminal instance running the backend server.
 
 ### 7. Deploy database events to smart contract
@@ -110,6 +116,7 @@ cd backend && npm run deploy
 
 ### 8. Start the frontend
 - This should automatically launch the web application in your browser. If not, you can manually navigate to http://localhost:3000/.
+
 ```bash
 cd frontend && npm start
 ```
@@ -141,6 +148,7 @@ When running the web application locally, a locally run blockchain is used. This
 
 # Testing
 - Run smart contract unit tests.
+
 ```bash
 cd eth && truffle run coverage
 ```

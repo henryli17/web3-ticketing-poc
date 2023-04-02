@@ -137,7 +137,7 @@ When running the web application locally, a locally run blockchain is used. This
 - Confirm the account you have just imported has been connected by viewing the status in the MetaMask extension. 
 
 ### Troubleshooting
-- If you have deployed locally more than once, the nonce MetaMask uses for the local blockchain can become out of sync with nonce of the local blockchain you are currently running. This will cause transactions to hang indefinitely. This can be fixed by reinstalling the MetaMask extension.
+- If you have deployed locally more than once, the nonce MetaMask uses for the local blockchain can become out of sync. This will cause transactions to hang indefinitely. This can be fixed by reinstalling the MetaMask extension.
 
 # Testing
 - Run smart contract unit tests.

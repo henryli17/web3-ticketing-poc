@@ -12,7 +12,9 @@ All instructions below assume that you are in the **root directory** of the proj
 ### Prerequisites
 - [Node.js](https://nodejs.org/en/)
 - [Truffle Suite](https://trufflesuite.com/docs/truffle/how-to/install/)
-- [MetaMask](https://metamask.io/) (preferably running on [Google Chrome](https://www.google.com/intl/en_uk/chrome/))
+- MetaMask (running on [Google Chrome](https://www.google.com/intl/en_uk/chrome/))
+   - [Version 10.27.0](https://github.com/MetaMask/metamask-extension/releases/tag/v10.27.0) is recommended due to a [bug on 10.28.1](https://github.com/MetaMask/metamask-extension/issues/18453) preventing MetaMask from switching networks
+   - To install, visit `chrome://extensions` and drag `metamask-chrome-10.27.0.zip` into the Chrome window
 
 ### Required Ports
 Please ensure none of the following ports are being used by any other applications: 

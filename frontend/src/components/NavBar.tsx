@@ -71,38 +71,19 @@ const NavBar = () => {
                             </button>
                         </div>
                         <div className="flex flex-1 justify-center sm:justify-start h-full">
-                            <Link
-                                to={routes.home()}
-                                className="flex flex-shrink-0 items-center"
-                            >
-                                <img
-                                    className="block h-8 w-auto"
-                                    src="https://ethereum.org/static/a183661dd70e0e5c70689a0ec95ef0ba/13c43/eth-diamond-purple.png"
-                                    alt="Ethereum Logo"
-                                />
-                            </Link>
                             <div className="hidden sm:ml-6 sm:block justify-center">
                                 <div className="flex space-x-4 h-full">
-                                    {navEntries.map((navEntry, i) => {
-                                        if (
-                                            navEntry.location === routes.home()
-                                        ) {
-                                            return (
-                                                <Tab
-                                                    key={i}
-                                                    navEntry={navEntry}
-                                                    className="hidden md:flex"
-                                                />
-                                            );
-                                        } else {
-                                            return (
-                                                <Tab
-                                                    key={i}
-                                                    navEntry={navEntry}
-                                                />
-                                            );
-                                        }
-                                    })}
+                                    {navEntries.map((navEntry, i) =>
+                                        navEntry.location === routes.home() ? (
+                                            <Tab
+                                                key={i}
+                                                navEntry={navEntry}
+                                                className="hidden md:flex"
+                                            />
+                                        ) : (
+                                            <Tab key={i} navEntry={navEntry} />
+                                        ),
+                                    )}
                                 </div>
                             </div>
                         </div>

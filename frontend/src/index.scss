@@ -3,94 +3,95 @@
 @tailwind utilities;
 
 body {
-	background-color: white;
+    background-color: white;
 }
 
 * {
-	// outline: 1px rgba(255, 0, 0, .5) solid;
+    // outline: 1px rgba(255, 0, 0, .5) solid;
 }
 
 h1 {
-	font-size: 3rem;
-	line-height: 3rem;
+    font-size: 3rem;
+    line-height: 3rem;
 }
 
 h2 {
-	font-size: 2rem;
-	line-height: 2rem;
+    font-size: 2rem;
+    line-height: 2rem;
 }
 
 .btn {
-	@apply flex justify-center text-sm font-medium py-2 px-4 rounded-md outline outline-1 items-center transition ease-in-out duration-300;
+    @apply flex justify-center text-sm font-medium py-2 px-4 rounded-md outline outline-1 items-center transition ease-in-out duration-300;
 }
 
 .btn-base {
-	@apply flex justify-center text-sm font-medium rounded-md items-center transition ease-in-out duration-300;
+    @apply flex justify-center text-sm font-medium rounded-md items-center transition ease-in-out duration-300;
 }
 
-.btn-basic[disabled], .btn-basic[disabled]:hover {
-	@apply outline-gray-400 text-gray-400
+.btn-basic[disabled],
+.btn-basic[disabled]:hover {
+    @apply outline-gray-400 text-gray-400;
 }
 
 .btn-basic {
-	@apply outline-indigo-500 text-indigo-500;
+    @apply outline-indigo-500 text-indigo-500;
 }
 
 .btn-basic:hover {
-	@apply outline-indigo-700 text-indigo-700;
+    @apply outline-indigo-700 text-indigo-700;
 }
 
 .filter-child {
-	@apply py-2 px-3;
+    @apply py-2 px-3;
 }
 
 .filter-child:not(:last-child):not(.border-b-0) {
-	@apply border-b;
+    @apply border-b;
 }
 
 .card {
-	@apply outline outline-1 outline-gray-300 rounded transition-all ease-in-out duration-300 hover:outline-indigo-500;
+    @apply outline outline-1 outline-gray-300 rounded transition-all ease-in-out duration-300 hover:outline-indigo-500;
 }
 
 .card-static {
-	@apply outline outline-1 outline-gray-300 rounded;
+    @apply outline outline-1 outline-gray-300 rounded;
 }
 
 .menu-tab {
-	@apply border-b-4 pb-1 font-medium;
+    @apply border-b-4 pb-1 font-medium;
 }
 
 .input {
-	@apply w-full rounded-md border-gray-300 text-sm focus:ring-0;
+    @apply w-full rounded-md border-gray-300 text-sm focus:ring-0;
 }
 
 .input[disabled] {
-	opacity: 0.5;
+    opacity: 0.5;
 }
 
 .input:focus {
-	@apply border-indigo-500 ring-indigo-500 border;
+    @apply border-indigo-500 ring-indigo-500 border;
 }
 
 .home-page {
-	height: calc(100vh - 64px);
-	background-image: url("~/public/static/home.jpg");
-	background-size: cover;
-	background-repeat: no-repeat;
-	background-attachment: fixed;
-	background-position-x: center;
-	opacity: 0.9;
+    height: calc(100vh - 64px);
+    background-image: url("~/public/static/home.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position-x: center;
+    opacity: 0.9;
 }
 
 .text-shadow {
-	text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .thumbnail {
-	height: 138px;
-	width: 100px;
+    height: 138px;
+    width: 100px;
 }
 
 img:not([src]):not([srcset]) {
-	visibility: hidden;
+    visibility: hidden;
 }

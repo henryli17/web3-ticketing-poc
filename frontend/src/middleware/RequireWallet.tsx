@@ -3,19 +3,19 @@ import routes from "../routes";
 import { useAddress } from "./Wallet";
 
 const RequireWallet = ({ redirect: Redirect }: { redirect: React.FC }) => {
-	const [address] = useAddress();
+    const [address] = useAddress();
 
-	// Still attempting to connect to wallet
-	if (address === null) {
-		return null;
-	}
-	
-	// Wallet present, but not connected
-	if (!address.length) {
-		return <Navigate to={routes.home()} replace />;
-	}
+    // Still attempting to connect to wallet
+    if (address === null) {
+        return null;
+    }
 
-	return <Redirect />;
-}; 
+    // Wallet present, but not connected
+    if (!address.length) {
+        return <Navigate to={routes.home()} replace />;
+    }
+
+    return <Redirect />;
+};
 
 export default RequireWallet;

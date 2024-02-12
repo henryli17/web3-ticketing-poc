@@ -40,7 +40,7 @@ const ConfirmationModal = (props: {
                                         />
                                     </svg>
                                 </div>
-                                <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                                <div className="mt-3 w-full text-center sm:mt-0 sm:ml-4 sm:text-left">
                                     <h3
                                         className="text-lg font-medium leading-6 text-gray-900"
                                         id="modal-title"
@@ -60,7 +60,7 @@ const ConfirmationModal = (props: {
                             <button
                                 type="button"
                                 disabled={disabled}
-                                className="inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-25"
+                                className="inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none disabled:opacity-25 sm:ml-3 sm:w-auto sm:text-sm"
                                 onClick={() => action()}
                             >
                                 {disabled && <Spinner />}
@@ -69,7 +69,7 @@ const ConfirmationModal = (props: {
                             <button
                                 type="button"
                                 disabled={disabled}
-                                className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-25"
+                                className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none disabled:opacity-25 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                                 onClick={() => props.close()}
                             >
                                 Cancel

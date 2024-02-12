@@ -111,8 +111,8 @@ const PurchaseCard = (props: {
                 {!props.purchase.expired &&
                     !props.purchase.event.cancelled &&
                     remainingQuantity > 0 && (
-                        <div className="col-span-12 lg:col-span-4 xl:col-span-3 lg:pt-0 pt-5 flex">
-                            <div className="lg:ml-auto flex h-fit space-x-2">
+                        <div className="col-span-12 flex pt-5 lg:col-span-4 lg:pt-0 xl:col-span-3">
+                            <div className="flex h-fit space-x-2 lg:ml-auto">
                                 {!props.purchase.forSale && (
                                     <button
                                         className="btn btn-basic"
@@ -127,8 +127,8 @@ const PurchaseCard = (props: {
                                         quantity={remainingQuantity}
                                         className={
                                             props.purchase.forSale
-                                                ? "outline-red-700 text-red-700 hover:outline-red-900 hover:text-red-900"
-                                                : "outline-green-700 text-green-700 hover:outline-green-900 hover:text-green-900"
+                                                ? "text-red-700 outline-red-700 hover:text-red-900 hover:outline-red-900"
+                                                : "text-green-700 outline-green-700 hover:text-green-900 hover:outline-green-900"
                                         }
                                         value={selectedQuantity}
                                         onClick={(e) => quantityButtonClick(e)}

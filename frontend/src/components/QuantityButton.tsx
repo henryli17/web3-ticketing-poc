@@ -26,12 +26,12 @@ const QuantityButton = (props: {
             disabled={props.disabled}
         >
             {props.children && (
-                <div className="flex pr-3 items-center border-r border-current h-full">
+                <div className="flex h-full items-center border-r border-current pr-3">
                     {props.children}
                 </div>
             )}
             <select
-                className="border-transparent h-full bg-transparent py-0 pl-3 pr-8 text-sm focus:ring-0 focus:border-transparent"
+                className="h-full border-transparent bg-transparent py-0 pl-3 pr-8 text-sm focus:border-transparent focus:ring-0"
                 onClick={(e) => quantityOnClick(e)}
                 value={props.value}
                 onChange={(e) => props.onChange && props.onChange(e)}

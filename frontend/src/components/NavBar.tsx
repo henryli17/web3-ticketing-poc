@@ -70,9 +70,9 @@ const NavBar = () => {
                                 </svg>
                             </button>
                         </div>
-                        <div className="flex flex-1 justify-center sm:justify-start h-full">
-                            <div className="hidden sm:ml-6 sm:block justify-center">
-                                <div className="flex space-x-4 h-full">
+                        <div className="flex h-full flex-1 justify-center sm:justify-start">
+                            <div className="hidden justify-center sm:ml-6 sm:block">
+                                <div className="flex h-full space-x-4">
                                     {navEntries.map((navEntry, i) =>
                                         navEntry.location === routes.home() ? (
                                             <Tab
@@ -87,7 +87,7 @@ const NavBar = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="pr-2 sm:pr-0 hidden sm:flex items-center">
+                        <div className="hidden items-center pr-2 sm:flex sm:pr-0">
                             <SearchBar
                                 className="w-40 md:w-56"
                                 onSubmit={search}
@@ -104,7 +104,7 @@ const NavBar = () => {
                         "sm:hidden " + (mobileMenuHidden ? "hidden" : "")
                     }
                 >
-                    <div className="pt-2 pb-3 w-full">
+                    <div className="w-full pt-2 pb-3">
                         <SearchBar
                             className="mx-2 mb-2"
                             onSubmit={(s) => {
@@ -112,7 +112,7 @@ const NavBar = () => {
                                 search(s);
                             }}
                         />
-                        <div className="flex mx-2 mb-3">
+                        <div className="mx-2 mb-3 flex">
                             <ConnectWallet
                                 className="w-full"
                                 onLocked={() => setShowAlert(true)}
@@ -177,7 +177,7 @@ const Tab = (props: { navEntry: NavEntry; className?: string }) => {
     return (
         <Link
             to={props.navEntry.location}
-            className={`border-b-2 h-full text-gray-800 px-3 py-2 text-sm font-medium h-full items-center flex ${borderColour} ${props.className}`}
+            className={`flex h-full h-full items-center border-b-2 px-3 py-2 text-sm font-medium text-gray-800 ${borderColour} ${props.className}`}
         >
             {props.navEntry.text}
         </Link>
@@ -192,7 +192,7 @@ const MobileTab = (props: { navEntry: NavEntry; onClick: () => any }) => {
     return (
         <Link
             to={props.navEntry.location}
-            className={"py-2 w-full text-left flex " + className}
+            className={"flex w-full py-2 text-left " + className}
             onClick={() => props.onClick()}
         >
             <div

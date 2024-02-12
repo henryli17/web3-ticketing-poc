@@ -25,7 +25,7 @@ const CheckboxGroup = (props: {
                     <div key={i} className="flex items-center">
                         <input
                             type="checkbox"
-                            className="rounded text-indigo-500 mr-1.5 appearance-none focus:ring-0 focus:ring-offset-0"
+                            className="mr-1.5 appearance-none rounded text-indigo-500 focus:ring-0 focus:ring-offset-0"
                             id={item.name}
                             value={item.name}
                             onChange={(e) => toggle(item.name)}

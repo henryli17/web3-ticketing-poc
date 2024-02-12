@@ -17,25 +17,25 @@ const EventCard = (props: {
             to={props.to || routes.event(props.event.id)}
             className={"card flex w-full py-5 px-5 " + props.className}
         >
-            <div className="my-auto grid grid-cols-12 w-full">
-                <div className="col-span-12 lg:col-span-8 xl:col-span-9 flex items-center">
+            <div className="my-auto grid w-full grid-cols-12">
+                <div className="col-span-12 flex items-center lg:col-span-8 xl:col-span-9">
                     <img
-                        className="rounded shadow-lg hidden sm:block thumbnail mr-5"
+                        className="thumbnail mr-5 hidden rounded shadow-lg sm:block"
                         src={props.event.imageUrl}
                         alt={props.event.artist}
                     />
-                    <div className="text-left w-full flex">
+                    <div className="flex w-full text-left">
                         <div className="my-auto w-full">
-                            <div className="italic mb-2">
-                                <h2 className="font-bold uppercase mr-2">
+                            <div className="mb-2 italic">
+                                <h2 className="mr-2 font-bold uppercase">
                                     {props.event.artist}
                                 </h2>
                                 <div className="text-xl">
                                     {props.event.name}
                                 </div>
                             </div>
-                            <div className="text-xl font-bold text-indigo-500 flex flex-wrap items-center mb-0.5">
-                                <div className="flex items-center mr-2">
+                            <div className="mb-0.5 flex flex-wrap items-center text-xl font-bold text-indigo-500">
+                                <div className="mr-2 flex items-center">
                                     {props.quantity && (
                                         <>
                                             {props.quantity} <X />
@@ -44,7 +44,7 @@ const EventCard = (props: {
                                     {gweiToEth(props.event.price)} ETH
                                 </div>
                                 {!!props.used && props.used > 0 && (
-                                    <div className="text-indigo-500 font-medium text-xs uppercase">
+                                    <div className="text-xs font-medium uppercase text-indigo-500">
                                         [{props.used} Used]
                                     </div>
                                 )}

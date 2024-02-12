@@ -96,9 +96,9 @@ const EventsView = () => {
     }
 
     return (
-        <div className="container py-16 px-10 mx-auto">
+        <div className="container mx-auto py-16 px-10">
             {search && (
-                <div className="mb-3 text-lg flex items-center">
+                <div className="mb-3 flex items-center text-lg">
                     <button
                         type="button"
                         onClick={() => {
@@ -113,7 +113,7 @@ const EventsView = () => {
             )}
             <button
                 type="button"
-                className="md:hidden text-gray-500 mb-2 text-xs uppercase"
+                className="mb-2 text-xs uppercase text-gray-500 md:hidden"
                 onClick={() => setShowFilters(!showFilters)}
             >
                 {showFilters ? "Hide" : "Show"} Filters
@@ -121,7 +121,7 @@ const EventsView = () => {
             <div className="grid grid-cols-12 gap-x-3">
                 <div
                     className={
-                        "card-static col-span-12 mb-5 md:mb-0 md:col-span-3 xl:col-span-2 h-fit md:block " +
+                        "card-static col-span-12 mb-5 h-fit md:col-span-3 md:mb-0 md:block xl:col-span-2 " +
                         (!showFilters ? "hidden" : "")
                     }
                 >
@@ -160,7 +160,7 @@ const EventsView = () => {
                     <button
                         type="button"
                         className={
-                            "filter-child flex items-center w-full " +
+                            "filter-child flex w-full items-center " +
                             (showPrice ? "" : "border-b-0")
                         }
                         onClick={() => setShowPrice(!showPrice)}
@@ -176,7 +176,7 @@ const EventsView = () => {
                             "filter-child " + (showPrice ? "" : "hidden")
                         }
                     >
-                        <div className="relative shadow-sm my-1">
+                        <div className="relative my-1 shadow-sm">
                             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-xs text-gray-500">
                                 MAX ETH
                             </div>
@@ -197,9 +197,9 @@ const EventsView = () => {
                         </div>
                     </div>
                 </div>
-                <div className="space-y-3 col-span-12 md:col-span-9 xl:col-span-10">
+                <div className="col-span-12 space-y-3 md:col-span-9 xl:col-span-10">
                     {!eventsData.events.length && (
-                        <h2 className="uppercase italic font-medium py-1 md:px-5">
+                        <h2 className="py-1 font-medium uppercase italic md:px-5">
                             No Events Found
                         </h2>
                     )}
@@ -239,7 +239,7 @@ const CheckboxItemsFilter = (props: {
         <>
             <button
                 type="button"
-                className="filter-child flex items-center w-full"
+                className="filter-child flex w-full items-center"
                 onClick={() => props.setShow(!props.show)}
             >
                 {props.title}

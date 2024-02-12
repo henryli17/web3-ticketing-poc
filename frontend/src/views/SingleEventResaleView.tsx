@@ -58,10 +58,10 @@ const SingleEventResaleView = () => {
         <div className="container mx-auto p-10">
             <BackCaret to={routes.event(Number(id))} />
             <div>
-                <h1 className="italic uppercase font-bold">{event.artist}</h1>
-                <div className="text-2xl mb-8 italic">{event.name}</div>
-                <div className="text-2xl uppercase font-bold">Price</div>
-                <h2 className="font-bold text-indigo-500 mb-8">
+                <h1 className="font-bold uppercase italic">{event.artist}</h1>
+                <div className="mb-8 text-2xl italic">{event.name}</div>
+                <div className="text-2xl font-bold uppercase">Price</div>
+                <h2 className="mb-8 font-bold text-indigo-500">
                     {gweiToEth(event.price)} ETH
                 </h2>
             </div>
@@ -125,18 +125,18 @@ const ResaleListing = (props: {
     };
 
     return (
-        <div className="grid grid-cols-12 py-4 items-center">
-            <div className="flex space-x-3 items-center col-span-12 md:col-span-10">
-                <div className="uppercase font-medium text-sm bg-indigo-500 text-white py-1 px-2">
+        <div className="grid grid-cols-12 items-center py-4">
+            <div className="col-span-12 flex items-center space-x-3 md:col-span-10">
+                <div className="bg-indigo-500 py-1 px-2 text-sm font-medium uppercase text-white">
                     Resale
                 </div>
-                <div className="break-words w-3/5">
+                <div className="w-3/5 break-words">
                     {props.resaleToken.owner}
                 </div>
             </div>
-            <div className="col-span-12 md:col-span-2 flex">
+            <div className="col-span-12 flex md:col-span-2">
                 <button
-                    className="ml-auto btn btn-basic md:w-fit w-full mt-3 md:mt-0"
+                    className="btn btn-basic ml-auto mt-3 w-full md:mt-0 md:w-fit"
                     type="button"
                     disabled={disabled}
                     onClick={() => purchase()}

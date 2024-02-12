@@ -33,10 +33,10 @@ const AdminLoginView = () => {
     };
 
     return (
-        <div className="container mx-auto h-screen flex justify-center items-center">
+        <div className="container mx-auto flex h-screen items-center justify-center">
             <form className="text-gray-600" onSubmit={(e) => submit(e)}>
-                <label className="text-xs uppercase  mx-1">Admin Login</label>
-                <div className="flex items-center relative w-60">
+                <label className="mx-1 text-xs  uppercase">Admin Login</label>
+                <div className="relative flex w-60 items-center">
                     <input
                         type="password"
                         className="input pr-9 shadow-sm"
@@ -47,14 +47,14 @@ const AdminLoginView = () => {
                     />
                     <button
                         type="submit"
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                        className="absolute inset-y-0 right-0 flex items-center pr-3"
                     >
                         <ArrowRightShort />
                     </button>
                 </div>
                 <div
                     className={
-                        "text-red-700 uppercase text-xs my-1 mx-1 pointer-events-0 " +
+                        "pointer-events-0 my-1 mx-1 text-xs uppercase text-red-700 " +
                         (error ? "opacity-1" : "opacity-0")
                     }
                 >

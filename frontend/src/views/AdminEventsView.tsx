@@ -74,7 +74,7 @@ const AdminEventsView = () => {
                     </Link>
                 </div>
             </AdminHeader>
-            <div className="space-y-3 mb-4">
+            <div className="mb-4 space-y-3">
                 {!Web3.givenProvider && (
                     <Alert
                         className="bg-red-50 text-red-900"
@@ -93,7 +93,7 @@ const AdminEventsView = () => {
                     }}
                 />
                 {!eventsData.events.length && (
-                    <h2 className="font-medium py-5 italic uppercase">
+                    <h2 className="py-5 font-medium uppercase italic">
                         No Events
                     </h2>
                 )}

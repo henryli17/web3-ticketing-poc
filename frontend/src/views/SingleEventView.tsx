@@ -67,10 +67,10 @@ const SingleEventView = () => {
                 />
             )}
             <div className="grid grid-cols-1 py-10 lg:grid-cols-2 ">
-                <div className="grid-span-1 flex mb-16 lg:mb-0">
+                <div className="grid-span-1 mb-16 flex lg:mb-0">
                     <div className="my-auto">
                         <img
-                            className="mx-auto shadow-lg w-10/12 md:w-8/12 lg:w-10/12 xl:w-8/12 rounded"
+                            className="mx-auto w-10/12 rounded shadow-lg md:w-8/12 lg:w-10/12 xl:w-8/12"
                             src={event.imageUrl}
                             alt={event.artist}
                         />
@@ -78,21 +78,21 @@ const SingleEventView = () => {
                 </div>
                 <div className="grid-span-1 flex">
                     <div className="my-auto w-full">
-                        <h1 className="italic uppercase font-bold mb-1">
+                        <h1 className="mb-1 font-bold uppercase italic">
                             {event.artist}
                         </h1>
-                        <div className="text-2xl mb-8 italic">{event.name}</div>
+                        <div className="mb-8 text-2xl italic">{event.name}</div>
                         <div className="text-2xl">{prettyDate(event.time)}</div>
-                        <div className="text-2xl mb-8 capitalize">
+                        <div className="mb-8 text-2xl capitalize">
                             {event.venue}, {event.city}
                         </div>
-                        <div className="text-2xl uppercase font-bold">
+                        <div className="text-2xl font-bold uppercase">
                             Price
                         </div>
-                        <h2 className="font-bold text-indigo-500 mb-8">
+                        <h2 className="mb-8 font-bold text-indigo-500">
                             {gweiToEth(event.price)} ETH
                         </h2>
-                        <div className="flex mb-8 space-x-2">
+                        <div className="mb-8 flex space-x-2">
                             <PurchaseButton
                                 address={address}
                                 event={event}
@@ -116,7 +116,7 @@ const SingleEventView = () => {
                             )}
                         </div>
                         <div className="mb-8 text-lg">{event.description}</div>
-                        <div className="flex-wrap flex">
+                        <div className="flex flex-wrap">
                             {event.genres.map((genre) => (
                                 <GenrePill
                                     name={genre}

@@ -193,8 +193,8 @@ const AdminCreateEditEventView = () => {
                     formik={formik}
                 />
                 <div>
-                    <div className="flex my-0.5">
-                        <label className="uppercase text-sm text-indigo-500 mx-1">
+                    <div className="my-0.5 flex">
+                        <label className="mx-1 text-sm uppercase text-indigo-500">
                             Image (4:5 Aspect Ratio)
                         </label>
                     </div>
@@ -214,7 +214,7 @@ const AdminCreateEditEventView = () => {
                     />
                     {(event?.imageUrl || image) && (
                         <img
-                            className="mt-3 rounded shadow-lg thumbnail"
+                            className="thumbnail mt-3 rounded shadow-lg"
                             src={
                                 image
                                     ? URL.createObjectURL(image as Blob)
@@ -275,13 +275,13 @@ const Input = (props: {
 }) => {
     return (
         <div>
-            <div className="flex my-0.5">
-                <label className="uppercase text-sm text-indigo-500 mx-1">
+            <div className="my-0.5 flex">
+                <label className="mx-1 text-sm uppercase text-indigo-500">
                     {props.label}
                 </label>
                 {props.formik.touched[props.name] &&
                     props.formik.errors[props.name] && (
-                        <div className="text-red-600 text-sm ml-auto">
+                        <div className="ml-auto text-sm text-red-600">
                             {props.formik.errors[props.name]}
                         </div>
                     )}

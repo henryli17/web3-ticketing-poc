@@ -37,7 +37,7 @@ const AlertModal = (props: {
                                         />
                                     </svg>
                                 </div>
-                                <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                                <div className="mt-3 w-full text-center sm:mt-0 sm:ml-4 sm:text-left">
                                     <h3
                                         className="text-lg font-medium leading-6 text-gray-900"
                                         id="modal-title"
@@ -45,7 +45,7 @@ const AlertModal = (props: {
                                         {props.title}
                                     </h3>
                                     <div className="mt-2">
-                                        <p className="text-sm text-gray-500 break-words sm:w-[calc(100%-3.5rem)]">
+                                        <p className="break-words text-sm text-gray-500 sm:w-[calc(100%-3.5rem)]">
                                             {props.message}
                                         </p>
                                     </div>
@@ -55,7 +55,7 @@ const AlertModal = (props: {
                         <div className="px-4 py-5 sm:flex sm:flex-row-reverse sm:px-6">
                             <button
                                 type="button"
-                                className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-25"
+                                className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none disabled:opacity-25 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                                 onClick={() => props.close()}
                             >
                                 Okay

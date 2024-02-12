@@ -7,7 +7,7 @@ const GenrePill = (props: { name: string; className?: string }) => {
             to={`${routes.events()}?genres=${encodeURIComponent(props.name)}`}
             className={props.className}
         >
-            <div className="rounded-full bg-indigo-500 uppercase text-white px-5 py-1 h-8 whitespace-nowrap">
+            <div className="h-8 whitespace-nowrap rounded-full bg-indigo-500 px-5 py-1 uppercase text-white">
                 {props.name}
             </div>
         </Link>

@@ -5,8 +5,8 @@ const PageError = () => {
     const navigate = useNavigate();
 
     return (
-        <div className="text-center my-24 mx-5">
-            <h1 className="font-bold text-red-600 mb-3">Oops!</h1>
+        <div className="my-24 mx-5 text-center">
+            <h1 className="mb-3 font-bold text-red-600">Oops!</h1>
             <div>
                 Something went wrong whilst trying to process your request.
             </div>

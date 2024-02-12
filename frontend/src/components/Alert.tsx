@@ -4,9 +4,9 @@ const Alert = (props: {
     className?: string;
 }) => {
     return (
-        <div className={"flex p-4 mb-4 text-sm rounded-lg " + props.className}>
+        <div className={"mb-4 flex rounded-lg p-4 text-sm " + props.className}>
             <svg
-                className="flex-shrink-0 inline w-5 h-5 mr-3"
+                className="mr-3 inline h-5 w-5 flex-shrink-0"
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
@@ -17,8 +17,8 @@ const Alert = (props: {
                     clipRule="evenodd"
                 />
             </svg>
-            <div className="break-words w-[calc(100%-2rem)]">
-                <span className="font-medium mr-1">{props.title}</span>
+            <div className="w-[calc(100%-2rem)] break-words">
+                <span className="mr-1 font-medium">{props.title}</span>
                 {props.message}
             </div>
         </div>

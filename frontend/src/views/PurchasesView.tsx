@@ -80,8 +80,8 @@ const PurchasesView = () => {
     }
 
     return (
-        <div className="container mx-auto py-16 px-10 space-y-3">
-            <div className="flex space-x-5 mb-5">
+        <div className="container mx-auto space-y-3 py-16 px-10">
+            <div className="mb-5 flex space-x-5">
                 {purchaseData &&
                     Object.values(PurchaseType)
                         .filter(
@@ -106,7 +106,7 @@ const PurchasesView = () => {
                         })}
             </div>
             {purchaseData !== undefined && !hasPurchases && (
-                <h2 className="italic uppercase text-center font-medium">
+                <h2 className="text-center font-medium uppercase italic">
                     No Purchases Found
                 </h2>
             )}

@@ -5,7 +5,12 @@ import CheckboxGroup, { CheckboxItem } from "../components/CheckboxGroup";
 import EventCard from "../components/EventCard";
 import PageError from "../components/PageError";
 import PaginationButtons from "../components/PaginationButtons";
-import { getEvents, GetEventsResponse, getGenres, getLocations } from "../helpers/api";
+import {
+  GetEventsResponse,
+  getEvents,
+  getGenres,
+  getLocations,
+} from "../helpers/api";
 import { ethToGwei } from "../helpers/utils";
 
 const EventsView = () => {
@@ -83,7 +88,7 @@ const EventsView = () => {
 	}
 
 	if (!eventsData) {
-		return <></>;
+		return null;
 	}
 
 	return (

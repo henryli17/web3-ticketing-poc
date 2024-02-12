@@ -7,7 +7,7 @@ const RequireWallet = ({ redirect: Redirect }: { redirect: React.FC }) => {
 
 	// Still attempting to connect to wallet
 	if (address === null) {
-		return <></>;
+		return null;
 	}
 	
 	// Wallet present, but not connected

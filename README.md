@@ -1,3 +1,7 @@
+# Report
+
+The report and accompanying appendix can be found [here](https://github.com/henryli17/web3-ticketing-poc/tree/main/report).
+
 # Local Deployment
 
 All instructions below assume that you are in the **root directory** of the project unless explicitly stated and that you are using a **Unix-like OS**.
